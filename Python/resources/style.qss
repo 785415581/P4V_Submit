@@ -1,0 +1,7 @@
+
+QMenu{border:1px solid lightgray;}
+QMenu{border-color:green;}
+QMenu::item{padding:0px 40px 0px 20px;}
+QMenu::item{height:30px;}
+QMenu::item{color:blue;}
+QMenu::item{background:white;}
