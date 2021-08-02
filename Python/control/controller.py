@@ -1,14 +1,12 @@
-import sys
-from PySide2 import QtWidgets
-from PySide2 import QtGui
 from PySide2 import QtCore
 from Python.modules.app_functions import AppFunction
 from Python.modules.p4_module import P4Module
-from Python.modules import utils
+from Python.utils import utils
 
 
-class Controller:
+class Controller(QtCore.QObject):
     def __init__(self, widget):
+        super(Controller, self).__init__()
         self._appFunction = AppFunction(widget)
         self._p4Model = P4Module()
         self._view = widget
@@ -25,7 +23,7 @@ class Controller:
         self._view.listWidget.customContextMenuRequested.connect(self.appFunction.showWorkListHandle)
         self._view.typeComboBox.currentIndexChanged.connect(self.appFunction.changeType)
         self._view.assetNameComboBox.currentIndexChanged.connect(self.appFunction.changeAsset)
-        self._view.submitStepCom.currentIndexChanged.connect(self.appFunction.changeTreeStatus)
+        self._view.submitStepCom.currentIndexChanged.connect(self.appFunction.changeStep)
 
     def initUI(self):
         self._view.assetNameComboBox.setEnabled(True)
@@ -34,9 +32,9 @@ class Controller:
         self._view.workTree.clear()
         self._view.listWidget.clear()
 
-    def createAsset(self, assetPath):
-        utils.createAsset(assetPath=assetPath)
-        self.appFunction.changeAsset()
+    def createAsset(self, control):
+        utils.createAsset(control)
+        # self.appFunction.changeAsset()
 
     @property
     def p4Model(self):

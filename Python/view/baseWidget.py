@@ -11,7 +11,7 @@ class ListWidgetItem(QtWidgets.QListWidgetItem):
 
     def __init__(self, parent):
         super(ListWidgetItem, self).__init__(parent)
-
+        self._filePath = None
         self.widget = QtWidgets.QWidget(parent)
         self.fileBaseName = QtWidgets.QLabel()
         self.exportCheck = QtWidgets.QCheckBox('Export')
@@ -33,4 +33,10 @@ class ListWidgetItem(QtWidgets.QListWidgetItem):
     def setCurrentEnterFile(self, fileName):
         self.fileBaseName.setText(fileName)
 
+    @property
+    def filePath(self):
+        return self._filePath
 
+    @filePath.setter
+    def filePath(self, value):
+        self._filePath = value

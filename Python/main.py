@@ -10,6 +10,7 @@ from Python.modules.ui_main import Ui_MainWindow
 from Python.control.controller import Controller
 from Python.view.baseWidget import ListWidgetItem
 from Python import publishInterface
+from Python.utils import utils
 widgets = None
 
 
@@ -25,11 +26,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.control = Controller(widgets)
         self.control.initSignal()
         self.control.appFunction.initValue()
-        widgets.currentPathCombox.currentIndexChanged.connect(self.changeTreeStatus)
+        widgets.currentPathCombox.currentIndexChanged.connect(self.changeCurrentPath)
         widgets.workTree.itemClicked.connect(self.listPath)
         widgets.connectBtn.clicked.connect(self.buttonClick)
         widgets.publishBtn.clicked.connect(self.buttonClick)
-
         widgets.listWidget.setAcceptDrops(True)
         widgets.listWidget.setDefaultDropAction(QtCore.Qt.MoveAction)
         widgets.listWidget.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
@@ -49,6 +49,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 for url in urls:
                     filePath = url.toLocalFile()
                     item = ListWidgetItem(self.ui.listWidget)
+                    item.filePath = filePath
                     item.setCurrentEnterFile(os.path.basename(filePath))
                     widgets.listWidget.addItem(item)
                     item.exportCheck.clicked.connect(partial(self.control.appFunction.checkedExportItem, item))
@@ -56,14 +57,12 @@ class MainWindow(QtWidgets.QMainWindow):
             if watched is self.ui.assetNameComboBox:
                 key = event.key()
                 if key == QtCore.Qt.Key_Enter or key == QtCore.Qt.Key_Return:
-
-                    clientRoot = self.control.appFunction.clientRoot
-                    assetType = self.ui.typeComboBox.currentText()
-                    assetName = self.ui.assetNameComboBox.currentText()
-                    self.control.createAsset(os.path.join(clientRoot, assetType, assetName))
+                    self.control.createAsset(self.control)
+            elif watched is self.ui.submitStepCom:
+                print('222')
         return QtCore.QObject.eventFilter(self, watched, event)
 
-    def changeTreeStatus(self, index):
+    def changeCurrentPath(self, index):
         treeWidgetItem = widgets.currentPathCombox.itemData(index, QtCore.Qt.UserRole)
         widgets.workTree.setCurrentItem(treeWidgetItem)
 
@@ -105,7 +104,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.control.appFunction.initWindow(clientRoot)
 
         elif btnName == "publishBtn":
-            step = self.ui.submitStepCom.currentText()
+            step = self.control.appFunction.submitStepComText
             if step:
                 stepClass = publishInterface.get_step_interface_class(stepName=step)
                 Interface = stepClass()
