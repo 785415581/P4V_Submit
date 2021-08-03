@@ -167,7 +167,6 @@ class AppFunction(object):
             icon = os.path.dirname(os.path.dirname(__file__)) + '/icons/file.png'
             root.setIcon(0, QtGui.QIcon(icon))
 
-
     def callBack(self):
         self.appSetting.init()
         configValue = self.appSetting.getConfig()

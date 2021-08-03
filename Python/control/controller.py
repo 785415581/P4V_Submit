@@ -1,7 +1,7 @@
 from PySide2 import QtCore
 from Python.modules.app_functions import AppFunction
 from Python.modules.p4_module import P4Module
-from Python.utils import utils
+from Python.utils.utils import Utils
 
 
 class Controller(QtCore.QObject):
@@ -10,6 +10,7 @@ class Controller(QtCore.QObject):
         self._appFunction = AppFunction(widget)
         self._p4Model = P4Module()
         self._view = widget
+        self._utils = Utils()
 
     def init(self):
         self._p4Model.serverPort = self._view.serverLn.currentText()
@@ -33,8 +34,8 @@ class Controller(QtCore.QObject):
         self._view.listWidget.clear()
 
     def createAsset(self, control):
-        utils.createAsset(control)
-        # self.appFunction.changeAsset()
+        self._utils.control = control
+        self._utils.createAsset()
 
     @property
     def p4Model(self):

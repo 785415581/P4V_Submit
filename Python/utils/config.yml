@@ -1,10 +1,18 @@
 Audio:
 
 Character:
-  - Animation
-  - Mesh
-  - Rig
-  - Textures
+  - Animation:
+      format: "{asset_name}_{action}"
+      exprot_hooks: ""
+  - Mesh:
+      format: "{asset_name}"
+      exprot_hooks: ""
+  - Rig:
+      format: "{asset_name}_rig"
+      exprot_hooks: ""
+  - Textures:
+      format: "{asset_name}_{action}"
+      exprot_hooks: ""
   
 Concept:
 

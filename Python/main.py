@@ -53,6 +53,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     item.setCurrentEnterFile(os.path.basename(filePath))
                     widgets.listWidget.addItem(item)
                     item.exportCheck.clicked.connect(partial(self.control.appFunction.checkedExportItem, item))
+
         elif event.type() == QtCore.QEvent.KeyPress:
             if watched is self.ui.assetNameComboBox:
                 key = event.key()
@@ -88,7 +89,8 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             currentType = widgets.typeComboBox.currentText()
             currentAsset = widgets.assetNameComboBox.currentText()
-            currentPath = os.path.join(self.control.appFunction.clientRoot, currentType, currentAsset, strPath)
+            currentStep = widgets.submitStepCom.currentText()
+            currentPath = os.path.join(self.control.appFunction.clientRoot, currentType, currentAsset, currentStep, strPath)
             return currentPath
 
     def buttonClick(self):

@@ -14,6 +14,7 @@ class ListWidgetItem(QtWidgets.QListWidgetItem):
         self._filePath = None
         self.widget = QtWidgets.QWidget(parent)
         self.fileBaseName = QtWidgets.QLabel()
+        self.fileBaseName.mouseDoubleClickEvent = self.mouseDoubleClickEvent
         self.exportCheck = QtWidgets.QCheckBox('Export')
         self.exportType = QtWidgets.QComboBox()
         self.exportType.addItems(['fbx', 'mesh'])
@@ -32,6 +33,11 @@ class ListWidgetItem(QtWidgets.QListWidgetItem):
 
     def setCurrentEnterFile(self, fileName):
         self.fileBaseName.setText(fileName)
+
+    def mouseDoubleClickEvent(self, event):
+        text, ok = QtWidgets.QInputDialog().getText(QtWidgets.QWidget(), '修改Label', '输入文本:')
+        if ok and text:
+            self.fileBaseName.setText(text)
 
     @property
     def filePath(self):
