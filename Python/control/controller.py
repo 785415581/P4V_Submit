@@ -5,37 +5,12 @@ from Python.utils.utils import Utils
 
 
 class Controller(QtCore.QObject):
-    def __init__(self, widget):
+    def __init__(self):
         super(Controller, self).__init__()
-        self._appFunction = AppFunction(widget)
-        self._p4Model = P4Module()
-        self._view = widget
+        self._view = None
         self._utils = Utils()
-
-    def init(self):
-        self._p4Model.serverPort = self._view.serverLn.currentText()
-        self._p4Model.user = self._view.userLn.currentText()
-        self._p4Model.client = self._view.workLn.currentText()
-
-    def initSignal(self):
-        self._view.workTree.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self._view.listWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self._view.workTree.customContextMenuRequested.connect(self.appFunction.showWorkTreeHandle)
-        self._view.listWidget.customContextMenuRequested.connect(self.appFunction.showWorkListHandle)
-        self._view.typeComboBox.currentIndexChanged.connect(self.appFunction.changeType)
-        self._view.assetNameComboBox.currentIndexChanged.connect(self.appFunction.changeAsset)
-        self._view.submitStepCom.currentIndexChanged.connect(self.appFunction.changeStep)
-
-    def initUI(self):
-        self._view.assetNameComboBox.setEnabled(True)
-        self._view.typeComboBox.setEnabled(True)
-        self._view.currentPathCombox.clear()
-        self._view.workTree.clear()
-        self._view.listWidget.clear()
-
-    def createAsset(self, control):
-        self._utils.control = control
-        self._utils.createAsset()
+        self._p4Model = P4Module()
+        self._appFunction = AppFunction()
 
     @property
     def p4Model(self):
@@ -45,6 +20,44 @@ class Controller(QtCore.QObject):
     def appFunction(self):
         return self._appFunction
 
+    @appFunction.setter
+    def appFunction(self, value):
+        self._appFunction = value
+
     @property
     def view(self):
         return self._view
+
+    @view.setter
+    def view(self, value):
+        self._view = value
+
+    @property
+    def utils(self):
+        return self._utils
+
+    def init(self):
+        self.appFunction.view = self.view
+        self.view.workTree.clear()
+        self.view.listWidget.clear()
+        self.view.currentPathCombox.clear()
+        self.view.typeComboBox.setEnabled(True)
+        self.view.assetNameComboBox.setEnabled(True)
+
+    def initUI(self):
+        self.p4Model.user = self.view.userLn.currentText()
+        self.p4Model.client = self.view.workLn.currentText()
+        self.p4Model.serverPort = self.view.serverLn.currentText()
+
+    def initSignal(self):
+        self.view.workTree.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.view.listWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.view.workTree.customContextMenuRequested.connect(self.appFunction.showWorkTreeHandle)
+        self.view.listWidget.customContextMenuRequested.connect(self.appFunction.showWorkListHandle)
+        self.view.typeComboBox.currentIndexChanged.connect(self.appFunction.changeType)
+        self.view.assetNameComboBox.currentIndexChanged.connect(self.appFunction.changeAsset)
+        self.view.submitStepCom.currentIndexChanged.connect(self.appFunction.changeStep)
+
+    def createAsset(self, control):
+        self._utils.control = control
+        self._utils.createAsset()

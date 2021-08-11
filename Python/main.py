@@ -23,7 +23,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         global widgets
         widgets = self.ui
-        self.control = Controller(widgets)
+        self.control = Controller()
+        self.control.view = widgets
+        self.control.init()
         self.control.initSignal()
         self.control.appFunction.initValue()
         widgets.currentPathCombox.currentIndexChanged.connect(self.changeCurrentPath)
@@ -53,6 +55,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     item.setCurrentEnterFile(os.path.basename(filePath))
                     widgets.listWidget.addItem(item)
                     item.exportCheck.clicked.connect(partial(self.control.appFunction.checkedExportItem, item))
+                    item.exportPath.clicked.connect(partial(self.control.appFunction.selectExportPath, item))
 
         elif event.type() == QtCore.QEvent.KeyPress:
             if watched is self.ui.assetNameComboBox:
@@ -68,7 +71,7 @@ class MainWindow(QtWidgets.QMainWindow):
         widgets.workTree.setCurrentItem(treeWidgetItem)
 
     def listPath(self, item, column):
-        res = self.getCurrentPath(item)
+        res = self.getCurrentPath(item).replace('\\', '/')
         print(res)
         if self.control.appFunction.clientRoot and res not in self.currentPathList:
             widgets.currentPathCombox.addItem(res.replace('\\', '/'))
@@ -97,22 +100,22 @@ class MainWindow(QtWidgets.QMainWindow):
         btn = self.sender()
         btnName = btn.objectName()
         if btnName == "connectBtn":
-            self.control.init()
-            self.control.initUI()
+            self.control.p4Model.user = self.ui.userLn.currentText()
+            self.control.p4Model.client = self.ui.workLn.currentText()
+            self.control.p4Model.serverPort = self.ui.serverLn.currentText()
             p4Info = self.control.p4Model.connectP4()
-            if p4Info and p4Info[0].get('clientRoot', ''):
-                clientRoot = p4Info[0]['clientRoot']
+            if p4Info and p4Info[0].get('clientStream', ''):
+                clientRoot = p4Info[0]['clientStream']
+                print(clientRoot)
                 self.control.appFunction.clientRoot = clientRoot
-                self.control.appFunction.initWindow(clientRoot)
+                self.control.appFunction.initWindow()
 
         elif btnName == "publishBtn":
             step = self.control.appFunction.submitStepComText
             if step:
                 stepClass = publishInterface.get_step_interface_class(stepName=step)
                 Interface = stepClass()
-                Interface.appFunction = self.control.appFunction
-                Interface.p4Model = self.control.p4Model
-                Interface.view = self.control.view
+                Interface.control = self.control
                 Interface.publish()
             print('publishBtn')
 

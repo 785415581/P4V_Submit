@@ -3,16 +3,16 @@ Audio:
 Character:
   - Animation:
       format: "{asset_name}_{action}"
-      exprot_hooks: ""
+      export_hooks: "default"
   - Mesh:
       format: "{asset_name}"
-      exprot_hooks: ""
+      export_hooks: "default"
   - Rig:
       format: "{asset_name}_rig"
-      exprot_hooks: ""
+      export_hooks: "export_hooks/export_{step}.py"
   - Textures:
       format: "{asset_name}_{action}"
-      exprot_hooks: ""
+      export_hooks: "default"
   
 Concept:
 

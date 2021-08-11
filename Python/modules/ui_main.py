@@ -18,14 +18,14 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(744, 703)
+        MainWindow.resize(769, 726)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.centralwidget.setStyleSheet(u"")
         self.verticalLayout_7 = QVBoxLayout(self.centralwidget)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
-        self.horizontalLayout_4 = QHBoxLayout()
-        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.horizontalLayout_7 = QHBoxLayout()
+        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
         self.verticalLayout_3 = QVBoxLayout()
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.horizontalLayout = QHBoxLayout()
@@ -96,8 +96,37 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_3)
 
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.label_7 = QLabel(self.centralwidget)
+        self.label_7.setObjectName(u"label_7")
+        self.label_7.setFont(font1)
 
-        self.horizontalLayout_4.addLayout(self.verticalLayout_3)
+        self.horizontalLayout_4.addWidget(self.label_7)
+
+        self.lineEdit = QLineEdit(self.centralwidget)
+        self.lineEdit.setObjectName(u"lineEdit")
+        self.lineEdit.setFont(font1)
+
+        self.horizontalLayout_4.addWidget(self.lineEdit)
+
+        self.label_8 = QLabel(self.centralwidget)
+        self.label_8.setObjectName(u"label_8")
+        self.label_8.setMinimumSize(QSize(20, 0))
+        self.label_8.setStyleSheet(u"color: rgb(69, 85, 49);\n"
+"image: url(:/icons/icons/no_display_password.png);\n"
+"font: 10pt \"Consolas\";\n"
+"")
+
+        self.horizontalLayout_4.addWidget(self.label_8)
+
+        self.horizontalLayout_4.setStretch(0, 1)
+        self.horizontalLayout_4.setStretch(1, 5)
+
+        self.verticalLayout_3.addLayout(self.horizontalLayout_4)
+
+
+        self.horizontalLayout_7.addLayout(self.verticalLayout_3)
 
         self.connectBtn = QPushButton(self.centralwidget)
         self.connectBtn.setObjectName(u"connectBtn")
@@ -107,25 +136,25 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.connectBtn.sizePolicy().hasHeightForWidth())
         self.connectBtn.setSizePolicy(sizePolicy)
-        self.connectBtn.setMinimumSize(QSize(160, 80))
+        self.connectBtn.setMinimumSize(QSize(160, 110))
         self.connectBtn.setCursor(QCursor(Qt.PointingHandCursor))
         self.connectBtn.setStyleSheet(u"/* /////////////////////////////////////////////////////////////////////////////////////////////////\n"
 "Custom */\n"
 "#connectBtn{ font-family: \"Microsoft YaHei\";\n"
-"    font-size: 12px;\n"
+"    font-size: 15px;\n"
 "	font-color:#2b2b2b;\n"
-"border-radius: 10px;\n"
+"border-radius: 20px;\n"
 "background-color: #214283;\n"
 "background-repeat: no-repeat;\n"
 "background-position: left center;\n"
 "}\n"
-"#connectBtn:hover { background-color: #282c34; border-style: solid; border-radius: 10px; }\n"
-"#connectBtn:pressed { background-color: #214283; border-style: solid; border-radius: 10px; }")
+"#connectBtn:hover { background-color: #282c34; border-style: solid; border-radius: 20px; }\n"
+"#connectBtn:pressed { background-color: #214283; border-style: solid; border-radius: 20px; }")
 
-        self.horizontalLayout_4.addWidget(self.connectBtn)
+        self.horizontalLayout_7.addWidget(self.connectBtn)
 
 
-        self.verticalLayout_7.addLayout(self.horizontalLayout_4)
+        self.verticalLayout_7.addLayout(self.horizontalLayout_7)
 
         self.line = QFrame(self.centralwidget)
         self.line.setObjectName(u"line")
@@ -188,6 +217,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
         self.label_6 = QLabel(self.groupBox_3)
         self.label_6.setObjectName(u"label_6")
+        self.label_6.setStyleSheet(u"")
 
         self.horizontalLayout_6.addWidget(self.label_6)
 
@@ -301,7 +331,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 744, 23))
+        self.menubar.setGeometry(QRect(0, 0, 769, 23))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -318,14 +348,16 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Server", None))
-        self.serverLn.setItemText(0, QCoreApplication.translate("MainWindow", u"10.0.13.18:1666", None))
+        self.serverLn.setItemText(0, QCoreApplication.translate("MainWindow", u"10.0.201.12:1666", None))
 
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Workspace", None))
-        self.workLn.setItemText(0, QCoreApplication.translate("MainWindow", u"qinjiaxin", None))
+        self.workLn.setItemText(0, QCoreApplication.translate("MainWindow", u"qinjiaxin_01YXHY1235_Assets", None))
 
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"User", None))
-        self.userLn.setItemText(0, QCoreApplication.translate("MainWindow", u"jiaxin.qin", None))
+        self.userLn.setItemText(0, QCoreApplication.translate("MainWindow", u"qinjiaxin", None))
 
+        self.label_7.setText(QCoreApplication.translate("MainWindow", u"Password", None))
+        self.label_8.setText("")
         self.connectBtn.setText(QCoreApplication.translate("MainWindow", u"Connect", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"GroupBox", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Type", None))

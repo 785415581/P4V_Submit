@@ -1,18 +1,29 @@
 import os
+import subprocess
 from PySide2 import QtGui
 from PySide2 import QtWidgets
 from PySide2 import QtCore
 from Python.modules.app_setting import AppSetting
+from Python.utils.Leaf import Leaf
+from Python.utils.utils import Utils
 from Python import publishInterface
 from Python.publish_hooks import basePublish
 
 
 class AppFunction(object):
 
-    def __init__(self, ui):
+    def __init__(self):
         self.appSetting = AppSetting()
-        self.widget = ui
+        self._view = None
         self._clientRoot = None
+
+    @property
+    def view(self):
+        return self._view
+
+    @view.setter
+    def view(self, value):
+        self._view = value
 
     @property
     def clientRoot(self):
@@ -24,155 +35,182 @@ class AppFunction(object):
 
     @property
     def typeComboBoxText(self):
-        return self.widget.typeComboBox.currentText()
+        return self.view.typeComboBox.currentText()
 
     @property
     def assetNameComboBoxText(self):
-        return self.widget.assetNameComboBox.currentText()
+        return self.view.assetNameComboBox.currentText()
 
     @property
     def submitStepComText(self):
-        return self.widget.submitStepCom.currentText()
+        return self.view.submitStepCom.currentText()
 
-    def initWindow(self, clientRoot):
-        self.widget.typeComboBox.blockSignals(True)
-        self.widget.assetNameComboBox.blockSignals(True)
-        self.widget.currentPathCombox.setCurrentText(clientRoot)
-        self.widget.typeComboBox.clear()
-        self.widget.assetNameComboBox.clear()
-        self.widget.submitStepCom.clear()
-        for i in os.listdir(clientRoot):
-            self.widget.typeComboBox.addItem(i, os.path.join(clientRoot, i))
-        indexType = self.widget.typeComboBox.currentIndex()
-        currentType = self.widget.typeComboBox.itemData(indexType, role=QtCore.Qt.UserRole)
+    def initWindow(self):
+        self.view.typeComboBox.blockSignals(True)
+        self.view.assetNameComboBox.blockSignals(True)
+        self.view.currentPathCombox.setCurrentText(self.clientRoot)
+        self.view.typeComboBox.clear()
+        self.view.assetNameComboBox.clear()
+        self.view.submitStepCom.clear()
+        for i in Utils.listdir(self.clientRoot):
+            self.view.typeComboBox.addItem(i, "{}/{}".format(self.clientRoot, i))
+
+        indexType = self.view.typeComboBox.currentIndex()
+        currentType = self.view.typeComboBox.itemData(indexType, role=QtCore.Qt.UserRole)
         self.setTreeWidget(currentType)
-        self.widget.typeComboBox.blockSignals(False)
-        self.widget.assetNameComboBox.blockSignals(False)
+        self.view.typeComboBox.blockSignals(False)
+        self.view.assetNameComboBox.blockSignals(False)
 
     def changeType(self, index):
-        self.widget.assetNameComboBox.clear()
-        currentType = self.widget.typeComboBox.itemData(index, role=QtCore.Qt.UserRole)
-        self.widget.currentPathCombox.setCurrentText(currentType)
-        self.widget.assetNameComboBox.addItem('')
-        if os.listdir(currentType):
-            for i in os.listdir(currentType):
-                self.widget.assetNameComboBox.addItem(i, os.path.join(currentType, i))
-        self.setTreeWidget(currentType, listAll=True)
+        self.view.assetNameComboBox.clear()
+        currentType = self.view.typeComboBox.itemData(index, role=QtCore.Qt.UserRole)
+        self.view.currentPathCombox.setCurrentText(currentType)
+        self.view.assetNameComboBox.addItem('')
+        for i in Utils.listdir(currentType):
+            self.view.assetNameComboBox.addItem(i, "{}/{}".format(currentType, i))
+        self.setTreeWidget(currentType)
 
     def changeAsset(self, index):
-        currentAsset = self.widget.assetNameComboBox.itemData(index, role=QtCore.Qt.UserRole)
+        currentAsset = self.view.assetNameComboBox.itemData(index, role=QtCore.Qt.UserRole)
         if currentAsset:
-            self.widget.currentPathCombox.setCurrentText(currentAsset)
-            self.widget.currentPathCombox.clear()
-            self.widget.submitStepCom.clear()
-            self.widget.submitStepCom.addItem('', None)
-            for i in os.listdir(currentAsset):
-                self.widget.submitStepCom.addItem(i, os.path.join(currentAsset, i))
-            self.setTreeWidget(currentAsset, listAll=True)
+            self.view.currentPathCombox.setCurrentText(currentAsset)
+            self.view.currentPathCombox.clear()
+            self.view.submitStepCom.clear()
+            self.view.submitStepCom.addItem('', None)
+            for i in Utils.listdir(currentAsset):
+                self.view.submitStepCom.addItem(i, "{}/{}".format(currentAsset, i))
+            self.setTreeWidget(currentAsset)
         else:
-            indexType = self.widget.typeComboBox.currentIndex()
-            currentType = self.widget.typeComboBox.itemData(indexType, role=QtCore.Qt.UserRole)
-            self.widget.currentPathCombox.setCurrentText(currentType)
-            self.widget.submitStepCom.clear()
-            self.setTreeWidget(currentType, listAll=True)
+            indexType = self.view.typeComboBox.currentIndex()
+            currentType = self.view.typeComboBox.itemData(indexType, role=QtCore.Qt.UserRole)
+            self.view.currentPathCombox.setCurrentText(currentType)
+            self.view.submitStepCom.clear()
+            self.setTreeWidget(currentType)
 
     def changeStep(self, index):
-        currentStep = self.widget.submitStepCom.itemData(index, role=QtCore.Qt.UserRole)
+        currentStep = self.view.submitStepCom.itemData(index, role=QtCore.Qt.UserRole)
         if currentStep:
-            self.widget.currentPathCombox.clear()
-            self.widget.currentPathCombox.setCurrentText(currentStep)
-            self.setTreeWidget(currentStep, listAll=True)
+            self.view.currentPathCombox.clear()
+            self.view.currentPathCombox.setCurrentText(currentStep)
+            self.setTreeWidget(currentStep)
 
     def initValue(self):
         value = self.appSetting.getConfig()
-        self.widget.serverLn.addItems(value['serverPort'])
-        self.widget.workLn.addItems(value['workSpace'])
-        self.widget.userLn.addItems(value['user'])
+        self.view.serverLn.addItems(value['serverPort'])
+        self.view.workLn.addItems(value['workSpace'])
+        self.view.userLn.addItems(value['user'])
 
     def showWorkTreeHandle(self, pos):
         contextMenuTree = QtWidgets.QMenu()
         actionA = QtWidgets.QAction('New Folder')
         actionB = QtWidgets.QAction('Delete Folder')
         actionC = QtWidgets.QAction('Import Unreal')
-        if self.widget.workTree.itemAt(pos):
-            item = self.widget.workTree.itemAt(pos)
+        if self.view.workTree.itemAt(pos):
+            item = self.view.workTree.itemAt(pos)
             currentTreeItemPath = item.whatsThis(0)
             if os.path.isfile(currentTreeItemPath):
                 contextMenuTree.addAction(actionC)
-                actionC.triggered.connect(lambda: self.importAsset(self.widget))
+                actionC.triggered.connect(lambda: self.importAsset(self.view))
             contextMenuTree.addAction(actionA)
             contextMenuTree.addAction(actionB)
-            actionA.triggered.connect(lambda: self.addFolder(self.widget))
-            actionB.triggered.connect(lambda: self.deleteFolder(self.widget))
+            actionA.triggered.connect(lambda: self.addFolder(self.view))
+            actionB.triggered.connect(lambda: self.deleteFolder(self.view))
         contextMenuTree.exec_(QtGui.QCursor().pos())
 
     def showWorkListHandle(self, pos):
         contextMenuList = QtWidgets.QMenu()
         delAct = QtWidgets.QAction('Delete Item')
-        if self.widget.listWidget.itemAt(pos):
+        if self.view.listview.itemAt(pos):
             contextMenuList.addAction(delAct)
-            delAct.triggered.connect(lambda: self.__deleteItem(self.widget))
+            delAct.triggered.connect(lambda: self.__deleteItem(self.view))
         contextMenuList.exec_(QtGui.QCursor().pos())
 
     def checkedExportItem(self, item):
         if item.exportCheck.isChecked():
-            print(item.fileBaseName.text())
-            print(item.filePath)
             item.exportType.setEnabled(True)
+            item.exportPath.setEnabled(True)
         else:
             item.exportType.setEnabled(False)
+            item.exportPath.setEnabled(False)
 
-    def addFolder(self, widgets):
-        print(widgets)
+    def selectExportPath(self, item):
+        outputPath = QtWidgets.QFileDialog.getExistingDirectory(item.parent,
+                                                                u'选择输出FBX文件夹',
+                                                                os.path.dirname(item.filePath))
+        item.exportPath.exportDirectory = outputPath
+        print(outputPath)
+        print(item.fileBaseName.text())
+        print(item.filePath)
 
-    def deleteFolder(self, widgets):
-        print(widgets)
+    def addFolder(self, views):
+        print(views)
 
-    def importAsset(self, widgets):
-        print(widgets)
+    def deleteFolder(self, views):
+        print(views)
 
-    def __deleteItem(self, widget):
-        items = widget.listWidget.selectedItems()
+    def importAsset(self, views):
+        print(views)
+
+    def __deleteItem(self, view):
+        items = view.listview.selectedItems()
         for i in range(len(items)):
-            itemNum = widget.listWidget.row(items[i])
-            item = widget.listWidget.takeItem(itemNum)
+            itemNum = view.listview.row(items[i])
+            item = view.listview.takeItem(itemNum)
 
-    def setTreeWidget(self, clientRoot, listAll=False):
-        self.widget.workTree.clear()
-        root = QtWidgets.QTreeWidgetItem(self.widget.workTree)
-        root.setExpanded(True)
-        root.setText(0, os.path.basename(clientRoot))
-        if listAll:
-            self.set_tree(root, clientRoot)
-        else:
-            next_dir = os.listdir(clientRoot)
-            for next_dir_name in next_dir:
-                currentPath = os.path.join(clientRoot, next_dir_name)
-                child_root = QtWidgets.QTreeWidgetItem(root)
-                child_root.setText(0, os.path.basename(next_dir_name))
-                if os.path.isdir(currentPath):
-                    icon = os.path.dirname(os.path.dirname(__file__)) + '/icons/close_folder.png'
-                    child_root.setIcon(0, QtGui.QIcon(icon))
+    def setTreeWidget(self, clientRoot):
+        self.view.workTree.clear()
+        rootItem = QtWidgets.QTreeWidgetItem(self.view.workTree)
+        rootItem.setText(0, os.path.basename(clientRoot))
 
-    def set_tree(self, root, client_asset_name):
-        if os.path.isdir(client_asset_name):
-            next_dir = os.listdir(client_asset_name)
-            for next_dir_name in next_dir:
-                child_root = QtWidgets.QTreeWidgetItem(root)
-                child_root.setText(0, os.path.basename(next_dir_name))
-                child_root.setWhatsThis(0, os.path.join(client_asset_name, next_dir_name))
-                self.set_tree(child_root, os.path.join(client_asset_name, next_dir_name))
-        else:
-            root.setText(0, os.path.basename(client_asset_name))
-            icon = os.path.dirname(os.path.dirname(__file__)) + '/icons/file.png'
-            root.setIcon(0, QtGui.QIcon(icon))
+        first_no = 10
+        cmd_files = 'p4 files -i ' + clientRoot + '...'
+        res_files = subprocess.getoutput(cmd_files)
+        res_files = res_files.split('\n')
+        root_node = Leaf(clientRoot)
+        for res in res_files:
+            out = res.split(clientRoot)[-1].split('/')
+            lines = list()
+            for level in range(len(out)):
+                if out[level]:
+                    index = '/' + out[level]
+                    lines.append(index)
+
+            first_node = Leaf(lines[0])
+            if first_node.name not in [child.name for child in root_node.children]:
+                first_node.set_value(str(first_no))
+                first_no = first_no + 1
+                root_node.add_child(first_node)
+
+            cur_node = root_node.search(first_node)
+            for node in [Leaf(name=lines[tmp]) for tmp in range(1, len(lines))]:  # 二级以后直接根据一级目录的编号开始
+                if node.name not in [child.name for child in cur_node.children]:
+                    length = len(cur_node.children)
+                    node.set_value(str(length + 100 * int(cur_node.value)))
+                    cur_node.add_child(node)
+                cur_node = root_node.search(node)
+        data = root_node.to_json()
+
+        # with open(os.path.dirname(os.path.dirname(__file__)) + '/temp/temp.json', 'w') as fp:
+        #     import json
+        #     json_data = json.dumps(data, indent=2)
+        #     fp.write(json_data)
+        #     fp.close()
+
+        self.set_tree(rootItem, data)
+
+    def set_tree(self, leaf, leafName):
+        if leafName['children']:
+            for child in leafName['children']:
+                child_root = QtWidgets.QTreeWidgetItem(leaf)
+                child_root.setText(0, os.path.basename(child['name']))
+                self.set_tree(child_root, child)
 
     def callBack(self):
         self.appSetting.init()
         configValue = self.appSetting.getConfig()
-        serverPort = self.widget.serverLn.currentText()
-        user = self.widget.userLn.currentText()
-        workSpace = self.widget.workLn.currentText()
+        serverPort = self.view.serverLn.currentText()
+        user = self.view.userLn.currentText()
+        workSpace = self.view.workLn.currentText()
         if serverPort not in configValue['serverPort']:
             configValue['serverPort'].append(serverPort)
         if user not in configValue['user']:

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>744</width>
-    <height>703</height>
+    <width>769</width>
+    <height>726</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_7" stretch="0,0,0,0,0,5">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <layout class="QHBoxLayout" name="horizontalLayout_7">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
@@ -49,7 +49,7 @@
             </property>
             <item>
              <property name="text">
-              <string>10.0.13.18:1666</string>
+              <string>10.0.201.12:1666</string>
              </property>
             </item>
            </widget>
@@ -83,7 +83,7 @@
             </property>
             <item>
              <property name="text">
-              <string>qinjiaxin</string>
+              <string>qinjiaxin_01YXHY1235_Assets</string>
              </property>
             </item>
            </widget>
@@ -117,9 +117,55 @@
             </property>
             <item>
              <property name="text">
-              <string>jiaxin.qin</string>
+              <string>qinjiaxin</string>
              </property>
             </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,5,0">
+          <item>
+           <widget class="QLabel" name="label_7">
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Password</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit">
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_8">
+            <property name="minimumSize">
+             <size>
+              <width>20</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: rgb(69, 85, 49);
+image: url(:/icons/icons/no_display_password.png);
+font: 10pt &quot;Consolas&quot;;
+</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
            </widget>
           </item>
          </layout>
@@ -140,7 +186,7 @@
         <property name="minimumSize">
          <size>
           <width>160</width>
-          <height>80</height>
+          <height>110</height>
          </size>
         </property>
         <property name="cursor">
@@ -150,15 +196,15 @@
          <string notr="true">/* /////////////////////////////////////////////////////////////////////////////////////////////////
 Custom */
 #connectBtn{ font-family: &quot;Microsoft YaHei&quot;;
-    font-size: 12px;
+    font-size: 15px;
 	font-color:#2b2b2b;
-border-radius: 10px;
+border-radius: 20px;
 background-color: #214283;
 background-repeat: no-repeat;
 background-position: left center;
 }
-#connectBtn:hover { background-color: #282c34; border-style: solid; border-radius: 10px; }
-#connectBtn:pressed { background-color: #214283; border-style: solid; border-radius: 10px; }</string>
+#connectBtn:hover { background-color: #282c34; border-style: solid; border-radius: 20px; }
+#connectBtn:pressed { background-color: #214283; border-style: solid; border-radius: 20px; }</string>
         </property>
         <property name="text">
          <string>Connect</string>
@@ -286,6 +332,9 @@ background-position: left center;
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
           <widget class="QLabel" name="label_6">
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <property name="text">
             <string>Step</string>
            </property>
@@ -479,7 +528,7 @@ QTreeWidget::branch::open::has-children{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>744</width>
+     <width>769</width>
      <height>23</height>
     </rect>
    </property>

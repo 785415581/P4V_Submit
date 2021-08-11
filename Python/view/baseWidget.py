@@ -12,6 +12,7 @@ class ListWidgetItem(QtWidgets.QListWidgetItem):
     def __init__(self, parent):
         super(ListWidgetItem, self).__init__(parent)
         self._filePath = None
+        self.parent = parent
         self.widget = QtWidgets.QWidget(parent)
         self.fileBaseName = QtWidgets.QLabel()
         self.fileBaseName.mouseDoubleClickEvent = self.mouseDoubleClickEvent
@@ -19,13 +20,17 @@ class ListWidgetItem(QtWidgets.QListWidgetItem):
         self.exportType = QtWidgets.QComboBox()
         self.exportType.addItems(['fbx', 'mesh'])
         self.exportType.setEnabled(False)
+        self.exportPath = QtWidgets.QPushButton('...')
+        self.exportPath.setEnabled(False)
+        self.exportPath.exportDirectory = None
         self.item_layout = QtWidgets.QHBoxLayout()
         self.item_layout.addWidget(self.fileBaseName)
         self.item_layout.addWidget(self.exportCheck)
         self.item_layout.addWidget(self.exportType)
+        self.item_layout.addWidget(self.exportPath)
         self.item_layout.setStretch(0, 5)
         self.item_layout.setContentsMargins(0, 0, 0, 0)
-        self.item_layout.addStretch(1)
+
         self.widget.setLayout(self.item_layout)
         self.setSizeHint(self.widget.sizeHint())
         parent.addItem(self)
