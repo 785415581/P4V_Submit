@@ -1,13 +1,13 @@
 import os
+import re
 import subprocess
+
+from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
-from PySide2 import QtCore
 from Python.modules.app_setting import AppSetting
 from Python.utils.Leaf import Leaf
 from Python.utils.utils import Utils
-from Python import publishInterface
-from Python.publish_hooks import basePublish
 
 
 class AppFunction(object):
@@ -15,6 +15,7 @@ class AppFunction(object):
     def __init__(self):
         self.appSetting = AppSetting()
         self._view = None
+        self._clientStream = None
         self._clientRoot = None
 
     @property
@@ -24,6 +25,14 @@ class AppFunction(object):
     @view.setter
     def view(self, value):
         self._view = value
+
+    @property
+    def clientStream(self):
+        return self._clientStream
+
+    @clientStream.setter
+    def clientStream(self, clientStream):
+        self._clientStream = clientStream
 
     @property
     def clientRoot(self):
@@ -48,12 +57,12 @@ class AppFunction(object):
     def initWindow(self):
         self.view.typeComboBox.blockSignals(True)
         self.view.assetNameComboBox.blockSignals(True)
-        self.view.currentPathCombox.setCurrentText(self.clientRoot)
+        self.view.currentPathCombox.setCurrentText(self.clientStream)
         self.view.typeComboBox.clear()
         self.view.assetNameComboBox.clear()
         self.view.submitStepCom.clear()
-        for i in Utils.listdir(self.clientRoot):
-            self.view.typeComboBox.addItem(i, "{}/{}".format(self.clientRoot, i))
+        for i in Utils.listdir(self.clientStream):
+            self.view.typeComboBox.addItem(i, "{}/{}".format(self.clientStream, i))
 
         indexType = self.view.typeComboBox.currentIndex()
         currentType = self.view.typeComboBox.itemData(indexType, role=QtCore.Qt.UserRole)
@@ -99,22 +108,26 @@ class AppFunction(object):
         self.view.serverLn.addItems(value['serverPort'])
         self.view.workLn.addItems(value['workSpace'])
         self.view.userLn.addItems(value['user'])
+        if value['password']:
+            self.view.passwordLn.setText(value['password'][0])
 
     def showWorkTreeHandle(self, pos):
         contextMenuTree = QtWidgets.QMenu()
         actionA = QtWidgets.QAction('New Folder')
         actionB = QtWidgets.QAction('Delete Folder')
-        actionC = QtWidgets.QAction('Import Unreal')
+        actionC = QtWidgets.QAction('Sync to local')
         if self.view.workTree.itemAt(pos):
             item = self.view.workTree.itemAt(pos)
-            currentTreeItemPath = item.whatsThis(0)
-            if os.path.isfile(currentTreeItemPath):
-                contextMenuTree.addAction(actionC)
-                actionC.triggered.connect(lambda: self.importAsset(self.view))
+            # currentTreeItemPath = item.whatsThis(0)
+            # if os.path.isfile(currentTreeItemPath):
+            #     contextMenuTree.addAction(actionC)
+
             contextMenuTree.addAction(actionA)
             contextMenuTree.addAction(actionB)
+            contextMenuTree.addAction(actionC)
             actionA.triggered.connect(lambda: self.addFolder(self.view))
             actionB.triggered.connect(lambda: self.deleteFolder(self.view))
+            actionC.triggered.connect(lambda: self.syncFile(self.view))
         contextMenuTree.exec_(QtGui.QCursor().pos())
 
     def showWorkListHandle(self, pos):
@@ -148,8 +161,12 @@ class AppFunction(object):
     def deleteFolder(self, views):
         print(views)
 
-    def importAsset(self, views):
-        print(views)
+    def syncFile(self, view):
+        item = view.workTree.currentItem()
+        p4Path = item.whatsThis(0)
+        p4Path = p4Path.replace(self.clientStream, self.clientRoot)
+        p4Path = re.sub(r'#\d+(.*?)[)]', str(), p4Path)
+        print(p4Path)
 
     def __deleteItem(self, view):
         items = view.listview.selectedItems()
@@ -157,35 +174,42 @@ class AppFunction(object):
             itemNum = view.listview.row(items[i])
             item = view.listview.takeItem(itemNum)
 
-    def setTreeWidget(self, clientRoot):
+    def setTreeWidget(self, clientStream):
         self.view.workTree.clear()
-        rootItem = QtWidgets.QTreeWidgetItem(self.view.workTree)
-        rootItem.setText(0, os.path.basename(clientRoot))
-
         first_no = 10
-        cmd_files = 'p4 files -i ' + clientRoot + '...'
+        cmd_files = 'p4 files -i ' + clientStream + '...'
         res_files = subprocess.getoutput(cmd_files)
         res_files = res_files.split('\n')
-        root_node = Leaf(clientRoot)
+        root_node = Leaf(clientStream)
         for res in res_files:
-            out = res.split(clientRoot)[-1].split('/')
-            lines = list()
-            for level in range(len(out)):
-                if out[level]:
-                    index = '/' + out[level]
-                    lines.append(index)
-
+            if re.findall(r'#\d+(.*?)delete(.*?)[)]', res):
+                continue
+            out = res.split(clientStream)[-1].split('/')
+            temp = list()
+            level = str()
+            for index in range(len(out)):
+                if out[index]:
+                    # if index == 0:
+                    #     print('222222222222222222222222222222222222')
+                    #     level = out[index]
+                    #     temp.append(level)
+                    # else:
+                    level = level + '/' + out[index]
+                    temp.append(level)
+            lines = temp
             first_node = Leaf(lines[0])
             if first_node.name not in [child.name for child in root_node.children]:
                 first_node.set_value(str(first_no))
+                first_node.set_fullPath("{}{}".format(clientStream, first_node.name))
                 first_no = first_no + 1
                 root_node.add_child(first_node)
 
             cur_node = root_node.search(first_node)
-            for node in [Leaf(name=lines[tmp]) for tmp in range(1, len(lines))]:  # 二级以后直接根据一级目录的编号开始
+            for node in [Leaf(name=lines[tmp]) for tmp in range(1, len(lines))]:
                 if node.name not in [child.name for child in cur_node.children]:
                     length = len(cur_node.children)
                     node.set_value(str(length + 100 * int(cur_node.value)))
+                    node.set_fullPath("{}{}".format(clientStream, node.name))
                     cur_node.add_child(node)
                 cur_node = root_node.search(node)
         data = root_node.to_json()
@@ -195,15 +219,39 @@ class AppFunction(object):
         #     json_data = json.dumps(data, indent=2)
         #     fp.write(json_data)
         #     fp.close()
-
+        rootItem = QtWidgets.QTreeWidgetItem(self.view.workTree)
+        rootItem.setWhatsThis(0, clientStream)
+        rootItem.setText(0, os.path.basename(clientStream))
         self.set_tree(rootItem, data)
+        self.view.workTree.setSortingEnabled(True)
+        self.view.workTree.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
     def set_tree(self, leaf, leafName):
         if leafName['children']:
             for child in leafName['children']:
                 child_root = QtWidgets.QTreeWidgetItem(leaf)
+
+                child_root.setWhatsThis(0, child['path'])
                 child_root.setText(0, os.path.basename(child['name']))
                 self.set_tree(child_root, child)
+
+    def showPassword(self):
+        self.view.passwordBtn.setStyleSheet("""QPushButton {
+        min-width:10px;
+        background-color: rgba(0, 0, 0, 0);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-image: url(:/icons/icons/display_password.png);}""")
+        self.view.passwordLn.setEchoMode(QtWidgets.QLineEdit.Normal)
+
+    def hidePassword(self):
+        self.view.passwordBtn.setStyleSheet("""QPushButton {
+        min-width:10px;
+        background-color: rgba(0, 0, 0, 0);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-image: url(:/icons/icons/no_display_password.png);}""")
+        self.view.passwordLn.setEchoMode(QtWidgets.QLineEdit.Password)
 
     def callBack(self):
         self.appSetting.init()
@@ -211,10 +259,13 @@ class AppFunction(object):
         serverPort = self.view.serverLn.currentText()
         user = self.view.userLn.currentText()
         workSpace = self.view.workLn.currentText()
+        password = self.view.passwordLn.text()
         if serverPort not in configValue['serverPort']:
             configValue['serverPort'].append(serverPort)
         if user not in configValue['user']:
             configValue['user'].append(user)
         if workSpace not in configValue['workSpace']:
             configValue['workSpace'].append(workSpace)
+        if password not in configValue['password']:
+            configValue['password'].append(password)
         self.appSetting.setConfig(configValue)

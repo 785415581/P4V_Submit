@@ -1,16 +1,16 @@
+import ctypes
 import os
 import sys
-import ctypes
 from functools import partial
-from PySide2 import QtWidgets
+
 from PySide2 import QtCore
 from PySide2 import QtGui
-import qdarkstyle
-from Python.modules.ui_main import Ui_MainWindow
-from Python.control.controller import Controller
-from Python.view.baseWidget import ListWidgetItem
+from PySide2 import QtWidgets
 from Python import publishInterface
-from Python.utils import utils
+from Python.control.controller import Controller
+from Python.modules.ui_main import Ui_MainWindow
+from Python.view.baseWidget import ListWidgetItem
+
 widgets = None
 
 
@@ -77,7 +77,7 @@ class MainWindow(QtWidgets.QMainWindow):
             widgets.currentPathCombox.addItem(res.replace('\\', '/'))
             self.currentPathList.append(res)
             index = widgets.currentPathCombox.count()
-            widgets.currentPathCombox.setItemData(index-1, item, QtCore.Qt.UserRole)
+            widgets.currentPathCombox.setItemData(index - 1, item, QtCore.Qt.UserRole)
         widgets.currentPathCombox.setCurrentText(res.replace('\\', '/'))
 
     def getCurrentPath(self, item, strPath=''):
@@ -93,7 +93,11 @@ class MainWindow(QtWidgets.QMainWindow):
             currentType = widgets.typeComboBox.currentText()
             currentAsset = widgets.assetNameComboBox.currentText()
             currentStep = widgets.submitStepCom.currentText()
-            currentPath = os.path.join(self.control.appFunction.clientRoot, currentType, currentAsset, currentStep, strPath)
+            currentPath = os.path.join(self.control.appFunction.clientStream,
+                                       currentType,
+                                       currentAsset,
+                                       currentStep,
+                                       strPath)
             return currentPath
 
     def buttonClick(self):
@@ -103,13 +107,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.control.p4Model.user = self.ui.userLn.currentText()
             self.control.p4Model.client = self.ui.workLn.currentText()
             self.control.p4Model.serverPort = self.ui.serverLn.currentText()
-            p4Info = self.control.p4Model.connectP4()
-            if p4Info and p4Info[0].get('clientStream', ''):
-                clientRoot = p4Info[0]['clientStream']
-                print(clientRoot)
+            self.control.p4Model.password = self.ui.passwordLn.text()
+            self.control.p4Model.validation()
+            self.control.p4Model.initClient()
+            clientRoot = self.control.p4Model.getRoot()
+            clientStream = self.control.p4Model.getStreamName()
+            if clientStream:
                 self.control.appFunction.clientRoot = clientRoot
+                self.control.appFunction.clientStream = clientStream
                 self.control.appFunction.initWindow()
-
+            else:
+                print('error')
         elif btnName == "publishBtn":
             step = self.control.appFunction.submitStepComText
             if step:
@@ -122,7 +130,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def closeEvent(self, event):
         event.accept()
         self.control.appFunction.callBack()
-        self.control.p4Model.disconnectP4()
 
 
 if __name__ == '__main__':

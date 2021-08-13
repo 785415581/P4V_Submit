@@ -1,7 +1,5 @@
-import os
-import sys
 import json
-import getpass
+import os
 import tempfile
 
 
@@ -10,7 +8,7 @@ class AppSetting:
         self._fileConfig = os.path.join(tempfile.gettempdir(), 'publish_yxhy.json')
 
     def init(self):
-        default = {'serverPort': [], 'workSpace': [], 'user': []}
+        default = {'serverPort': [], 'workSpace': [], 'user': [], 'password':[]}
         if not os.path.isfile(self.fileConfig):
             with open(self.fileConfig, 'w', encoding='utf-8') as fp:
                 data = json.dumps(default, indent=4)

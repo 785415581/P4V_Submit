@@ -104,21 +104,27 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_4.addWidget(self.label_7)
 
-        self.lineEdit = QLineEdit(self.centralwidget)
-        self.lineEdit.setObjectName(u"lineEdit")
-        self.lineEdit.setFont(font1)
+        self.passwordLn = QLineEdit(self.centralwidget)
+        self.passwordLn.setObjectName(u"passwordLn")
+        self.passwordLn.setFont(font1)
+        self.passwordLn.setEchoMode(QLineEdit.Password)
 
-        self.horizontalLayout_4.addWidget(self.lineEdit)
+        self.horizontalLayout_4.addWidget(self.passwordLn)
 
-        self.label_8 = QLabel(self.centralwidget)
-        self.label_8.setObjectName(u"label_8")
-        self.label_8.setMinimumSize(QSize(20, 0))
-        self.label_8.setStyleSheet(u"color: rgb(69, 85, 49);\n"
-"image: url(:/icons/icons/no_display_password.png);\n"
-"font: 10pt \"Consolas\";\n"
-"")
+        self.passwordBtn = QPushButton(self.centralwidget)
+        self.passwordBtn.setObjectName(u"passwordBtn")
+        self.passwordBtn.setMinimumSize(QSize(12, 0))
+        self.passwordBtn.setFont(font1)
+        self.passwordBtn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.passwordBtn.setStyleSheet(u"QPushButton{\n"
+"	min-width:10px;\n"
+"    background-color: rgba(39, 44, 54, 0);\n"
+"	background-position: center;\n"
+"	background-repeat: no-repeat;\n"
+"	background-image: url(:/icons/icons/no_display_password.png);\n"
+"}")
 
-        self.horizontalLayout_4.addWidget(self.label_8)
+        self.horizontalLayout_4.addWidget(self.passwordBtn)
 
         self.horizontalLayout_4.setStretch(0, 1)
         self.horizontalLayout_4.setStretch(1, 5)
@@ -217,6 +223,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
         self.label_6 = QLabel(self.groupBox_3)
         self.label_6.setObjectName(u"label_6")
+        self.label_6.setFont(font1)
         self.label_6.setStyleSheet(u"")
 
         self.horizontalLayout_6.addWidget(self.label_6)
@@ -266,6 +273,7 @@ class Ui_MainWindow(object):
 "    image:url(icons/open_folder.png);\n"
 "}\n"
 "")
+        self.workTree.setSelectionMode(QAbstractItemView.ExtendedSelection)
 
         self.verticalLayout.addWidget(self.workTree)
 
@@ -319,6 +327,17 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QWidget()
         self.tab_2.setObjectName(u"tab_2")
+        self.gridLayout = QGridLayout(self.tab_2)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.label_8 = QLabel(self.tab_2)
+        self.label_8.setObjectName(u"label_8")
+        font2 = QFont()
+        font2.setFamily(u"Consolas")
+        font2.setPointSize(16)
+        self.label_8.setFont(font2)
+
+        self.gridLayout.addWidget(self.label_8, 0, 0, 1, 1)
+
         self.tabWidget.addTab(self.tab_2, "")
 
         self.verticalLayout_6.addWidget(self.tabWidget)
@@ -338,6 +357,8 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
+        self.passwordBtn.pressed.connect(self.passwordLn.selectAll)
+        self.passwordBtn.pressed.connect(self.passwordBtn.showMenu)
 
         self.tabWidget.setCurrentIndex(0)
 
@@ -357,7 +378,7 @@ class Ui_MainWindow(object):
         self.userLn.setItemText(0, QCoreApplication.translate("MainWindow", u"qinjiaxin", None))
 
         self.label_7.setText(QCoreApplication.translate("MainWindow", u"Password", None))
-        self.label_8.setText("")
+        self.passwordBtn.setText("")
         self.connectBtn.setText(QCoreApplication.translate("MainWindow", u"Connect", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"GroupBox", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Type", None))
@@ -369,6 +390,7 @@ class Ui_MainWindow(object):
         self.groupBox_5.setTitle(QCoreApplication.translate("MainWindow", u"Comment", None))
         self.publishBtn.setText(QCoreApplication.translate("MainWindow", u"Publish", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"\u5355\u6587\u4ef6\u63d0\u4ea4", None))
+        self.label_8.setText(QCoreApplication.translate("MainWindow", u"Under functional development...", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"\u591a\u6587\u4ef6\u63d0\u4ea4", None))
     # retranslateUi
 

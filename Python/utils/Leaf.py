@@ -3,6 +3,7 @@ class Leaf(object):
     def __init__(self, name, value="0"):
         self.name = name
         self.value = value
+        self.fullPath = ''
         self.children = []
 
     def search(self, node):
@@ -23,10 +24,14 @@ class Leaf(object):
     def set_value(self, value):
         self.value = value
 
+    def set_fullPath(self, value):
+        self.fullPath = value
+
     def to_json(self):
         res = dict()
         res['value'] = self.value
         res['name'] = self.name
+        res['path'] = self.fullPath
         res['children'] = []
         for child in self.children:
             res['children'].append(child.to_json())

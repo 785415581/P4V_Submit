@@ -1,3 +1,4 @@
+from PySide2 import QtWidgets
 from PySide2 import QtCore
 from Python.modules.app_functions import AppFunction
 from Python.modules.p4_module import P4Module
@@ -52,6 +53,8 @@ class Controller(QtCore.QObject):
     def initSignal(self):
         self.view.workTree.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.view.listWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.view.passwordBtn.pressed.connect(self.appFunction.showPassword)
+        self.view.passwordBtn.released.connect(self.appFunction.hidePassword)
         self.view.workTree.customContextMenuRequested.connect(self.appFunction.showWorkTreeHandle)
         self.view.listWidget.customContextMenuRequested.connect(self.appFunction.showWorkListHandle)
         self.view.typeComboBox.currentIndexChanged.connect(self.appFunction.changeType)

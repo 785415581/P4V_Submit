@@ -49,6 +49,8 @@ class Utils:
         res_files = subprocess.getoutput(cmd_files)
         dirs_set = set()
         for res in res_files.split('\n'):
+            if re.findall(r'#\d+(.*?)delete(.*?)[)]', res):
+                continue
             dirs = res.split(rootPath)[-1].split('/')[0]
             if not re.findall(r'#\d+(.*?)[)]', dirs):
                 dirs_set.add(dirs)
@@ -58,31 +60,17 @@ class Utils:
 if __name__ == '__main__':
     _utils = Utils()
     # value = _utils.getConfig()
-    dir_set = _utils.listdir('//Assets/main/Assets')
+    dir_set = _utils.listdir('//Assets/main/Character')
     print(dir_set)
 
-    # print(value)
 
+    # Instead of execfile(fn) use exec(open(fn).read()).
+    # https://docs.python.org/3.3/whatsnew/3.0.html?highlight=execfile#builtins
+    # https://stackoverflow.com/questions/436198/what-is-an-alternative-to-execfile-in-python-3
 
-    # def execfile(filepath, globals=None, locals=None):
-    #     if globals is None:
-    #         globals = {}
-    #     globals.update({
-    #         "__file__": filepath,
-    #         "__name__": "__main__",
-    #     })
-    #     with open(filepath, 'rb') as file:
-    #         exec(compile(file.read(), filepath, 'exec'), globals, locals)
-    #
-    #
-    #
-    # # Instead of execfile(fn) use exec(open(fn).read()).
-    # # https://docs.python.org/3.3/whatsnew/3.0.html?highlight=execfile#builtins
-    # # https://stackoverflow.com/questions/436198/what-is-an-alternative-to-execfile-in-python-3
-    #
-    # # fn = "C:/Users/jiaxin.qin/Desktop/123.py"
-    # # exec(compile(open(fn).read(), fn, 'exec'), {"__name__": "__main__"})
-    # # exec(open(fn).read())
+    # fn = "C:/Users/jiaxin.qin/Desktop/123.py"
+    # exec(compile(open(fn).read(), fn, 'exec'), {"__name__": "__main__"})
+    # exec(open(fn).read())
 
 
 

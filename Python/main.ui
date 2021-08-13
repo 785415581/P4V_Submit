@@ -140,28 +140,43 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit">
+           <widget class="QLineEdit" name="passwordLn">
             <property name="font">
              <font>
               <family>Consolas</family>
               <pointsize>10</pointsize>
              </font>
             </property>
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
+            </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_8">
+           <widget class="QPushButton" name="passwordBtn">
             <property name="minimumSize">
              <size>
-              <width>20</width>
+              <width>12</width>
               <height>0</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <family>Consolas</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
             <property name="styleSheet">
-             <string notr="true">color: rgb(69, 85, 49);
-image: url(:/icons/icons/no_display_password.png);
-font: 10pt &quot;Consolas&quot;;
-</string>
+             <string notr="true">QPushButton{
+	min-width:10px;
+    background-color: rgba(39, 44, 54, 0);
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url(:/icons/icons/no_display_password.png);
+}</string>
             </property>
             <property name="text">
              <string/>
@@ -332,6 +347,12 @@ background-position: left center;
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
           <widget class="QLabel" name="label_6">
+           <property name="font">
+            <font>
+             <family>Consolas</family>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="styleSheet">
             <string notr="true"/>
            </property>
@@ -413,6 +434,9 @@ QTreeWidget::branch::open::has-children{
     image:url(icons/open_folder.png);
 }
 </string>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
           </property>
           <column>
            <property name="text">
@@ -514,6 +538,21 @@ QTreeWidget::branch::open::has-children{
            <attribute name="title">
             <string>多文件提交</string>
            </attribute>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="font">
+               <font>
+                <family>Consolas</family>
+                <pointsize>16</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Under functional development...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </widget>
         </item>
@@ -538,5 +577,38 @@ QTreeWidget::branch::open::has-children{
  <resources>
   <include location="resources.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>passwordBtn</sender>
+   <signal>pressed()</signal>
+   <receiver>passwordLn</receiver>
+   <slot>selectAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>572</x>
+     <y>133</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>327</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>passwordBtn</sender>
+   <signal>pressed()</signal>
+   <receiver>passwordBtn</receiver>
+   <slot>showMenu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>572</x>
+     <y>133</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>572</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
