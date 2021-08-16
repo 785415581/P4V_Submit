@@ -1,6 +1,7 @@
 import os
 import re
 import subprocess
+from functools import wraps
 
 
 class P4Module(object):
@@ -105,16 +106,6 @@ class P4Module(object):
         else:
             return False
 
-    def syncFile(self, p4File):
-        cmd = 'p4 sync -s {}'.format(p4File)
-        os.popen(cmd)
-
-    def syncFiles(self, p4Files):
-        for p4File in p4Files:
-            pass
-
-    def syncDir(self):
-        pass
 
 if __name__ == '__main__':
     p4Module = P4Module()

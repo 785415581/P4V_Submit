@@ -113,6 +113,7 @@ class MainWindow(QtWidgets.QMainWindow):
             clientRoot = self.control.p4Model.getRoot()
             clientStream = self.control.p4Model.getStreamName()
             if clientStream:
+                self.control.appFunction.validation = self.control.p4Model.validation
                 self.control.appFunction.clientRoot = clientRoot
                 self.control.appFunction.clientStream = clientStream
                 self.control.appFunction.initWindow()

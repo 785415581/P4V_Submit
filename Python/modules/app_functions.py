@@ -8,6 +8,7 @@ from PySide2 import QtWidgets
 from Python.modules.app_setting import AppSetting
 from Python.utils.Leaf import Leaf
 from Python.utils.utils import Utils
+from Python.utils import P4Utils
 
 
 class AppFunction(object):
@@ -17,6 +18,7 @@ class AppFunction(object):
         self._view = None
         self._clientStream = None
         self._clientRoot = None
+        self._validation = None
 
     @property
     def view(self):
@@ -41,6 +43,14 @@ class AppFunction(object):
     @clientRoot.setter
     def clientRoot(self, clientRoot):
         self._clientRoot = clientRoot
+
+    @property
+    def validation(self):
+        return self._validation
+
+    @validation.setter
+    def validation(self, value):
+        self._validation = value
 
     @property
     def typeComboBoxText(self):
@@ -116,6 +126,7 @@ class AppFunction(object):
         actionA = QtWidgets.QAction('New Folder')
         actionB = QtWidgets.QAction('Delete Folder')
         actionC = QtWidgets.QAction('Sync to local')
+        # actionC.setDisabled(True)
         if self.view.workTree.itemAt(pos):
             item = self.view.workTree.itemAt(pos)
             # currentTreeItemPath = item.whatsThis(0)
@@ -162,11 +173,16 @@ class AppFunction(object):
         print(views)
 
     def syncFile(self, view):
-        item = view.workTree.currentItem()
-        p4Path = item.whatsThis(0)
-        p4Path = p4Path.replace(self.clientStream, self.clientRoot)
-        p4Path = re.sub(r'#\d+(.*?)[)]', str(), p4Path)
-        print(p4Path)
+        items = view.workTree.selectedItems()
+        self.validation()
+        for item in items:
+            p4Path = item.whatsThis(0)
+            if re.findall(r'#\d+(.*?)[)]', p4Path):
+                p4Path = re.sub(r'#\d+(.*?)[)]', str(), p4Path).replace('\\', '/')
+                P4Utils.syncFile(p4Path)
+            else:
+                p4Path = p4Path + '/...'
+                P4Utils.syncFile(p4Path)
 
     def __deleteItem(self, view):
         items = view.listview.selectedItems()
@@ -189,11 +205,6 @@ class AppFunction(object):
             level = str()
             for index in range(len(out)):
                 if out[index]:
-                    # if index == 0:
-                    #     print('222222222222222222222222222222222222')
-                    #     level = out[index]
-                    #     temp.append(level)
-                    # else:
                     level = level + '/' + out[index]
                     temp.append(level)
             lines = temp
