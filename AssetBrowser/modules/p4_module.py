@@ -1,7 +1,5 @@
 import os
-import re
 import subprocess
-from functools import wraps
 
 
 class P4Module(object):
@@ -69,9 +67,12 @@ class P4Module(object):
     @staticmethod
     def getStreamName():
         cmd = 'p4 -F %Stream% -ztag client -o'
-        stdout = subprocess.getoutput(cmd)
+        print(subprocess.__file__)
+        stdout = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True)
+        # stdout, err = process.communicate()
+        print(stdout)
         if stdout:
-            return stdout
+            return stdout.decode('windows-1252').split('\r\n')[0]
         return None
 
     @staticmethod
@@ -81,9 +82,10 @@ class P4Module(object):
         :return:
         """
         cmd = 'p4 -F %clientRoot% -ztag info'
-        stdout = subprocess.getoutput(cmd)
+        stdout = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True)
+        # stdout, err = process.communicate()
         if stdout:
-            return stdout
+            return stdout.decode('windows-1252').split('\r\n')[0]
         return None
 
     def initClient(self):
@@ -114,6 +116,6 @@ if __name__ == '__main__':
     p4Module.user = 'qinjiaxin'
     p4Module.password = 'qinjiaxin_1145qq'
     p4Module.validation()
-    root = p4Module.getRoot()
+    root = p4Module.getStreamName()
     print(root)
 

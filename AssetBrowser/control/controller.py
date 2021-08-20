@@ -1,8 +1,9 @@
 from PySide2 import QtWidgets
 from PySide2 import QtCore
-from Python.modules.app_functions import AppFunction
-from Python.modules.p4_module import P4Module
-from Python.utils.utils import Utils
+from AssetBrowser.modules.app_functions import AppFunction
+from AssetBrowser.modules.p4_module import P4Module
+
+from AssetBrowser.utils.utils import Utils
 
 
 class Controller(QtCore.QObject):
@@ -11,6 +12,7 @@ class Controller(QtCore.QObject):
         self._view = None
         self._utils = Utils()
         self._p4Model = P4Module()
+        print()
         self._appFunction = AppFunction()
 
     @property

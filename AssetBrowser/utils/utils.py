@@ -1,3 +1,4 @@
+# _*_coding:utf-8 _*_
 import os
 import re
 import yaml
@@ -46,9 +47,12 @@ class Utils:
     def listdir(rootPath):
         rootPath = rootPath.replace('\\', '/') + '/'
         cmd_files = 'p4 files ' + rootPath + '...'
-        res_files = subprocess.getoutput(cmd_files)
+        process = subprocess.Popen(cmd_files, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        res_files, err = process.communicate()
+        # print(res_files)
+        # print(res_files.decode('windows-1252'))
         dirs_set = set()
-        for res in res_files.split('\n'):
+        for res in res_files.decode('windows-1252').split('\r\n'):
             if re.findall(r'#\d+(.*?)delete(.*?)[)]', res):
                 continue
             dirs = res.split(rootPath)[-1].split('/')[0]
@@ -56,21 +60,47 @@ class Utils:
                 dirs_set.add(dirs)
         return dirs_set
 
+    def getRegx(self, crType):
+        config = self.getConfig()
+        if config.get(crType, ''):
+            regx = str()
+            for cf in config.get(crType).keys():
+                if regx:
+                    regx = regx + '|{}/(.*?)/'.format(crType) + cf
+                else:
+                    regx = regx + '{}/(.*?)/'.format(crType) + cf
+            return regx
+        return None
+
+    def listSubAssetsDir(self, rootPath, crType):
+        rootPath = rootPath.replace('\\', '/') + '/'
+        cmd_files = 'p4 files ' + rootPath + '...'
+        process = subprocess.Popen(cmd_files, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        res_files, err = process.communicate()
+        dirs_set = set()
+        regx = self.getRegx(crType)
+        for res in res_files.decode('windows-1252').split('\r\n'):
+            if re.findall(r'#\d+(.*?)delete(.*?)[)]', res):
+                continue
+            if not regx:
+                continue
+            assets = re.findall(regx, res)
+            if assets:
+                for asset in assets[0]:
+                    if asset:
+                        dirs_set.add(asset)
+        return dirs_set
+
 
 if __name__ == '__main__':
     _utils = Utils()
-    # value = _utils.getConfig()
+    value = _utils.getConfig()
+    from pprint import pprint
+    # pprint(value)
     dir_set = _utils.listdir('//Assets/main/Character')
-    print(dir_set)
+    for i in dir_set:
+        print(i)
 
-
-    # Instead of execfile(fn) use exec(open(fn).read()).
-    # https://docs.python.org/3.3/whatsnew/3.0.html?highlight=execfile#builtins
-    # https://stackoverflow.com/questions/436198/what-is-an-alternative-to-execfile-in-python-3
-
-    # fn = "C:/Users/jiaxin.qin/Desktop/123.py"
-    # exec(compile(open(fn).read(), fn, 'exec'), {"__name__": "__main__"})
-    # exec(open(fn).read())
 
 
 

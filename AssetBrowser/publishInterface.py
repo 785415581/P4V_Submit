@@ -1,6 +1,6 @@
 import os
-from Python.utils import loader
-from Python.publish_hooks import basePublish
+from AssetBrowser.utils import loader
+from AssetBrowser.publish_hooks import basePublish
 
 
 def get_step_interface_class(stepName=None):

@@ -9,7 +9,7 @@ cmd = input("Enter a Perforce command (omitting 'p4 -G'): ")
 list = []
 if sys.version_info[1] < 6:
     pipe = os.popen('p4 -G ' + cmd, 'r')  # 'rb' on Windows for binary read
-else:  # os.popen is deprecated in Python 2.6+
+else:  # os.popen is deprecated in AssetBrowser 2.6+
     from subprocess import Popen, PIPE
     # p4 client -o qinjiaxin_01YXHY1235_Assets
 

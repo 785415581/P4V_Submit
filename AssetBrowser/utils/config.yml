@@ -1,16 +1,16 @@
 Audio:
 
 Character:
-  - Animation:
+  Animation:
       format: "{asset_name}_{action}"
       export_hooks: "default"
-  - Mesh:
+  Mesh:
       format: "{asset_name}"
       export_hooks: "default"
-  - Rig:
+  Rig:
       format: "{asset_name}_rig"
       export_hooks: "export_hooks/export_{step}.py"
-  - Textures:
+  Textures:
       format: "{asset_name}_{action}"
       export_hooks: "default"
   

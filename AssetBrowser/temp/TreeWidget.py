@@ -27,6 +27,9 @@
 #         root = "//Assets/main/Character"
 #         cmd_files = 'p4 files -i ' + root + '...'
 #         res_files = subprocess.getoutput(cmd_files)
+#         process = subprocess.Popen('p4 files //Assets/main/Character/...', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+#         res_files, err = process.communicate()
+#         print(out)
 #         res_files = res_files.split('\n')
 #
 #         root_node = Node(root)  # 根节点

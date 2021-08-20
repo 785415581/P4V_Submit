@@ -6,10 +6,10 @@ from functools import partial
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
-from Python import publishInterface
-from Python.control.controller import Controller
-from Python.modules.ui_main import Ui_MainWindow
-from Python.view.baseWidget import ListWidgetItem
+from AssetBrowser import publishInterface
+from AssetBrowser.control.controller import Controller
+from AssetBrowser.modules.ui_main import Ui_MainWindow
+from AssetBrowser.view.baseWidget import ListWidgetItem
 
 widgets = None
 
@@ -111,7 +111,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.control.p4Model.validation()
             self.control.p4Model.initClient()
             clientRoot = self.control.p4Model.getRoot()
+            print("clientRoot = {}".format(clientRoot))
             clientStream = self.control.p4Model.getStreamName()
+            print("clientStream = {}".format(clientStream))
             if clientStream:
                 self.control.appFunction.validation = self.control.p4Model.validation
                 self.control.appFunction.clientRoot = clientRoot

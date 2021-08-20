@@ -1,3 +1,4 @@
+# _*_coding:utf-8 _*_
 import os
 import re
 import subprocess
@@ -5,10 +6,10 @@ import subprocess
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
-from Python.modules.app_setting import AppSetting
-from Python.utils.Leaf import Leaf
-from Python.utils.utils import Utils
-from Python.utils import P4Utils
+from AssetBrowser.modules.app_setting import AppSetting
+from AssetBrowser.utils.Leaf import Leaf
+from AssetBrowser.utils.utils import Utils
+from AssetBrowser.utils import P4Utils
 
 
 class AppFunction(object):
@@ -66,26 +67,30 @@ class AppFunction(object):
 
     def initWindow(self):
         self.view.typeComboBox.blockSignals(True)
-        self.view.assetNameComboBox.blockSignals(True)
+        # self.view.assetNameComboBox.blockSignals(True)
         self.view.currentPathCombox.setCurrentText(self.clientStream)
         self.view.typeComboBox.clear()
         self.view.assetNameComboBox.clear()
         self.view.submitStepCom.clear()
         for i in Utils.listdir(self.clientStream):
+            if not i:
+                continue
             self.view.typeComboBox.addItem(i, "{}/{}".format(self.clientStream, i))
 
         indexType = self.view.typeComboBox.currentIndex()
         currentType = self.view.typeComboBox.itemData(indexType, role=QtCore.Qt.UserRole)
         self.setTreeWidget(currentType)
         self.view.typeComboBox.blockSignals(False)
-        self.view.assetNameComboBox.blockSignals(False)
+        # self.view.assetNameComboBox.blockSignals(False)
 
     def changeType(self, index):
         self.view.assetNameComboBox.clear()
         currentType = self.view.typeComboBox.itemData(index, role=QtCore.Qt.UserRole)
         self.view.currentPathCombox.setCurrentText(currentType)
         self.view.assetNameComboBox.addItem('')
-        for i in Utils.listdir(currentType):
+        for i in Utils().listSubAssetsDir(currentType, self.typeComboBoxText):
+            if not i:
+                continue
             self.view.assetNameComboBox.addItem(i, "{}/{}".format(currentType, i))
         self.setTreeWidget(currentType)
 
@@ -97,6 +102,8 @@ class AppFunction(object):
             self.view.submitStepCom.clear()
             self.view.submitStepCom.addItem('', None)
             for i in Utils.listdir(currentAsset):
+                if not i:
+                    continue
                 self.view.submitStepCom.addItem(i, "{}/{}".format(currentAsset, i))
             self.setTreeWidget(currentAsset)
         else:
@@ -144,7 +151,7 @@ class AppFunction(object):
     def showWorkListHandle(self, pos):
         contextMenuList = QtWidgets.QMenu()
         delAct = QtWidgets.QAction('Delete Item')
-        if self.view.listview.itemAt(pos):
+        if self.view.listWidget.itemAt(pos):
             contextMenuList.addAction(delAct)
             delAct.triggered.connect(lambda: self.__deleteItem(self.view))
         contextMenuList.exec_(QtGui.QCursor().pos())
@@ -194,11 +201,14 @@ class AppFunction(object):
         self.view.workTree.clear()
         first_no = 10
         cmd_files = 'p4 files -i ' + clientStream + '...'
-        res_files = subprocess.getoutput(cmd_files)
-        res_files = res_files.split('\n')
+        process = subprocess.Popen(cmd_files, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        res_files, err = process.communicate()
+        res_files = res_files.decode('windows-1252').split('\r\n')
         root_node = Leaf(clientStream)
         for res in res_files:
             if re.findall(r'#\d+(.*?)delete(.*?)[)]', res):
+                continue
+            if not res:
                 continue
             out = res.split(clientStream)[-1].split('/')
             temp = list()
@@ -208,6 +218,7 @@ class AppFunction(object):
                     level = level + '/' + out[index]
                     temp.append(level)
             lines = temp
+
             first_node = Leaf(lines[0])
             if first_node.name not in [child.name for child in root_node.children]:
                 first_node.set_value(str(first_no))
@@ -220,7 +231,7 @@ class AppFunction(object):
                 if node.name not in [child.name for child in cur_node.children]:
                     length = len(cur_node.children)
                     node.set_value(str(length + 100 * int(cur_node.value)))
-                    node.set_fullPath("{}{}".format(clientStream, node.name))
+                    node.set_fullPath("{}{}".format(clientStream, (node.name).encode('utf-8')))
                     cur_node.add_child(node)
                 cur_node = root_node.search(node)
         data = root_node.to_json()
