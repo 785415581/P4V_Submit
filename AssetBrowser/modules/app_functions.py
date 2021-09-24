@@ -73,8 +73,7 @@ class AppFunction(object):
         self.view.assetNameComboBox.clear()
         self.view.submitStepCom.clear()
         for i in Utils.listdir(self.clientStream):
-            if not i:
-                continue
+            if not i: continue
             self.view.typeComboBox.addItem(i, "{}/{}".format(self.clientStream, i))
 
         indexType = self.view.typeComboBox.currentIndex()
@@ -89,8 +88,7 @@ class AppFunction(object):
         self.view.currentPathCombox.setCurrentText(currentType)
         self.view.assetNameComboBox.addItem('')
         for i in Utils().listSubAssetsDir(currentType, self.typeComboBoxText):
-            if not i:
-                continue
+            if not i: continue
             self.view.assetNameComboBox.addItem(i, "{}/{}".format(currentType, i))
         self.setTreeWidget(currentType)
 
@@ -102,8 +100,7 @@ class AppFunction(object):
             self.view.submitStepCom.clear()
             self.view.submitStepCom.addItem('', None)
             for i in Utils.listdir(currentAsset):
-                if not i:
-                    continue
+                if not i: continue
                 self.view.submitStepCom.addItem(i, "{}/{}".format(currentAsset, i))
             self.setTreeWidget(currentAsset)
         else:
@@ -130,22 +127,26 @@ class AppFunction(object):
 
     def showWorkTreeHandle(self, pos):
         contextMenuTree = QtWidgets.QMenu()
-        actionA = QtWidgets.QAction('New Folder')
-        actionB = QtWidgets.QAction('Delete Folder')
-        actionC = QtWidgets.QAction('Sync to local')
         # actionC.setDisabled(True)
         if self.view.workTree.itemAt(pos):
+            actionA = QtWidgets.QAction('New Folder')
+            actionB = QtWidgets.QAction('Delete Folder')
+            actionC = QtWidgets.QAction('Sync to local')
             item = self.view.workTree.itemAt(pos)
             # currentTreeItemPath = item.whatsThis(0)
             # if os.path.isfile(currentTreeItemPath):
             #     contextMenuTree.addAction(actionC)
-
+            app = QtWidgets.QApplication.instance()
+            if app and 'maya' in app.applicationName().lower():
+                actionD = QtWidgets.QAction('import file')
+                contextMenuTree.addAction(actionD)
             contextMenuTree.addAction(actionA)
             contextMenuTree.addAction(actionB)
             contextMenuTree.addAction(actionC)
             actionA.triggered.connect(lambda: self.addFolder(self.view))
             actionB.triggered.connect(lambda: self.deleteFolder(self.view))
             actionC.triggered.connect(lambda: self.syncFile(self.view))
+
         contextMenuTree.exec_(QtGui.QCursor().pos())
 
     def showWorkListHandle(self, pos):
@@ -154,6 +155,11 @@ class AppFunction(object):
         if self.view.listWidget.itemAt(pos):
             contextMenuList.addAction(delAct)
             delAct.triggered.connect(lambda: self.__deleteItem(self.view))
+        else:
+            action_save = QtWidgets.QAction('save current scene')
+            action_export = QtWidgets.QAction('export scene')
+            contextMenuList.addAction(action_save)
+            contextMenuList.addAction(action_export)
         contextMenuList.exec_(QtGui.QCursor().pos())
 
     def checkedExportItem(self, item):

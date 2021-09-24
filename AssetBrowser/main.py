@@ -15,8 +15,8 @@ widgets = None
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self):
-        super(MainWindow, self).__init__()
+    def __init__(self, parent=None, *args):
+        super(MainWindow, self).__init__(parent)
         self.setWindowTitle('Publish for P4V')
         self.currentPathList = list()
         self.ui = Ui_MainWindow()

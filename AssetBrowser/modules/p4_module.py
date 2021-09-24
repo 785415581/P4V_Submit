@@ -67,10 +67,7 @@ class P4Module(object):
     @staticmethod
     def getStreamName():
         cmd = 'p4 -F %Stream% -ztag client -o'
-        print(subprocess.__file__)
         stdout = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True)
-        # stdout, err = process.communicate()
-        print(stdout)
         if stdout:
             return stdout.decode('windows-1252').split('\r\n')[0]
         return None
@@ -83,7 +80,7 @@ class P4Module(object):
         """
         cmd = 'p4 -F %clientRoot% -ztag info'
         stdout = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True)
-        # stdout, err = process.communicate()
+
         if stdout:
             return stdout.decode('windows-1252').split('\r\n')[0]
         return None
