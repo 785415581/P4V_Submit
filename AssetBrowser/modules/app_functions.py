@@ -16,6 +16,7 @@ class AppFunction(object):
 
     def __init__(self):
         self.appSetting = AppSetting()
+        self.appSetting.init()
         self._view = None
         self._clientStream = None
         self._clientRoot = None
