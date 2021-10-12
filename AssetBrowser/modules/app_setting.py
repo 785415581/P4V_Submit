@@ -3,6 +3,7 @@ import os
 import tempfile
 
 
+
 class AppSetting:
     def __init__(self):
         self._fileConfig = os.path.join(tempfile.gettempdir(), 'publish_yxhy.json')

@@ -49,10 +49,12 @@ class Utils:
         cmd_files = 'p4 files ' + rootPath + '...'
         process = subprocess.Popen(cmd_files, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         res_files, err = process.communicate()
-        # print(res_files)
-        # print(res_files.decode('windows-1252'))
+        print(res_files)
+        # print(str(res_files, encoding="utf-8"))
         dirs_set = set()
+        print(type(res_files.decode('utf-8')))
         for res in res_files.decode('windows-1252').split('\r\n'):
+            print(res)
             if re.findall(r'#\d+(.*?)delete(.*?)[)]', res):
                 continue
             dirs = res.split(rootPath)[-1].split('/')[0]
@@ -95,9 +97,10 @@ class Utils:
 if __name__ == '__main__':
     _utils = Utils()
     value = _utils.getConfig()
+    # print(value)
     from pprint import pprint
     # pprint(value)
-    dir_set = _utils.listdir('//Assets/main/Character')
+    dir_set = _utils.listdir('//Assets/main/TATest')
     for i in dir_set:
         print(i)
 
