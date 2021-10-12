@@ -1,0 +1,93 @@
+
+
+
+{
+  "Maya": {
+    "import": {
+      "default": "mayaFunctions.MayaImport",
+      "beforce": "",
+      "after": "",
+      "ext": {
+        "fbx": "mayaFunctions.MayaImportFBX",
+        "ma": "mayaFunctions.MayaImportMa",
+        "mb": "mayaFunctions.MayaImportMb",
+        "abc": "mayaFunctions.MayaImportABC",
+        "tiff": "mayaFunctions.MayaImportImage",
+        "png": "mayaFunctions.MayaImportImage"
+       }
+    },
+    "reference":
+    {
+      "default": "mayaFunctions.MayaReference",
+      "beforce": "",
+      "after": "",
+      "ext": {
+        "fbx": "mayaFunctions.MayaReferenceFBX",
+        "ma": "mayaFunctions.MayaReferenceMa",
+        "mb": "mayaFunctions.MayaReferenceMb",
+        "abc": "mayaFunctions.MayaReferenceABC"
+       }
+    },
+    "open":
+    {
+      "default": "mayaFunctions.MayaOpen",
+      "beforce": "",
+      "after": "",
+      "ext": {
+        "ma": "",
+        "mb": "",
+       }
+    }
+
+
+  },
+  "Unreal": {
+    "Import": {
+      "default": "imFunctions.UEImport",
+      "beforce": "",
+      "after": "",
+      "ext": {
+        "fbx": "imFunctions.UEImport",
+        "abc": "",
+        "tiff": "",
+        "png": ""
+       }
+    },
+    "Open":
+    {
+      "default": "imFunctions.UEOpen",
+      "beforce": "",
+      "after": "",
+      "ext": {
+        "uproject": "imFunctions.UEOpen"
+       }
+    }
+
+
+  },
+  "Houdini": {
+    "Import": {
+      "default": "imFunctions.HoudiniImport",
+      "beforce": "",
+      "after": "",
+      "ext": {
+        "fbx": "",
+        "abc": "",
+        "hda": "",
+        "png": ""
+       }
+    },
+    "Open":
+    {
+      "default": "imFunctions.HoudiniOpen",
+      "beforce": "",
+      "after": "",
+      "ext": {
+        "hip": "imFunctions.HoudiniOpen"
+       }
+    }
+
+
+  }
+
+}

@@ -13,12 +13,13 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
 from AssetBrowser import resources_rc
+from AssetBrowser.view.baseWidget import TreeWidgetDrop
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(769, 726)
+        MainWindow.resize(1200, 900)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.centralwidget.setStyleSheet(u"")
@@ -36,18 +37,18 @@ class Ui_MainWindow(object):
         font.setFamily(u"Microsoft JhengHei UI")
         self.label.setFont(font)
 
-        self.horizontalLayout.addWidget(self.label)
+        # self.horizontalLayout.addWidget(self.label)
 
-        self.serverLn = QComboBox(self.centralwidget)
-        self.serverLn.addItem("")
-        self.serverLn.setObjectName(u"serverLn")
+        # self.serverLn = QComboBox(self.centralwidget)
+        # self.serverLn.addItem("")
+        # self.serverLn.setObjectName(u"serverLn")
         font1 = QFont()
         font1.setFamily(u"Consolas")
         font1.setPointSize(10)
-        self.serverLn.setFont(font1)
-        self.serverLn.setEditable(True)
+        # self.serverLn.setFont(font1)
+        # self.serverLn.setEditable(True)
 
-        self.horizontalLayout.addWidget(self.serverLn)
+        # self.horizontalLayout.addWidget(self.serverLn)
 
         self.horizontalLayout.setStretch(0, 1)
         self.horizontalLayout.setStretch(1, 5)
@@ -56,19 +57,19 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.label_2 = QLabel(self.centralwidget)
-        self.label_2.setObjectName(u"label_2")
-        self.label_2.setFont(font)
+        # self.label_2 = QLabel(self.centralwidget)
+        # self.label_2.setObjectName(u"label_2")
+        # self.label_2.setFont(font)
+        #
+        # self.horizontalLayout_2.addWidget(self.label_2)
 
-        self.horizontalLayout_2.addWidget(self.label_2)
-
-        self.workLn = QComboBox(self.centralwidget)
-        self.workLn.addItem("")
-        self.workLn.setObjectName(u"workLn")
-        self.workLn.setFont(font1)
-        self.workLn.setEditable(True)
-
-        self.horizontalLayout_2.addWidget(self.workLn)
+        # self.workLn = QComboBox(self.centralwidget)
+        # self.workLn.addItem("")
+        # self.workLn.setObjectName(u"workLn")
+        # self.workLn.setFont(font1)
+        # self.workLn.setEditable(True)
+        #
+        # self.horizontalLayout_2.addWidget(self.workLn)
 
         self.horizontalLayout_2.setStretch(0, 1)
         self.horizontalLayout_2.setStretch(1, 5)
@@ -142,7 +143,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.connectBtn.sizePolicy().hasHeightForWidth())
         self.connectBtn.setSizePolicy(sizePolicy)
-        self.connectBtn.setMinimumSize(QSize(160, 110))
+        self.connectBtn.setMinimumSize(QSize(160, 70))
         self.connectBtn.setCursor(QCursor(Qt.PointingHandCursor))
         self.connectBtn.setStyleSheet(u"/* /////////////////////////////////////////////////////////////////////////////////////////////////\n"
 "Custom */\n"
@@ -161,6 +162,7 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_7.addLayout(self.horizontalLayout_7)
+
 
         self.line = QFrame(self.centralwidget)
         self.line.setObjectName(u"line")
@@ -258,7 +260,11 @@ class Ui_MainWindow(object):
         self.groupBox = QGroupBox(self.splitter)
         self.groupBox.setObjectName(u"groupBox")
         self.groupBox.setFont(font1)
+        self.extend = QCheckBox(u"展开")
+
+
         self.verticalLayout = QVBoxLayout(self.groupBox)
+        self.verticalLayout.addWidget(self.extend)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.workTree = QTreeWidget(self.groupBox)
         __qtreewidgetitem = QTreeWidgetItem()
@@ -276,6 +282,17 @@ class Ui_MainWindow(object):
         self.workTree.setSelectionMode(QAbstractItemView.ExtendedSelection)
 
         self.verticalLayout.addWidget(self.workTree)
+
+        self.import_layout = QHBoxLayout()
+        self.import_select_button = QPushButton(u"Import")
+        self.reference_select_button = QPushButton("Reference")
+        self.open_select_button = QPushButton("Open")
+        self.down_asset_button = QPushButton(u"下载资产下所有")
+        self.import_layout.addWidget(self.import_select_button)
+        self.import_layout.addWidget(self.reference_select_button)
+        self.import_layout.addWidget(self.open_select_button)
+        self.import_layout.addWidget(self.down_asset_button)
+        self.verticalLayout.addLayout(self.import_layout)
 
         self.splitter.addWidget(self.groupBox)
         self.groupBox_2 = QGroupBox(self.splitter)
@@ -298,10 +315,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_2 = QVBoxLayout(self.groupBox_4)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.listWidget = QListWidget(self.groupBox_4)
+        self.listWidget = TreeWidgetDrop(self.groupBox_4)
         self.listWidget.setObjectName(u"listWidget")
+        # self.splitter_2.setStretchFactor()
+
 
         self.verticalLayout_2.addWidget(self.listWidget)
+
 
         self.splitter_2.addWidget(self.groupBox_4)
         self.groupBox_5 = QGroupBox(self.splitter_2)
@@ -318,6 +338,11 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_5.addWidget(self.splitter_2)
 
+        self.exportBtn = QPushButton(self.tab)
+        self.exportBtn.setObjectName(u"exportBtn")
+        self.exportBtn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.verticalLayout_5.addWidget(self.exportBtn)
+
         self.publishBtn = QPushButton(self.tab)
         self.publishBtn.setObjectName(u"publishBtn")
         self.publishBtn.setCursor(QCursor(Qt.PointingHandCursor))
@@ -325,18 +350,46 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.addWidget(self.publishBtn)
 
         self.tabWidget.addTab(self.tab, "")
+
         self.tab_2 = QWidget()
         self.tab_2.setObjectName(u"tab_2")
-        self.gridLayout = QGridLayout(self.tab_2)
-        self.gridLayout.setObjectName(u"gridLayout")
-        self.label_8 = QLabel(self.tab_2)
-        self.label_8.setObjectName(u"label_8")
-        font2 = QFont()
-        font2.setFamily(u"Consolas")
-        font2.setPointSize(16)
-        self.label_8.setFont(font2)
 
-        self.gridLayout.addWidget(self.label_8, 0, 0, 1, 1)
+##################################################
+        verticalLayout_5_assets = QVBoxLayout(self.tab_2)
+        verticalLayout_5_assets.setObjectName(u"verticalLayout_5")
+        self.assets_file_list = QListWidget()
+        file_list_layout = QHBoxLayout()
+        file_list_layout.addWidget(self.assets_file_list)
+        file_list_grp = QGroupBox("File List")
+        file_list_grp.setLayout(file_list_layout)
+
+        self.comment_line = QPlainTextEdit()
+        comment_layout = QHBoxLayout()
+        comment_layout.addWidget(self.comment_line)
+        comment_grp = QGroupBox("Comment")
+        comment_grp.setLayout(comment_layout)
+
+        verticalLayout_5_assets.addWidget(file_list_grp)
+        verticalLayout_5_assets.addWidget(comment_grp)
+
+
+
+
+        self.exportBtn_assets = QPushButton("exportAssets")
+        self.exportBtn_assets.setObjectName(u"exportBtn_assets")
+        self.exportBtn_assets.setCursor(QCursor(Qt.PointingHandCursor))
+        verticalLayout_5_assets.addWidget(self.exportBtn_assets)
+
+        self.publishBtn_assets = QPushButton("publishAssets")
+        self.publishBtn_assets.setObjectName(u"publishBtn_assets")
+        self.publishBtn_assets.setCursor(QCursor(Qt.PointingHandCursor))
+        verticalLayout_5_assets.addWidget(self.publishBtn_assets)
+
+        self.splitter_2.setStretchFactor(0, 1)
+
+############################################################
+
+
 
         self.tabWidget.addTab(self.tab_2, "")
 
@@ -346,7 +399,24 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_7.addWidget(self.splitter)
 
-        self.verticalLayout_7.setStretch(5, 5)
+        #########add log lineedit
+        self.log_edit = QPlainTextEdit()
+        log_layout = QVBoxLayout()
+
+
+        log_layout.addWidget(self.log_edit)
+        self.groupBox_log = QGroupBox()
+        self.groupBox_log.setLayout(log_layout)
+        self.groupBox_log.setObjectName(u"groupBox_log")
+        self.groupBox_log.setFont(font1)
+        self.groupBox_log.setHidden(True)
+
+        self.show_log_check = QCheckBox("ShowLog")
+        self.verticalLayout_7.addWidget(self.show_log_check)
+        self.show_log_check.setChecked(False)
+        self.verticalLayout_7.addWidget(self.groupBox_log)
+
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
@@ -368,29 +438,33 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"Server", None))
-        self.serverLn.setItemText(0, QCoreApplication.translate("MainWindow", u"10.0.201.12:1666", None))
+        # self.label.setText(QCoreApplication.translate("MainWindow", u"Server", None))
+        # self.serverLn.setItemText(0, QCoreApplication.translate("MainWindow", u"10.0.201.12:1666", None))
 
-        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Workspace", None))
-        self.workLn.setItemText(0, QCoreApplication.translate("MainWindow", u"qinjiaxin_01YXHY1235_Assets", None))
+        # self.label_2.setText(QCoreApplication.translate("MainWindow", u"Workspace", None))
+        # self.workLn.setItemText(0, QCoreApplication.translate("MainWindow", u"qinjiaxin_01YXHY1235_Assets", None))
+        self.label_3.setText(QCoreApplication.translate("MainWindow", u"PerforceUser", None))
+        # self.userLn.setItemText(0, QCoreApplication.translate("MainWindow", u"qinjiaxin", None))
 
-        self.label_3.setText(QCoreApplication.translate("MainWindow", u"User", None))
-        self.userLn.setItemText(0, QCoreApplication.translate("MainWindow", u"qinjiaxin", None))
 
-        self.label_7.setText(QCoreApplication.translate("MainWindow", u"Password", None))
+        self.label_7.setText(QCoreApplication.translate("MainWindow", u"Password      ", None))
         self.passwordBtn.setText("")
         self.connectBtn.setText(QCoreApplication.translate("MainWindow", u"Connect", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"GroupBox", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Type", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"Asset", None))
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"Step", None))
+        self.extend.setChecked(True)
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"AssetName", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"Submit", None))
         self.groupBox_4.setTitle(QCoreApplication.translate("MainWindow", u"File List", None))
         self.groupBox_5.setTitle(QCoreApplication.translate("MainWindow", u"Comment", None))
+        self.exportBtn.setText(QCoreApplication.translate("MainWindow", u"ExportScene", None))
         self.publishBtn.setText(QCoreApplication.translate("MainWindow", u"Publish", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"\u5355\u6587\u4ef6\u63d0\u4ea4", None))
-        self.label_8.setText(QCoreApplication.translate("MainWindow", u"Under functional development...", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"\u591a\u6587\u4ef6\u63d0\u4ea4", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"当前资产提交", None))
+
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"多资产提交", None))
+
+
     # retranslateUi
 

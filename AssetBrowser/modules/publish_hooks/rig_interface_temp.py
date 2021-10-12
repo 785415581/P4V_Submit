@@ -1,4 +1,4 @@
-from AssetBrowser.publish_hooks.basePublish import BasePublish
+from AssetBrowser.modules.publish_hooks import BasePublish
 
 
 class RigPublish(BasePublish):

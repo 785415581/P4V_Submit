@@ -1,6 +1,7 @@
 import ctypes
 import os
 import sys
+sys.path.append("R:\ProjectX\Scripts\Python37\Lib\site-packages")
 from functools import partial
 
 from PySide2 import QtCore
@@ -17,8 +18,11 @@ widgets = None
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None, *args):
         super(MainWindow, self).__init__(parent)
+
+        #todo treewidget waiting to deal with fold and file item
+        #todo darg fold need to do
+        #todo mark full path or half path on item,need to solve fold and file
         self.setWindowTitle('Publish for P4V')
-        self.currentPathList = list()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         global widgets
@@ -27,30 +31,36 @@ class MainWindow(QtWidgets.QMainWindow):
         self.control.view = widgets
         self.control.init()
         self.control.initSignal()
-        self.control.appFunction.initValue()
+        self.control.appFunction.initUser()
+
         widgets.currentPathCombox.currentIndexChanged.connect(self.changeCurrentPath)
-        widgets.workTree.itemClicked.connect(self.listPath)
+
         widgets.connectBtn.clicked.connect(self.buttonClick)
         widgets.publishBtn.clicked.connect(self.buttonClick)
-        widgets.listWidget.setAcceptDrops(True)
-        widgets.listWidget.setDefaultDropAction(QtCore.Qt.MoveAction)
-        widgets.listWidget.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
-        widgets.listWidget.setSelectionMode(QtWidgets.QAbstractItemView.ContiguousSelection)
-        widgets.listWidget.installEventFilter(self)
+
+
+        widgets.workTree.setDefaultDropAction(QtCore.Qt.CopyAction)
+        widgets.workTree.setDragDropMode(QtWidgets.QAbstractItemView.DragOnly)
+
+        widgets.assets_file_list.setAcceptDrops(True)
+        widgets.assets_file_list.setDefaultDropAction(QtCore.Qt.MoveAction)
+        widgets.assets_file_list.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
+        widgets.assets_file_list.setSelectionMode(QtWidgets.QAbstractItemView.ContiguousSelection)
+        widgets.assets_file_list.installEventFilter(self)
         widgets.assetNameComboBox.installEventFilter(self)
 
     def eventFilter(self, watched, event):
         if event.type() == QtCore.QEvent.DragEnter:
-            if watched is self.ui.listWidget:
+            if watched is self.ui.assets_file_list:
                 event.accept()
                 return True
         elif event.type() == QtCore.QEvent.Drop:
-            if watched is self.ui.listWidget:
+            if watched is self.ui.assets_file_list:
                 data = event.mimeData()
                 urls = data.urls()
                 for url in urls:
                     filePath = url.toLocalFile()
-                    item = ListWidgetItem(self.ui.listWidget)
+                    item = ListWidgetItem(self.ui.assets_file_list)
                     item.filePath = filePath
                     item.setCurrentEnterFile(os.path.basename(filePath))
                     widgets.listWidget.addItem(item)
@@ -70,46 +80,17 @@ class MainWindow(QtWidgets.QMainWindow):
         treeWidgetItem = widgets.currentPathCombox.itemData(index, QtCore.Qt.UserRole)
         widgets.workTree.setCurrentItem(treeWidgetItem)
 
-    def listPath(self, item, column):
-        res = self.getCurrentPath(item).replace('\\', '/')
-        print(res)
-        if self.control.appFunction.clientRoot and res not in self.currentPathList:
-            widgets.currentPathCombox.addItem(res.replace('\\', '/'))
-            self.currentPathList.append(res)
-            index = widgets.currentPathCombox.count()
-            widgets.currentPathCombox.setItemData(index - 1, item, QtCore.Qt.UserRole)
-        widgets.currentPathCombox.setCurrentText(res.replace('\\', '/'))
 
-    def getCurrentPath(self, item, strPath=''):
-        if item.parent():
-            parentWidget = item.parent()
-            currentFolderName = item.text(0)
-            if strPath:
-                strPath = currentFolderName + '/' + strPath
-            else:
-                strPath = currentFolderName
-            return self.getCurrentPath(parentWidget, strPath)
-        else:
-            currentType = widgets.typeComboBox.currentText()
-            currentAsset = widgets.assetNameComboBox.currentText()
-            currentStep = widgets.submitStepCom.currentText()
-            currentPath = os.path.join(self.control.appFunction.clientStream,
-                                       currentType,
-                                       currentAsset,
-                                       currentStep,
-                                       strPath)
-            return currentPath
 
     def buttonClick(self):
         btn = self.sender()
         btnName = btn.objectName()
         if btnName == "connectBtn":
             self.control.p4Model.user = self.ui.userLn.currentText()
-            self.control.p4Model.client = self.ui.workLn.currentText()
-            self.control.p4Model.serverPort = self.ui.serverLn.currentText()
             self.control.p4Model.password = self.ui.passwordLn.text()
+
             self.control.p4Model.validation()
-            self.control.p4Model.initClient()
+            self.control.p4Model.initAssetsClient()
             clientRoot = self.control.p4Model.getRoot()
             print("clientRoot = {}".format(clientRoot))
             clientStream = self.control.p4Model.getStreamName()
@@ -129,6 +110,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 Interface.control = self.control
                 Interface.publish()
             print('publishBtn')
+        elif btnName == "exportBtn":
+
+            pass
+
 
     def closeEvent(self, event):
         event.accept()

@@ -5,6 +5,8 @@ class Leaf(object):
         self.value = value
         self.fullPath = ''
         self.children = []
+        self.ser_ver = None
+        self.local_ver = None
 
     def search(self, node):
         if self.name == node.name:
@@ -17,6 +19,12 @@ class Leaf(object):
                 if child_res:
                     return child_res
             return None
+
+    def set_ser_ver(self, version):
+        self.ser_ver = version
+
+    def set_local_ver(self, version):
+        self.local_ver = version
 
     def add_child(self, node):
         self.children.append(node)
@@ -32,6 +40,8 @@ class Leaf(object):
         res['value'] = self.value
         res['name'] = self.name
         res['path'] = self.fullPath
+        res["ser_ver"] = self.ser_ver
+        res["local_ver"] = self.local_ver
         res['children'] = []
         for child in self.children:
             res['children'].append(child.to_json())

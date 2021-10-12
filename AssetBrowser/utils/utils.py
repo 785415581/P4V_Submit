@@ -1,9 +1,11 @@
 # _*_coding:utf-8 _*_
 import os
 import re
+import sys
+sys.path.append("R:\ProjectX\Scripts\Python37\Lib\site-packages")
 import yaml
 import subprocess
-
+from collections import OrderedDict
 
 class Utils:
     def __init__(self):
@@ -36,7 +38,7 @@ class Utils:
         aType = self.control.appFunction.typeComboBoxText
         aAsset = self.control.appFunction.assetNameComboBoxText
         aStep = self.control.appFunction.submitStepComText
-        print(aType, aAsset, aStep)
+        # print(aType, aAsset, aStep)
 
     def getConfig(self):
         with open(os.path.join(os.path.dirname(__file__), 'config.yml'), 'r') as fp:
@@ -44,21 +46,49 @@ class Utils:
             return config
 
     @staticmethod
-    def listdir(rootPath):
-        rootPath = rootPath.replace('\\', '/') + '/'
-        cmd_files = 'p4 files ' + rootPath + '...'
-        process = subprocess.Popen(cmd_files, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        res_files, err = process.communicate()
-        # print(res_files)
-        # print(res_files.decode('windows-1252'))
-        dirs_set = set()
-        for res in res_files.decode('windows-1252').split('\r\n'):
-            if re.findall(r'#\d+(.*?)delete(.*?)[)]', res):
-                continue
-            dirs = res.split(rootPath)[-1].split('/')[0]
-            if not re.findall(r'#\d+(.*?)[)]', dirs):
-                dirs_set.add(dirs)
-        return dirs_set
+    def getAssetPath(*argv):
+        depot_path_tem = "//Assets/main/Assets/{0}/{1}/{2}/{3}".format(*argv)
+        return depot_path_tem
+
+    @staticmethod
+    def colorText(text, w=False, e=False):
+
+        if w:
+            text = "<span style=\" font-size:8pt; font-weight:600; color:#FFA500;\" > {0} </span>".format(text)
+        elif e:
+            text = "<span style=\" font-size:8pt; font-weight:600; color:#FF0000;\" > {0} </span>".format(text)
+        else:
+            text = "<span style=\" font-size:8pt; font-weight:600; color:#000000;\" > {0} </span>".format(text)
+        return text
+
+
+    def getAssetsData(self, p4_file_infos):
+        data_dicts = OrderedDict()
+        half_file_dicts = {}
+        full_file_dicts = {}
+
+        p = re.compile(r"//Assets/main/Assets/(Animal|Character|Fashion|Weapon)/(.+)/(Animations|Meshes|Textures)/(\S+)")
+        for p4_file_path, infos in p4_file_infos.items():
+            match = p.match(p4_file_path)
+            if match:
+                asset_type, asset_name, file_type, half_path = match.groups()
+                data_key = "{0}_{1}_{2}".format(asset_type, asset_name, file_type)
+                data_dicts.setdefault(asset_type, OrderedDict())
+                data_dicts[asset_type].setdefault(asset_name, [])
+                if file_type not in data_dicts[asset_type][asset_name]:
+                    data_dicts[asset_type][asset_name].append(file_type)
+
+                half_file_dicts.setdefault(data_key, []).append(half_path)
+                full_file_dicts.setdefault(data_key, []).append(p4_file_path)
+
+
+
+        return full_file_dicts, half_file_dicts, data_dicts
+
+
+
+
+
 
     def getRegx(self, crType):
         config = self.getConfig()
@@ -79,7 +109,7 @@ class Utils:
         res_files, err = process.communicate()
         dirs_set = set()
         regx = self.getRegx(crType)
-        for res in res_files.decode('windows-1252').split('\r\n'):
+        for res in res_files.decode('utf-8').split('\r\n'):
             if re.findall(r'#\d+(.*?)delete(.*?)[)]', res):
                 continue
             if not regx:
@@ -97,9 +127,8 @@ if __name__ == '__main__':
     value = _utils.getConfig()
     from pprint import pprint
     # pprint(value)
-    dir_set = _utils.listdir('//Assets/main/Character')
-    for i in dir_set:
-        print(i)
+    dir_set = _utils.listdir('//Assets/main/TATest')
+
 
 
 

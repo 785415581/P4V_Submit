@@ -10,6 +10,10 @@ from AssetBrowser.modules.app_setting import AppSetting
 from AssetBrowser.utils.Leaf import Leaf
 from AssetBrowser.utils.utils import Utils
 from AssetBrowser.utils import P4Utils
+import AssetBrowser.modules.ImportFunction.startImport as startImport
+import AssetBrowser.modules.global_setting as global_setting
+
+
 
 
 class AppFunction(object):
@@ -21,6 +25,9 @@ class AppFunction(object):
         self._clientStream = None
         self._clientRoot = None
         self._validation = None
+        self.p4Model = None
+        self.currentPathList=[]
+        self.select_files=[]
 
     @property
     def view(self):
@@ -73,74 +80,85 @@ class AppFunction(object):
         self.view.typeComboBox.clear()
         self.view.assetNameComboBox.clear()
         self.view.submitStepCom.clear()
-        for i in Utils.listdir(self.clientStream):
-            if not i: continue
-            self.view.typeComboBox.addItem(i, "{}/{}".format(self.clientStream, i))
 
-        indexType = self.view.typeComboBox.currentIndex()
-        currentType = self.view.typeComboBox.itemData(indexType, role=QtCore.Qt.UserRole)
-        self.setTreeWidget(currentType)
-        self.view.typeComboBox.blockSignals(False)
-        # self.view.assetNameComboBox.blockSignals(False)
+        self.p4_file_infos = self.p4Model.getFiles(self.clientStream)
+
+        self.full_file_dict, self.half_file_dict, self.data_dict = Utils().getAssetsData(self.p4_file_infos)
+
+        self.view.typeComboBox.addItems(self.data_dict.keys())
+        current_type = self.view.typeComboBox.currentText()
+        self.view.assetNameComboBox.addItems(self.data_dict[current_type].keys())
+        current_asset = self.view.assetNameComboBox.currentText()
+        self.view.submitStepCom.addItems(self.data_dict[current_type][current_asset])
+
+
+
 
     def changeType(self, index):
+        print("change type")
+
         self.view.assetNameComboBox.clear()
-        currentType = self.view.typeComboBox.itemData(index, role=QtCore.Qt.UserRole)
-        self.view.currentPathCombox.setCurrentText(currentType)
-        self.view.assetNameComboBox.addItem('')
-        for i in Utils().listSubAssetsDir(currentType, self.typeComboBoxText):
-            if not i: continue
-            self.view.assetNameComboBox.addItem(i, "{}/{}".format(currentType, i))
-        self.setTreeWidget(currentType)
+        currentType = self.view.typeComboBox.currentText()
+        if currentType not in self.data_dict:
+            return
+
+        self.view.assetNameComboBox.addItems(self.data_dict[currentType].keys())
+        self.setTreeWidget()
 
     def changeAsset(self, index):
-        currentAsset = self.view.assetNameComboBox.itemData(index, role=QtCore.Qt.UserRole)
-        if currentAsset:
-            self.view.currentPathCombox.setCurrentText(currentAsset)
-            self.view.currentPathCombox.clear()
-            self.view.submitStepCom.clear()
-            self.view.submitStepCom.addItem('', None)
-            for i in Utils.listdir(currentAsset):
-                if not i: continue
-                self.view.submitStepCom.addItem(i, "{}/{}".format(currentAsset, i))
-            self.setTreeWidget(currentAsset)
-        else:
-            indexType = self.view.typeComboBox.currentIndex()
-            currentType = self.view.typeComboBox.itemData(indexType, role=QtCore.Qt.UserRole)
-            self.view.currentPathCombox.setCurrentText(currentType)
-            self.view.submitStepCom.clear()
-            self.setTreeWidget(currentType)
+        print("change asset")
+        self.view.submitStepCom.clear()
+        current_type = self.view.typeComboBox.currentText()
+        current_asset = self.view.assetNameComboBox.currentText()
+        if current_type not in self.data_dict:
+            return
+        if current_asset not in self.data_dict[current_type]:
+            return
+        self.view.submitStepCom.addItems(self.data_dict[current_type][current_asset])
+
+        self.setTreeWidget()
 
     def changeStep(self, index):
-        currentStep = self.view.submitStepCom.itemData(index, role=QtCore.Qt.UserRole)
-        if currentStep:
-            self.view.currentPathCombox.clear()
-            self.view.currentPathCombox.setCurrentText(currentStep)
-            self.setTreeWidget(currentStep)
+        print("change step")
 
-    def initValue(self):
+        self.setTreeWidget()
+
+    def extendTree(self):
+        if self.view.extend.isChecked():
+            self.view.workTree.expandAll()
+        else:
+            self.view.workTree.collapseAll()
+
+    def initUser(self):
         value = self.appSetting.getConfig()
-        self.view.serverLn.addItems(value['serverPort'])
-        self.view.workLn.addItems(value['workSpace'])
-        self.view.userLn.addItems(value['user'])
-        if value['password']:
-            self.view.passwordLn.setText(value['password'][0])
+        # self.view.serverLn.addItems(value['serverPort'])
+        # self.view.workLn.addItems(value['workSpace'])
+        if self.p4Model.user:
+            user = self.p4Model.user
+            self.view.userLn.insertItem(0, user)
+            self.view.userLn.setCurrentIndex(0)
+            if user in value:
+                self.view.passwordLn.setText(value[user])
 
     def showWorkTreeHandle(self, pos):
         contextMenuTree = QtWidgets.QMenu()
         # actionC.setDisabled(True)
-        if self.view.workTree.itemAt(pos):
+        print("run")
+        current_item = self.view.listWidget.itemAt(pos)
+        if current_item:
             actionA = QtWidgets.QAction('New Folder')
             actionB = QtWidgets.QAction('Delete Folder')
             actionC = QtWidgets.QAction('Sync to local')
-            item = self.view.workTree.itemAt(pos)
-            # currentTreeItemPath = item.whatsThis(0)
+            #todo wait to judge file or fold to show actionC
+            # currentTreeItemPath = current_item.whatsThis(0)
+            # print(currentTreeItemPath)
+
             # if os.path.isfile(currentTreeItemPath):
             #     contextMenuTree.addAction(actionC)
-            app = QtWidgets.QApplication.instance()
-            if app and 'maya' in app.applicationName().lower():
-                actionD = QtWidgets.QAction('import file')
-                contextMenuTree.addAction(actionD)
+            # app = QtWidgets.QApplication.instance()
+            # if app and 'maya' in app.applicationName().lower():
+            #     actionD = QtWidgets.QAction('import file')
+            #     contextMenuTree.addAction(actionD)
             contextMenuTree.addAction(actionA)
             contextMenuTree.addAction(actionB)
             contextMenuTree.addAction(actionC)
@@ -204,65 +222,122 @@ class AppFunction(object):
             itemNum = view.listview.row(items[i])
             item = view.listview.takeItem(itemNum)
 
-    def setTreeWidget(self, clientStream):
+    def setTreeWidget(self):
         self.view.workTree.clear()
-        first_no = 10
-        cmd_files = 'p4 files -i ' + clientStream + '...'
-        process = subprocess.Popen(cmd_files, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        res_files, err = process.communicate()
-        res_files = res_files.decode('windows-1252').split('\r\n')
-        root_node = Leaf(clientStream)
-        for res in res_files:
-            if re.findall(r'#\d+(.*?)delete(.*?)[)]', res):
-                continue
-            if not res:
-                continue
-            out = res.split(clientStream)[-1].split('/')
+        current_type = self.view.typeComboBox.currentText()
+        current_asset = self.view.assetNameComboBox.currentText()
+        current_step = self.view.submitStepCom.currentText()
+        data_key = "{0}_{1}_{2}".format(current_type, current_asset, current_step)
+        if data_key not in self.half_file_dict:
+            return
+
+        root_nodes = []
+        first_node=None
+
+        for index in range(len(self.half_file_dict[data_key])):
+
+            half_path = self.half_file_dict[data_key][index]
+            full_path = self.full_file_dict[data_key][index]
+            out = half_path.split('/')
             temp = list()
             level = str()
+
             for index in range(len(out)):
                 if out[index]:
                     level = level + '/' + out[index]
                     temp.append(level)
             lines = temp
 
-            first_node = Leaf(lines[0])
-            if first_node.name not in [child.name for child in root_node.children]:
-                first_node.set_value(str(first_no))
-                first_node.set_fullPath("{}{}".format(clientStream, first_node.name))
-                first_no = first_no + 1
-                root_node.add_child(first_node)
 
-            cur_node = root_node.search(first_node)
-            for node in [Leaf(name=lines[tmp]) for tmp in range(1, len(lines))]:
+            if lines[0] not in [exist_node.name for exist_node in root_nodes]:
+                first_node = Leaf(lines[0])
+                first_node.set_fullPath("halfPath:{0}".format(first_node.name))
+                root_nodes.append(first_node)
+
+            cur_node = first_node
+
+            nodes = []
+            for tmp in range(1, len(lines)):
+                node = Leaf(name=lines[tmp])
+                node.set_fullPath("halfPath:{0}".format(lines[tmp]))
+                nodes.append(node)
+            for node in nodes:
                 if node.name not in [child.name for child in cur_node.children]:
                     length = len(cur_node.children)
                     node.set_value(str(length + 100 * int(cur_node.value)))
-                    node.set_fullPath("{}{}".format(clientStream, (node.name).encode('utf-8')))
                     cur_node.add_child(node)
-                cur_node = root_node.search(node)
-        data = root_node.to_json()
+                cur_node = first_node.search(node)
 
-        # with open(os.path.dirname(os.path.dirname(__file__)) + '/temp/temp.json', 'w') as fp:
-        #     import json
-        #     json_data = json.dumps(data, indent=2)
-        #     fp.write(json_data)
-        #     fp.close()
+
+            cur_node.set_ser_ver(self.p4_file_infos[full_path]["headRev"])
+            cur_node.set_local_ver(self.p4_file_infos[full_path]["haveRev"])
+
         rootItem = QtWidgets.QTreeWidgetItem(self.view.workTree)
-        rootItem.setWhatsThis(0, clientStream)
-        rootItem.setText(0, os.path.basename(clientStream))
-        self.set_tree(rootItem, data)
+        rootItem.setText(0, os.path.basename("..."))
+
+        for first_node in root_nodes:
+            print(first_node.to_json())
+            self.set_tree(rootItem, first_node.to_json())
+
         self.view.workTree.setSortingEnabled(True)
         self.view.workTree.sortByColumn(0, QtCore.Qt.AscendingOrder)
+        if self.view.extend.isChecked():
+            self.view.workTree.expandAll()
 
-    def set_tree(self, leaf, leafName):
+    def set_tree(self, parent, leafName):
+        parent.setFirstColumnSpanned(True)
+        item = QtWidgets.QTreeWidgetItem(parent)
+        item.setWhatsThis(0, leafName['path'])
+        item.setText(0, os.path.basename(leafName['name']))
+
+        if leafName["ser_ver"]:
+            # ver_item = QtWidgets.QTreeWidgetItem(parent)
+            # print(child["ser_ver"])
+            label = QtWidgets.QLabel(leafName["ser_ver"])
+            label.setAlignment(QtCore.Qt.AlignCenter)
+            parent.treeWidget().setItemWidget(item, 1, label)
+
+        if leafName["local_ver"]:
+            label = QtWidgets.QLabel(leafName["local_ver"])
+            label.setAlignment(QtCore.Qt.AlignCenter)
+            parent.treeWidget().setItemWidget(item, 2, label)
         if leafName['children']:
             for child in leafName['children']:
-                child_root = QtWidgets.QTreeWidgetItem(leaf)
+                self.set_tree(item, child)
 
-                child_root.setWhatsThis(0, child['path'])
-                child_root.setText(0, os.path.basename(child['name']))
-                self.set_tree(child_root, child)
+    def listPath(self, item):
+        half_path = self.getCurrentPath(item).replace('\\', '/')
+        current_type = self.view.typeComboBox.currentText()
+        current_asset = self.view.assetNameComboBox.currentText()
+        current_step = self.view.submitStepCom.currentText()
+        res = Utils.getAssetPath(current_type, current_asset, current_step, half_path)
+        if self.clientRoot and res not in self.currentPathList:
+            self.view.currentPathCombox.addItem(res.replace('\\', '/'))
+            self.currentPathList.append(res)
+            index = self.view.currentPathCombox.count()
+            self.view.currentPathCombox.setItemData(index - 1, item, QtCore.Qt.UserRole)
+        self.view.currentPathCombox.setCurrentText(res.replace('\\', '/'))
+
+    def getCurrentPath(self, item, strPath=''):
+        if item.parent():
+            parentWidget = item.parent()
+            currentFolderName = item.text(0)
+            if strPath:
+                strPath = currentFolderName + '/' + strPath
+            else:
+                strPath = currentFolderName
+            return self.getCurrentPath(parentWidget, strPath)
+        else:
+            return strPath
+
+    def printTest(self, item):
+        print(item.whatsThis(0))
+
+    def show_log(self):
+        if self.view.show_log_check.isChecked():
+            self.view.groupBox_log.setHidden(False)
+        else:
+            self.view.groupBox_log.setHidden(True)
 
     def showPassword(self):
         self.view.passwordBtn.setStyleSheet("""QPushButton {
@@ -282,19 +357,52 @@ class AppFunction(object):
         background-image: url(:/icons/icons/no_display_password.png);}""")
         self.view.passwordLn.setEchoMode(QtWidgets.QLineEdit.Password)
 
+    def Import_btn_clicked(self, model):
+        print(print("{0} btn pressed".format(model)))
+        sel_items = self.view.workTree.selectedItems()
+        if not sel_items:
+            self.add_log(u"Warning:未选择文件",w=True)
+            return
+
+        current_type = self.view.typeComboBox.currentText()
+        current_asset = self.view.assetNameComboBox.currentText()
+        current_step = self.view.submitStepCom.currentText()
+
+        for item in sel_items:
+            half_path = self.getCurrentPath(item).replace('\\', '/')
+            asset_depot_path = Utils.getAssetPath(current_type, current_asset, current_step, half_path)
+            local_path = self.p4_file_infos[asset_depot_path]["clientFile"]
+            if local_path:
+                log, result = startImport.start_import(model, local_path, current_step)
+                if result:
+                    self.add_log(log)
+                else:
+                    self.add_log(log, e=True)
+
+    def Export_btn_clicked(self, model):
+        if model == "ExportScene":
+            pass
+
+        elif model == "Publish":
+            pass
+
+
+
+    def add_log(self, log_text, w=False, e=False):
+        logText = Utils.colorText(log_text, w, e)
+        self.view.log_edit.appendHtml(logText)
+
+
     def callBack(self):
         self.appSetting.init()
         configValue = self.appSetting.getConfig()
-        serverPort = self.view.serverLn.currentText()
+        # serverPort = self.view.serverLn.currentText()
         user = self.view.userLn.currentText()
-        workSpace = self.view.workLn.currentText()
+        # workSpace = self.view.workLn.currentText()
         password = self.view.passwordLn.text()
-        if serverPort not in configValue['serverPort']:
-            configValue['serverPort'].append(serverPort)
-        if user not in configValue['user']:
-            configValue['user'].append(user)
-        if workSpace not in configValue['workSpace']:
-            configValue['workSpace'].append(workSpace)
-        if password not in configValue['password']:
-            configValue['password'].append(password)
+
+        # if serverPort not in configValue['serverPort']:
+        #     configValue['serverPort'].append(serverPort)
+        configValue[user]=password
+
         self.appSetting.setConfig(configValue)
