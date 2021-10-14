@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import ctypes
 import os
 import sys
@@ -7,10 +8,17 @@ from functools import partial
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
-from AssetBrowser import publishInterface
-from AssetBrowser.control.controller import Controller
-from AssetBrowser.modules.ui_main import Ui_MainWindow
-from AssetBrowser.view.baseWidget import ListWidgetItem
+import AssetBrowser.publishInterface as publishInterface
+import AssetBrowser.control.controller as controller
+import AssetBrowser.modules.ui_main as ui_main
+import AssetBrowser.view.baseWidget as baseWidget
+
+import imp
+imp.reload(publishInterface)
+imp.reload(controller)
+imp.reload(ui_main)
+imp.reload(baseWidget)
+
 
 widgets = None
 
@@ -22,12 +30,12 @@ class MainWindow(QtWidgets.QMainWindow):
         #todo treewidget waiting to deal with fold and file item
         #todo darg fold need to do
         #todo mark full path or half path on item,need to solve fold and file
-        self.setWindowTitle('Publish for P4V')
-        self.ui = Ui_MainWindow()
+        self.setWindowTitle(u'Publish for P4V中文')
+        self.ui = ui_main.Ui_MainWindow()
         self.ui.setupUi(self)
         global widgets
         widgets = self.ui
-        self.control = Controller()
+        self.control = controller.Controller()
         self.control.view = widgets
         self.control.init()
         self.control.initSignal()
@@ -60,7 +68,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 urls = data.urls()
                 for url in urls:
                     filePath = url.toLocalFile()
-                    item = ListWidgetItem(self.ui.assets_file_list)
+                    item = baseWidget.ListWidgetItem(self.ui.assets_file_list)
                     item.filePath = filePath
                     item.setCurrentEnterFile(os.path.basename(filePath))
                     widgets.listWidget.addItem(item)
@@ -88,6 +96,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if btnName == "connectBtn":
             self.control.p4Model.user = self.ui.userLn.currentText()
             self.control.p4Model.password = self.ui.passwordLn.text()
+            print(11111111111, self.control.p4Model.user)
 
             self.control.p4Model.validation()
             self.control.p4Model.initAssetsClient()

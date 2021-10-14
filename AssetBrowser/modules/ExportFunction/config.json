@@ -1,23 +1,83 @@
+
+
+
 {
-  "Rig": {
-    "Maya": "",
-    "Unreal": "",
-    "Houdini": ""
+  "Maya": {
+    "Meshes": {
+      "function": "mayaDefaultExport.defaultExport",
+      "files": {
+        "SM_XXX.ma": "|master",
+        "SM_XXX.fbx": "|master"
+      }
+    },
+    "Rig": {
+      "function": "mayaDefaultExport.defaultExport",
+      "files": {
+        "SK_XXX.ma": "|master",
+        "SK_XXX.fbx": "|master"
+      }
+    },
+    "Animations": {
+      "function": "mayaDefaultExport.defaultExport",
+      "files": {
+        "XXX_Idle.ma": "|ani|Idle",
+        "XXX_Idle.fbx": "|ani|Idle",
+        "XXX_Walk.ma": "|ani|Walk",
+        "XXX_Walk.ma": "|ani|Walk",
+        "XXX_Run.ma": "|ani|Run",
+        "XXX_Run.ma": "|ani|Run",
+      }
+    }
+
+
   },
-  "Meshes": {
-    "Maya": "",
-    "Unreal": "",
-    "Houdini": ""
+  "Unreal": {
+    "Import": {
+      "default": "imFunctions.UEImport",
+      "beforce": "",
+      "after": "",
+      "ext": {
+        "fbx": "imFunctions.UEImport",
+        "abc": "",
+        "tiff": "",
+        "png": ""
+       }
+    },
+    "Open":
+    {
+      "default": "imFunctions.UEOpen",
+      "beforce": "",
+      "after": "",
+      "ext": {
+        "uproject": "imFunctions.UEOpen"
+       }
+    }
+
+
   },
-  "Animations": {
-    "Maya": "",
-    "Unreal": "",
-    "Houdini": ""
-  },
-  "Textures": {
-    "SD": "",
-    "Maya": "",
-    "SP": "",
-    "Houdini": ""
+  "Houdini": {
+    "Import": {
+      "default": "imFunctions.HoudiniImport",
+      "beforce": "",
+      "after": "",
+      "ext": {
+        "fbx": "",
+        "abc": "",
+        "hda": "",
+        "png": ""
+       }
+    },
+    "Open":
+    {
+      "default": "imFunctions.HoudiniOpen",
+      "beforce": "",
+      "after": "",
+      "ext": {
+        "hip": "imFunctions.HoudiniOpen"
+       }
+    }
+
+
   }
+
 }

@@ -1,25 +1,29 @@
-# _*_coding:utf-8 _*_
+# -*- coding: utf-8 -*-
+
 import os
 import re
-import subprocess
 
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
-from AssetBrowser.modules.app_setting import AppSetting
-from AssetBrowser.utils.Leaf import Leaf
-from AssetBrowser.utils.utils import Utils
-from AssetBrowser.utils import P4Utils
+import AssetBrowser.modules.app_setting as app_setting
+import AssetBrowser.utils.Leaf as Leaf
+import AssetBrowser.utils.utils as utils
+import AssetBrowser.utils.P4Utils as P4Utils
 import AssetBrowser.modules.ImportFunction.startImport as startImport
-import AssetBrowser.modules.global_setting as global_setting
 
+import imp
+imp.reload(app_setting)
+imp.reload(Leaf)
+imp.reload(utils)
+imp.reload(P4Utils)
+imp.reload(startImport)
+import tempfile
+import shutil
 
-
-
-class AppFunction(object):
-
+class AppFunc():
     def __init__(self):
-        self.appSetting = AppSetting()
+        self.appSetting = app_setting.AppSetting()
         self.appSetting.init()
         self._view = None
         self._clientStream = None
@@ -83,7 +87,7 @@ class AppFunction(object):
 
         self.p4_file_infos = self.p4Model.getFiles(self.clientStream)
 
-        self.full_file_dict, self.half_file_dict, self.data_dict = Utils().getAssetsData(self.p4_file_infos)
+        self.full_file_dict, self.half_file_dict, self.data_dict = utils.Utils().getAssetsData(self.p4_file_infos)
 
         self.view.typeComboBox.addItems(self.data_dict.keys())
         current_type = self.view.typeComboBox.currentText()
@@ -191,7 +195,7 @@ class AppFunction(object):
 
     def selectExportPath(self, item):
         outputPath = QtWidgets.QFileDialog.getExistingDirectory(item.parent,
-                                                                u'选择输出FBX文件夹',
+                                                                'select export fold',
                                                                 os.path.dirname(item.filePath))
         item.exportPath.exportDirectory = outputPath
         print(outputPath)
@@ -250,7 +254,7 @@ class AppFunction(object):
 
 
             if lines[0] not in [exist_node.name for exist_node in root_nodes]:
-                first_node = Leaf(lines[0])
+                first_node = Leaf.Leaf(lines[0])
                 first_node.set_fullPath("halfPath:{0}".format(first_node.name))
                 root_nodes.append(first_node)
 
@@ -258,7 +262,7 @@ class AppFunction(object):
 
             nodes = []
             for tmp in range(1, len(lines)):
-                node = Leaf(name=lines[tmp])
+                node = Leaf.Leaf(name=lines[tmp])
                 node.set_fullPath("halfPath:{0}".format(lines[tmp]))
                 nodes.append(node)
             for node in nodes:
@@ -310,7 +314,7 @@ class AppFunction(object):
         current_type = self.view.typeComboBox.currentText()
         current_asset = self.view.assetNameComboBox.currentText()
         current_step = self.view.submitStepCom.currentText()
-        res = Utils.getAssetPath(current_type, current_asset, current_step, half_path)
+        res = utils.Utils.getAssetPath(current_type, current_asset, current_step, half_path)
         if self.clientRoot and res not in self.currentPathList:
             self.view.currentPathCombox.addItem(res.replace('\\', '/'))
             self.currentPathList.append(res)
@@ -358,7 +362,7 @@ class AppFunction(object):
         self.view.passwordLn.setEchoMode(QtWidgets.QLineEdit.Password)
 
     def Import_btn_clicked(self, model):
-        print(print("{0} btn pressed".format(model)))
+        print("{0} btn pressed".format(model))
         sel_items = self.view.workTree.selectedItems()
         if not sel_items:
             self.add_log(u"Warning:未选择文件",w=True)
@@ -370,7 +374,7 @@ class AppFunction(object):
 
         for item in sel_items:
             half_path = self.getCurrentPath(item).replace('\\', '/')
-            asset_depot_path = Utils.getAssetPath(current_type, current_asset, current_step, half_path)
+            asset_depot_path = utils.Utils.getAssetPath(current_type, current_asset, current_step, half_path)
             local_path = self.p4_file_infos[asset_depot_path]["clientFile"]
             if local_path:
                 log, result = startImport.start_import(model, local_path, current_step)
@@ -380,8 +384,26 @@ class AppFunction(object):
                     self.add_log(log, e=True)
 
     def Export_btn_clicked(self, model):
+
+        current_type = self.view.typeComboBox.currentText()
+        current_asset = self.view.assetNameComboBox.currentText()
+        current_step = self.view.submitStepCom.currentText()
+
         if model == "ExportScene":
-            pass
+            export_fold = tempfile.tempdir()
+            if not os.path.exists(export_fold):
+                os.makedirs(export_fold)
+            from .ExportFunction.startExport import start_export
+            log, result = start_export(current_type, current_asset, current_step, export_fold)
+
+            if result:
+                self.add_log(log)
+                self.view.listWidget.clear()
+                self.view.listWidget.createItem(export_fold)
+            else:
+                shutil.rmtree(export_fold)
+                self.add_log(log, e=True)
+
 
         elif model == "Publish":
             pass
@@ -389,7 +411,7 @@ class AppFunction(object):
 
 
     def add_log(self, log_text, w=False, e=False):
-        logText = Utils.colorText(log_text, w, e)
+        logText = utils.Utils.colorText(log_text, w, e)
         self.view.log_edit.appendHtml(logText)
 
 
@@ -406,3 +428,4 @@ class AppFunction(object):
         configValue[user]=password
 
         self.appSetting.setConfig(configValue)
+

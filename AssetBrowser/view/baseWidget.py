@@ -57,8 +57,8 @@ class ListWidgetItem(QtWidgets.QListWidgetItem):
 
 class TreeWidgetDrop(QtWidgets.QTreeWidget):
 
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, parent=None):
+        super(TreeWidgetDrop, self).__init__(parent)
 
         self.setHeaderHidden(True)
 

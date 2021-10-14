@@ -2,39 +2,10 @@ import maya.cmds as cmds
 import pymel.core as pm
 import os
 
-
-def createTransform(name_dict, parent=None):
-    for name, values in name_dict.items():
-        full_path = "|" +name
-        if parent:
-            full_path = parent.fullPath() +full_path
-        if not pm.objExists(full_path):
-            if parent:
-                trans_node = pm.createNode("transform", n=name, p=parent)
-            else:
-                trans_node = pm.createNode("transform", n=name)
-        if values:
-            createTransform(values, trans_node)
-
 def createHierarchy(asset=False, shot=False):
-    if asset:
-        hierarchy_levels = {"master":
-                                {
-                                    "Meshes":{},
-                                    "rig":{}
+    from Tools.maya.createhierarchy import createHierarchy
+    createHierarchy(asset, shot)
 
-                                }
-                            }
-    if shot:
-        hierarchy_levels = {"ani":
-            {
-                "rig": {},
-                "Animations": {}
-
-            }
-        }
-
-    createTransform(hierarchy_levels)
 
 def mayaImport(sel_file, type):
 
@@ -67,7 +38,18 @@ def getNameSpace(sel_file):
     return os.path.basename(sel_file).split(".")[0]
 
 
-def mayaReference(sel_file, file_type, namespace):
+def mayaReference(sel_file, file_type, namespace, step=""):
+    if step=="Rig":
+        models = ["Idle", "Walk", "Run"]
+        #todo one modle one file
+        for model in models:
+            model_ns = namespace+"_"+model
+            createHierarchy(shot=True)
+            cmds.file(sel_file, r=True, type=file_type, ignoreVersion=True, gl=True, mergeNamespacesOnClash=False,
+                      namespace=model_ns)
+            asset_master_node = pm.PyNode(model_ns)
+            pm.parent(asset_master_node, "|ani|"+model)
+
     createHierarchy(shot=True)
     cmds.file(sel_file, r=True, type=file_type, ignoreVersion=True, gl=True, mergeNamespacesOnClash=False,
               namespace=namespace)

@@ -1,9 +1,17 @@
-from PySide2 import QtCore, QtGui,QtWidgets
-from AssetBrowser.modules.app_functions import AppFunction
-from P4Module.p4_module import P4Client
+# -*- coding: utf-8 -*-
+from PySide2 import QtCore, QtGui, QtWidgets
+
+import AssetBrowser.modules.app_functions as app_functions
+import P4Module.p4_module as p4_module
+import AssetBrowser.utils.utils as utils
+
+import imp
+imp.reload(app_functions)
+imp.reload(p4_module)
+imp.reload(utils)
+
 from functools import partial
 
-from AssetBrowser.utils.utils import Utils
 
 class AlignDelegate(QtWidgets.QItemDelegate):
     def paint(self, painter, option, index):
@@ -14,9 +22,9 @@ class Controller(QtCore.QObject):
     def __init__(self):
         super(Controller, self).__init__()
         self._view = None
-        self._utils = Utils()
-        self._p4Model = P4Client()
-        self._appFunction = AppFunction()
+        self._utils = utils.Utils()
+        self._p4Model = p4_module.P4Client()
+        self._appFunction = app_functions.AppFunc()
         self._appFunction.p4Model = self._p4Model
 
     @property

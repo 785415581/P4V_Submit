@@ -5,7 +5,7 @@ import AssetBrowser.modules.ExportFunction as ExportFunction
 import tempfile
 import shutil
 
-def start_import(current_step):
+def start_export(current_type, current_asset, current_step, export_fold):
     log = ""
     result = False
     config_dict = read_config()
@@ -13,32 +13,30 @@ def start_import(current_step):
     if not soft_env:
         log = u"Error: 没有获取到软件环境"
         return log, result
-    if current_step not in config_dict:
-        log = "Error: Lack step {0} export".format(current_step)
+    if soft_env not in config_dict:
+        log = "Error: Lack step {0} under export".format(current_step)
 
-    if soft_env not in config_dict[current_step]:
-        log = "Error: Lack {0} export under {1}".format(soft_env, current_step)
+    if current_step not in config_dict[soft_env]:
+        log = "Error: Lack {0} export under {1}".format(current_step, soft_env)
         return log, result
 
-    if not config_dict[current_step][soft_env]:
+    if not config_dict[soft_env][current_step]["files"]:
         log = "Error: Lack export function  under {0}| {1}".format(current_step, soft_env)
         return log, result
 
 
-    export_func = config_dict[current_step][soft_env]
-    export_fold = tempfile.tempdir()
-    if not os.path.exists(export_fold):
-        os.makedirs(export_fold)
+    try:
+        for file_name, infos in config_dict[soft_env][current_step]["files"].items():
+            export_file = os.path.join(export_fold, file_name.replace("XXX", current_asset))
 
-    run_func = getattr(ExportFunction, export_func)
-    log, result = run_func(export_fold)
+            export_func_name = config_dict[soft_env][current_step]["function"]
+            export_func = getattr(ExportFunction, export_func_name)
+            export_func(export_file, infos, current_step)
+    except Exception as e:
 
-    shutil.rmtree(export_fold)
+        log = "Error: "+e
 
     return log, result
-
-
-
 
 
 

@@ -13,7 +13,11 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
 from AssetBrowser import resources_rc
-from AssetBrowser.view.baseWidget import TreeWidgetDrop
+import AssetBrowser.view.baseWidget as baseWidget
+import imp
+imp.reload(baseWidget)
+
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -315,7 +319,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2 = QVBoxLayout(self.groupBox_4)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.listWidget = TreeWidgetDrop(self.groupBox_4)
+        self.listWidget = baseWidget.TreeWidgetDrop(self.groupBox_4)
         self.listWidget.setObjectName(u"listWidget")
         # self.splitter_2.setStretchFactor()
 
@@ -337,12 +341,10 @@ class Ui_MainWindow(object):
         self.splitter_2.addWidget(self.groupBox_5)
 
         self.verticalLayout_5.addWidget(self.splitter_2)
-
         self.exportBtn = QPushButton(self.tab)
         self.exportBtn.setObjectName(u"exportBtn")
         self.exportBtn.setCursor(QCursor(Qt.PointingHandCursor))
         self.verticalLayout_5.addWidget(self.exportBtn)
-
         self.publishBtn = QPushButton(self.tab)
         self.publishBtn.setObjectName(u"publishBtn")
         self.publishBtn.setCursor(QCursor(Qt.PointingHandCursor))
@@ -415,6 +417,12 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.addWidget(self.show_log_check)
         self.show_log_check.setChecked(False)
         self.verticalLayout_7.addWidget(self.groupBox_log)
+        # self.verticalLayout_7.setStretch(0, 0)
+        # self.verticalLayout_7.setStretch(1, 0)
+        # self.verticalLayout_7.setStretch(2, 0)
+        # self.verticalLayout_7.setStretch(3, 0)
+        # self.verticalLayout_7.setStretch(4, 5)
+        # self.verticalLayout_7.setStretch(5, 2)
 
 
         MainWindow.setCentralWidget(self.centralwidget)
