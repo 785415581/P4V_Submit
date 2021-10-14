@@ -409,7 +409,8 @@ class AppFunc():
             if result:
                 self.add_log(log)
                 self.view.listWidget.clear()
-                self.view.listWidget.createItem(export_fold)
+                for sub in os.listdir(export_fold):
+                    self.view.listWidget.createItem(sub)
             else:
                 self.add_log(log, e=True)
                 shutil.rmtree(export_fold)

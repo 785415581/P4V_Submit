@@ -12,6 +12,9 @@ class MayaExport():
 
     def scene_check(self):
         self.check_hierarcy()
+        self.log = u"Success:场景检查通过"
+        self.result = True
+
 
 
     def check_hierarcy(self):
@@ -32,7 +35,10 @@ class MayaExport():
             self.result = False
             return
 
+
     def export_publish_level(self, export_file, export_level):
+        self.log = ""
+        self.result = False
         if not pm.PyNode(export_level).listRelatives():
             self.log = u"Error:检查组{0}".format(export_level)
             self.result = False
