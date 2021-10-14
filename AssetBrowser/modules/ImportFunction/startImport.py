@@ -40,12 +40,11 @@ def start_import(import_model, select_file, current_step):
 
 
 def read_config():
-    new_dict={}
-    config_json = os.path.join(os.path.basename(__file__), "config.json")
-    with open(config_json, "w") as f:
-        json.dump(new_dict, f)
+    config_json = os.path.join(os.path.dirname(__file__), "config.json")
+    with open(config_json, "r") as f:
+        new_dict = json.load(f)
+        f.close()
     return new_dict
-
 def get_env():
     module_path = os.__file__
     if "Engine\Binaries\ThirdParty" in module_path:

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-import pyeml.core as pm
+import pymel.core as pm
 import maya.cmds as cmds
 from ..global_setting import MAYALEVEL
 class MayaExport():
@@ -11,20 +11,20 @@ class MayaExport():
         #self.scene_check(step)
 
     def scene_check(self):
-        self.check_hierarcy(self.publish_step)
+        self.check_hierarcy()
 
 
     def check_hierarcy(self):
         #todo waiting to judge step name with s or not
-        self.root_nodes = MAYALEVEL[self.step]
-        work_paths = MAYALEVEL[self.step]["work"]
+        self.root_nodes = MAYALEVEL[self.publish_step]
+        work_paths = MAYALEVEL[self.publish_step]["work"]
         exist = False
         has_child = False
         for work_path in work_paths:
-            if pm.objectExists(work_path):
+            if pm.objExists(work_path):
                 exist=True
 
-            if pm.objectExists(work_path) and pm.PyNode(work_path).listRelatives():
+            if pm.objExists(work_path) and pm.PyNode(work_path).listRelatives():
                 has_child = True
 
         if (not exist) or (not has_child):

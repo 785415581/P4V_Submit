@@ -5,10 +5,16 @@ import re
 class P4Client(object):
     def __init__(self):
         self._serverPort = "10.0.201.12:1666"
-        self.user = None
+
         self.client = None
         self.password = None
         self.clientRoot = None
+
+        p = subprocess.Popen(r"p4 -Ztag -F %User% user -o", stdout=subprocess.PIPE, shell=True)
+        outlines = p.stdout.readlines()
+        if outlines:
+            out = outlines[-1].strip()
+            self._user = str(out.decode("utf-8"))
 
     @property
     def serverPort(self):
@@ -20,12 +26,6 @@ class P4Client(object):
 
     @property
     def user(self):
-        p = subprocess.Popen(r"p4 -Ztag -F %User% user -o", stdout=subprocess.PIPE, shell=True)
-        outlines = p.stdout.readlines()
-        if outlines:
-            out = outlines[-1].strip()
-            self._user = str(out.decode("utf-8"))
-
         return self._user
 
     @user.setter
@@ -118,6 +118,7 @@ class P4Client(object):
         userName = self.user
         password = self.password
         cmd = '{script} {user} {password}'.format(script=initWorkSpaceScriptPath, user=userName, password=password)
+        print(cmd)
         import subprocess
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
         out = p.stdout.readlines()[-1].strip()

@@ -6,6 +6,9 @@ sys.path.append("R:\ProjectX\Scripts\Python37\Lib\site-packages")
 import yaml
 import subprocess
 from collections import OrderedDict
+import AssetBrowser.modules.global_setting as global_setting
+import imp
+imp.reload(global_setting)
 
 class Utils:
     def __init__(self):
@@ -24,15 +27,15 @@ class Utils:
         assetType = self.control.appFunction.typeComboBoxText
         assetName = self.control.appFunction.assetNameComboBoxText
         assetPath = os.path.join(clientRoot, assetType, assetName)
-        if not os.path.isdir(assetPath):
-            os.mkdir(assetPath)
-        with open(os.path.join(os.path.dirname(__file__), 'config.yml'), 'r') as fp:
-            config = yaml.load(fp.read(), Loader=yaml.FullLoader)
-            childFolder = config[assetType]
-            if childFolder:
-                for folder in childFolder:
-                    folderPath = os.path.join(assetPath, folder)
-                    os.mkdir(folderPath)
+        # if not os.path.isdir(assetPath):
+        #     os.mkdir(assetPath)
+        # with open(os.path.join(os.path.dirname(__file__), 'config.yml'), 'r') as fp:
+        #     config = yaml.load(fp.read(), Loader=yaml.FullLoader)
+        #     childFolder = config[assetType]
+        #     if childFolder:
+        #         for folder in childFolder:
+        #             folderPath = os.path.join(assetPath, folder)
+        #             os.mkdir(folderPath)
 
     def formatName(self, filePath):
         aType = self.control.appFunction.typeComboBoxText
@@ -66,8 +69,10 @@ class Utils:
         data_dicts = OrderedDict()
         half_file_dicts = {}
         full_file_dicts = {}
+        asset_type_filter = "|".join(global_setting.ASSETTYPE)
+        submit_step_filter = "|".join(global_setting.STEP)
 
-        p = re.compile(r"//Assets/main/Assets/(Animal|Character|Fashion|Weapon)/(.+)/(Animations|Meshes|Textures)/(\S+)")
+        p = re.compile(r"//Assets/main/Assets/("+ asset_type_filter +")/(.+)/("+ submit_step_filter + ")/(\S+)")
         for p4_file_path, infos in p4_file_infos.items():
             match = p.match(p4_file_path)
             if match:

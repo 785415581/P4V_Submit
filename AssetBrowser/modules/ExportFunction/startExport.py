@@ -1,9 +1,9 @@
+# -*- coding: utf-8 -*-
 
 import json
 import os
-import AssetBrowser.modules.ExportFunction as ExportFunction
-import tempfile
-import shutil
+import importlib
+import imp
 
 def start_export(current_type, current_asset, current_step, export_fold):
     log = ""
@@ -30,11 +30,16 @@ def start_export(current_type, current_asset, current_step, export_fold):
             export_file = os.path.join(export_fold, file_name.replace("XXX", current_asset))
 
             export_func_name = config_dict[soft_env][current_step]["function"]
-            export_func = getattr(ExportFunction, export_func_name)
-            export_func(export_file, infos, current_step)
+            module_path = ".".join(export_func_name.split(".")[:-1])
+
+            export_module = importlib.import_module("AssetBrowser.modules.ExportFunction."+module_path)
+            imp.reload(export_module)
+
+            export_func = getattr(export_module, export_func_name.split(".")[-1])
+            log, result = export_func(export_file, infos, current_step)
     except Exception as e:
 
-        log = "Error: "+e
+        log = "Error: "+str(e)
 
     return log, result
 
@@ -42,10 +47,11 @@ def start_export(current_type, current_asset, current_step, export_fold):
 
 
 def read_config():
-    new_dict={}
-    config_json = os.path.join(os.path.basename(__file__), "config.json")
-    with open(config_json, "w") as f:
-        json.dump(new_dict, f)
+
+    config_json = os.path.join(os.path.dirname(__file__), "config.json")
+    with open(config_json, "r") as f:
+        new_dict = json.load(f)
+        f.close()
     return new_dict
 
 def get_env():

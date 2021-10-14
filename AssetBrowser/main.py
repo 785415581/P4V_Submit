@@ -79,7 +79,8 @@ class MainWindow(QtWidgets.QMainWindow):
             if watched is self.ui.assetNameComboBox:
                 key = event.key()
                 if key == QtCore.Qt.Key_Enter or key == QtCore.Qt.Key_Return:
-                    self.control.createAsset(self.control)
+                    pass
+                    # self.control.createAsset(self.control)
             elif watched is self.ui.submitStepCom:
                 print('222')
         return QtCore.QObject.eventFilter(self, watched, event)
@@ -96,7 +97,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if btnName == "connectBtn":
             self.control.p4Model.user = self.ui.userLn.currentText()
             self.control.p4Model.password = self.ui.passwordLn.text()
-            print(11111111111, self.control.p4Model.user)
 
             self.control.p4Model.validation()
             self.control.p4Model.initAssetsClient()

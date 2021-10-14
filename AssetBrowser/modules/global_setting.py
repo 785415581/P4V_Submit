@@ -3,7 +3,7 @@
 
 cmd_out_decode = "utf-8"
 ASSETTYPE=["Animal", "Character", "Fashion", "Weapon"]
-STEP=["Animation", "Mesh", "Texture"]
+STEP=["Animation", "Mesh", "Rig", "Texture"]
 
 MAYALEVEL = {
     "Rig":{
@@ -26,8 +26,3 @@ MAYALEVEL = {
 }
 
 
-FILENAME={
-    "Rig":{
-        "SK_%asset%"
-    }
-}

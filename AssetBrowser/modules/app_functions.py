@@ -7,17 +7,21 @@ from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
 import AssetBrowser.modules.app_setting as app_setting
+import AssetBrowser.modules.global_setting as global_setting
 import AssetBrowser.utils.Leaf as Leaf
 import AssetBrowser.utils.utils as utils
 import AssetBrowser.utils.P4Utils as P4Utils
 import AssetBrowser.modules.ImportFunction.startImport as startImport
+import AssetBrowser.modules.ExportFunction.startExport as startExport
 
 import imp
 imp.reload(app_setting)
+imp.reload(global_setting)
 imp.reload(Leaf)
 imp.reload(utils)
 imp.reload(P4Utils)
 imp.reload(startImport)
+imp.reload(startExport)
 import tempfile
 import shutil
 
@@ -93,7 +97,7 @@ class AppFunc():
         current_type = self.view.typeComboBox.currentText()
         self.view.assetNameComboBox.addItems(self.data_dict[current_type].keys())
         current_asset = self.view.assetNameComboBox.currentText()
-        self.view.submitStepCom.addItems(self.data_dict[current_type][current_asset])
+        self.view.submitStepCom.addItems(global_setting.STEP)
 
 
 
@@ -111,14 +115,14 @@ class AppFunc():
 
     def changeAsset(self, index):
         print("change asset")
-        self.view.submitStepCom.clear()
-        current_type = self.view.typeComboBox.currentText()
-        current_asset = self.view.assetNameComboBox.currentText()
-        if current_type not in self.data_dict:
-            return
-        if current_asset not in self.data_dict[current_type]:
-            return
-        self.view.submitStepCom.addItems(self.data_dict[current_type][current_asset])
+        #self.view.submitStepCom.clear()
+        # current_type = self.view.typeComboBox.currentText()
+        # # current_asset = self.view.assetNameComboBox.currentText()
+        # if current_type not in self.data_dict:
+        #     return
+        # if current_asset not in self.data_dict[current_type]:
+        #     return
+        # self.view.submitStepCom.addItems(self.data_dict[current_type][current_asset])
 
         self.setTreeWidget()
 
@@ -137,12 +141,17 @@ class AppFunc():
         value = self.appSetting.getConfig()
         # self.view.serverLn.addItems(value['serverPort'])
         # self.view.workLn.addItems(value['workSpace'])
-        if self.p4Model.user:
-            user = self.p4Model.user
-            self.view.userLn.insertItem(0, user)
-            self.view.userLn.setCurrentIndex(0)
-            if user in value:
-                self.view.passwordLn.setText(value[user])
+        if "users" in value and value["users"]:
+            first_user = list(value["users"].keys())[0]
+            first_passward = list(value["users"].values())[0]
+        else:
+            first_user = self.p4Model.user
+            first_passward = self.p4Model.password
+
+
+        self.view.userLn.insertItem(0, first_user)
+        self.view.userLn.setCurrentIndex(0)
+        self.view.passwordLn.setText(first_passward)
 
     def showWorkTreeHandle(self, pos):
         contextMenuTree = QtWidgets.QMenu()
@@ -232,6 +241,7 @@ class AppFunc():
         current_asset = self.view.assetNameComboBox.currentText()
         current_step = self.view.submitStepCom.currentText()
         data_key = "{0}_{1}_{2}".format(current_type, current_asset, current_step)
+        print(self.half_file_dict)
         if data_key not in self.half_file_dict:
             return
 
@@ -280,7 +290,7 @@ class AppFunc():
         rootItem.setText(0, os.path.basename("..."))
 
         for first_node in root_nodes:
-            print(first_node.to_json())
+
             self.set_tree(rootItem, first_node.to_json())
 
         self.view.workTree.setSortingEnabled(True)
@@ -390,19 +400,20 @@ class AppFunc():
         current_step = self.view.submitStepCom.currentText()
 
         if model == "ExportScene":
-            export_fold = tempfile.tempdir()
+            export_fold = tempfile.mkdtemp()
             if not os.path.exists(export_fold):
                 os.makedirs(export_fold)
-            from .ExportFunction.startExport import start_export
-            log, result = start_export(current_type, current_asset, current_step, export_fold)
+
+            log, result = startExport.start_export(current_type, current_asset, current_step, export_fold)
 
             if result:
                 self.add_log(log)
                 self.view.listWidget.clear()
                 self.view.listWidget.createItem(export_fold)
             else:
-                shutil.rmtree(export_fold)
                 self.add_log(log, e=True)
+                shutil.rmtree(export_fold)
+
 
 
         elif model == "Publish":
@@ -425,7 +436,8 @@ class AppFunc():
 
         # if serverPort not in configValue['serverPort']:
         #     configValue['serverPort'].append(serverPort)
-        configValue[user]=password
+
+        configValue.setdefault("users", {})[user]=password
 
         self.appSetting.setConfig(configValue)
 

@@ -3,29 +3,29 @@
 
 {
   "Maya": {
-    "Meshes": {
-      "function": "mayaDefaultExport.defaultExport",
+    "Mesh": {
+      "function": "mayaDefaultExport.default_export",
       "files": {
         "SM_XXX.ma": "|master",
         "SM_XXX.fbx": "|master"
       }
     },
     "Rig": {
-      "function": "mayaDefaultExport.defaultExport",
+      "function": "mayaDefaultExport.default_export",
       "files": {
         "SK_XXX.ma": "|master",
         "SK_XXX.fbx": "|master"
       }
     },
-    "Animations": {
-      "function": "mayaDefaultExport.defaultExport",
+    "Animation": {
+      "function": "mayaDefaultExport.default_export",
       "files": {
         "XXX_Idle.ma": "|ani|Idle",
         "XXX_Idle.fbx": "|ani|Idle",
         "XXX_Walk.ma": "|ani|Walk",
         "XXX_Walk.ma": "|ani|Walk",
         "XXX_Run.ma": "|ani|Run",
-        "XXX_Run.ma": "|ani|Run",
+        "XXX_Run.ma": "|ani|Run"
       }
     }
 
