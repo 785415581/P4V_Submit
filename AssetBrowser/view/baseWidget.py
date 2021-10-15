@@ -87,7 +87,9 @@ class TreeWidgetDrop(QtWidgets.QTreeWidget):
             current_item.setText(0, file_name)
 
         if os.path.isfile(real_path):
-            current_item.setWhatsThis(0, "fullPath:"+ real_path)
+            current_item.setWhatsThis(0, "fullPath:"+ os.path.abspath(real_path))
+        else:
+            print(real_path, os.path.isfile(real_path))
 
         parent_item_dict = {}
         parent_item_dict[real_path] = current_item
@@ -102,7 +104,8 @@ class TreeWidgetDrop(QtWidgets.QTreeWidget):
                     parent_item_dict[dir_full_path] = item
                 for file in files:
                     item = QtWidgets.QTreeWidgetItem(parent_item)
-                    item.setWhatsThis(0, "fullPath:"+os.path.join(root, file))
+                    item.setWhatsThis(0, u"fullPath:"+ os.path.abspath(os.path.join(root, file)))
+                    print(88888888888888, os.path.join(root, file))
                     item.setText(0, file)
 
     def dragEnterEvent(self, event):

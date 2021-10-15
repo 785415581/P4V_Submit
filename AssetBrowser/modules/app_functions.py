@@ -93,9 +93,9 @@ class AppFunc():
 
         self.full_file_dict, self.half_file_dict, self.data_dict = utils.Utils().getAssetsData(self.p4_file_infos)
 
-        self.view.typeComboBox.addItems(self.data_dict.keys())
+        self.view.typeComboBox.addItems(list(self.data_dict.keys()))
         current_type = self.view.typeComboBox.currentText()
-        self.view.assetNameComboBox.addItems(self.data_dict[current_type].keys())
+        self.view.assetNameComboBox.addItems(list(self.data_dict[current_type].keys()))
         current_asset = self.view.assetNameComboBox.currentText()
         self.view.submitStepCom.addItems(global_setting.STEP)
 
@@ -110,7 +110,7 @@ class AppFunc():
         if currentType not in self.data_dict:
             return
 
-        self.view.assetNameComboBox.addItems(self.data_dict[currentType].keys())
+        self.view.assetNameComboBox.addItems(list(self.data_dict[currentType].keys()))
         self.setTreeWidget()
 
     def changeAsset(self, index):
@@ -265,7 +265,7 @@ class AppFunc():
 
             if lines[0] not in [exist_node.name for exist_node in root_nodes]:
                 first_node = Leaf.Leaf(lines[0])
-                first_node.set_fullPath("halfPath:{0}".format(first_node.name))
+                first_node.set_fullPath(u"halfPath:{0}".format(first_node.name))
                 root_nodes.append(first_node)
 
             cur_node = first_node
@@ -273,7 +273,7 @@ class AppFunc():
             nodes = []
             for tmp in range(1, len(lines)):
                 node = Leaf.Leaf(name=lines[tmp])
-                node.set_fullPath("halfPath:{0}".format(lines[tmp]))
+                node.set_fullPath(u"halfPath:{0}".format(lines[tmp]))
                 nodes.append(node)
             for node in nodes:
                 if node.name not in [child.name for child in cur_node.children]:
@@ -400,9 +400,11 @@ class AppFunc():
         current_step = self.view.submitStepCom.currentText()
 
         if model == "ExportScene":
-            export_fold = tempfile.mkdtemp()
-            if not os.path.exists(export_fold):
-                os.makedirs(export_fold)
+            publish_temp_fold = os.path.join(tempfile.tempdir, "publish_temp")
+            if not os.path.exists(publish_temp_fold):
+                os.mkdir(publish_temp_fold)
+
+            export_fold = os.path.realpath(tempfile.mkdtemp(dir=publish_temp_fold))
 
             log, result = startExport.start_export(current_type, current_asset, current_step, export_fold)
 
@@ -410,7 +412,7 @@ class AppFunc():
                 self.add_log(log)
                 self.view.listWidget.clear()
                 for sub in os.listdir(export_fold):
-                    self.view.listWidget.createItem(sub)
+                    self.view.listWidget.createItem(os.path.join(export_fold, sub))
             else:
                 self.add_log(log, e=True)
                 shutil.rmtree(export_fold)
