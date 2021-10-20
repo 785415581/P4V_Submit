@@ -124,6 +124,52 @@ class P4Client(object):
         out = p.stdout.readlines()[-1].strip()
         self.client = str(out.decode("utf-8"))
 
+    def createNewChangelist(self, description="My pending change"):
+        cmd = 'p4 --field "Description={0}" change -o | p4 change -i'.format(description)
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        create_info, err = process.communicate()
+        if err:
+            return err, False
+        change_re = re.compile(r"Change (\d+) created ")
+        match = change_re.match(create_info)
+        if not match:
+            return "Error: Failed to create new changelist", False
+
+        return match.groups[0], False
+
+    def addChangeList(self, local_files):
+        data_keys = ["depotFile", "clientFile", "headRev", "headChange", "haveRev", "headAction"]
+        format_keys = ["%{0}%".format(data_key) for data_key in data_keys]
+        filters = ";;".join(format_keys)
+        add_key = "%no such file%"
+        new_change, res = self.createNewChangelist("Auto Publish")
+        if not res:
+            return new_change, res
+        for local_file in local_files:
+            cmd_stat = "p4 -F " + filters + " -ztag fstat " + local_file
+            process = subprocess.Popen(cmd_stat, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            res_files, err = process.communicate()
+
+            for res in res_files.decode('utf-8').split('\r\n'):
+                if not res:
+                    continue
+                data_values = res.split(";;")
+                if not data_values[0]:
+                    add_cmd = "p4 add -d -c {0} {1}".format(new_change, local_file)
+                else:
+                    add_cmd = "p4 edit -c {0} {1}".format(new_change, local_file)
+
+                process = subprocess.Popen(add_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                out, err = process.communicate()
+                if err:
+                    return err, False
+
+                return out, True
+
+
+
+
+
 
     def getFiles(self, rootPath):
         file_dict = {}
