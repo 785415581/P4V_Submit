@@ -5,6 +5,7 @@ class BasePublish(object):
 
     def __init__(self):
         self._control = None
+        self._changelist = None
 
     @property
     def control(self):
@@ -34,32 +35,16 @@ class BasePublish(object):
         if self.control:
             return self.control.utils
 
-    def publish(self):
-        """Publish files from drag in widget files"""
-        info = self.getSubmitFilesInfo()
-        print(info)
 
-    def replaceFile(self):
-        """replace local file and submit file to P4"""
-        pass
+    def addChangeList(self, ws_file):
+        # p4 查询状态，处理
 
-    def getSubmitFilesInfo(self):
-        res = dict()
-        itemsCount = self.view.listWidget.count()
-        for index in range(itemsCount):
-            item = self.view.listWidget.item(index)
-            res[item.filePath] = {}
-            res[item.filePath]['fileName'] = item.fileBaseName.text()
-            res[item.filePath]['isChecked'] = item.exportCheck.isChecked()
-            res[item.filePath]['submitPath'] = self.view.currentPathCombox.currentText()
-            res[item.filePath]['type'] = self.view.typeComboBox.currentText()
-            res[item.filePath]['step'] = self.view.submitStepCom.currentText()
-            if item.exportCheck.isChecked():
-                res[item.filePath]['exportType'] = item.exportType.currentText()
-                if hasattr(item.exportPath, 'exportDirectory'):
-                    res[item.filePath]['exportPath'] = item.exportPath.exportDirectory
-        return res
+        return self._changelist, True
 
-    def combineConfig(self):
-        info = self.getSubmitFilesInfo()
-        config = self.utils.getConfig()
+    def submit(self):
+        if not self._changelist:
+            return "Error: failed to get changelist", False
+
+        return "Sucess: finish submit changelist,{0}".format(str(self._changelist)), True
+
+
