@@ -2,6 +2,8 @@
 import pymel.core as pm
 import maya.cmds as cmds
 from ..global_setting import MAYALEVEL
+
+
 class MayaExport():
     def __init__(self, step):
         self.log = ""
@@ -11,13 +13,16 @@ class MayaExport():
         #self.scene_check(step)
 
     def scene_check(self):
-        self.check_hierarcy()
+        self.check_hierarchy()
         self.log = u"Success:场景检查通过"
         self.result = True
 
+    def unit_check(self):
+        liner = cmds.currentUnit(query=True, linear=True)
+        if liner not is "cm":
+            return False
 
-
-    def check_hierarcy(self):
+    def check_hierarchy(self):
         #todo waiting to judge step name with s or not
         self.root_nodes = MAYALEVEL[self.publish_step]
         work_paths = MAYALEVEL[self.publish_step]["work"]
@@ -34,7 +39,6 @@ class MayaExport():
             self.log = u"Error:检查组{0}".format(";".join(work_paths))
             self.result = False
             return
-
 
     def export_publish_level(self, export_file, export_level):
         self.log = ""

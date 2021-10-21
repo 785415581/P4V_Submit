@@ -5,7 +5,7 @@
   "Maya": {
     "import": {
       "default": "mayaFunctions.MayaImport",
-      "beforce": "",
+      "before": "",
       "after": "",
       "ext": {
         "fbx": "mayaFunctions.MayaImportFBX",
@@ -19,7 +19,7 @@
     "reference":
     {
       "default": "mayaFunctions.MayaReference",
-      "beforce": "",
+      "before": "",
       "after": "",
       "ext": {
         "fbx": "mayaFunctions.MayaReferenceFBX",
@@ -31,23 +31,22 @@
     "open":
     {
       "default": "mayaFunctions.MayaOpen",
-      "beforce": "",
+      "before": "",
       "after": "",
       "ext": {
         "ma": "",
-        "mb": "",
+        "mb": ""
        }
     }
-
-
   },
+
   "Unreal": {
-    "Import": {
-      "default": "imFunctions.UEImport",
-      "beforce": "",
+    "import": {
+      "default": "unrealFunctions.UnrealImport",
+      "before": "",
       "after": "",
       "ext": {
-        "fbx": "imFunctions.UEImport",
+        "fbx": "unrealFunctions.UnrealImportFBX",
         "abc": "",
         "tiff": "",
         "png": ""
@@ -56,7 +55,7 @@
     "Open":
     {
       "default": "imFunctions.UEOpen",
-      "beforce": "",
+      "before": "",
       "after": "",
       "ext": {
         "uproject": "imFunctions.UEOpen"
@@ -65,10 +64,11 @@
 
 
   },
+
   "Houdini": {
     "Import": {
       "default": "imFunctions.HoudiniImport",
-      "beforce": "",
+      "before": "",
       "after": "",
       "ext": {
         "fbx": "",
@@ -80,7 +80,7 @@
     "Open":
     {
       "default": "imFunctions.HoudiniOpen",
-      "beforce": "",
+      "before": "",
       "after": "",
       "ext": {
         "hip": "imFunctions.HoudiniOpen"
