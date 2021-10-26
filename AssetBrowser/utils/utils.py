@@ -49,9 +49,13 @@ class Utils:
             return config
 
     @staticmethod
-    def getAssetPath(*argv):
-        depot_path_tem = "//Assets/main/Assets/{0}/{1}/{2}/{3}".format(*argv)
+    def getPathPre(*argv):
+        depot_path_tem = "{0}/Assets/{1}/{2}/{3}".format(*argv)
         return depot_path_tem
+
+
+
+
 
     @staticmethod
     def colorText(text, w=False, e=False):
@@ -83,8 +87,9 @@ class Utils:
                 if file_type not in data_dicts[asset_type][asset_name]:
                     data_dicts[asset_type][asset_name].append(file_type)
 
-                half_file_dicts.setdefault(data_key, []).append(half_path)
+
                 full_file_dicts.setdefault(data_key, []).append(p4_file_path)
+                half_file_dicts[p4_file_path] = half_path
 
 
 

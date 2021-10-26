@@ -54,6 +54,50 @@ class ListWidgetItem(QtWidgets.QListWidgetItem):
         self._filePath = value
 
 
+class PathTreeItem(QtWidgets.QTreeWidgetItem):
+    def __init__(self, source_path, source_model="local", parent=None):
+        super(PathTreeItem, self).__init__(parent)
+        self.setText(0, source_path.replace("\\", "/").split("/")[-1])
+
+        self.parentItem = None
+        self.half_path = ""
+        self.source_path = source_path
+        self.source_model = source_model
+        self.childItems = []
+
+        #todo waiting to debug type
+
+        flag = isinstance(parent, QtWidgets.QTreeWidgetItem)
+        if flag:
+            self.parentItem = parent
+            self.parentItem.childItems.append(self)
+
+        self.set_half_path()
+
+    def set_half_path(self):
+        current_text = "/"+self.text(0)
+        if self.parentItem:
+            self.half_path = self.parentItem.half_path + current_text
+        else:
+            self.half_path = current_text
+
+
+
+
+
+
+
+
+
+        """
+        item = QtWidgets.QTreeWidgetItem(parent)
+        item.setWhatsThis(0, leafName['path'])
+        item.setText(0, os.path.basename(leafName['name']))
+        """
+
+
+
+
 
 class TreeWidgetDrop(QtWidgets.QTreeWidget):
 
@@ -75,38 +119,23 @@ class TreeWidgetDrop(QtWidgets.QTreeWidget):
 
 
 
-    def createItem(self, real_path, parent_item=None):
-        file_name = real_path.replace("\\", "/")
-        file_name = file_name.split("/")[-1]
-
+    def createItem(self, real_path, parent_item=None, source_model=None):
+        real_path = real_path.replace("\\", "/")
         if parent_item:
-            current_item = QtWidgets.QTreeWidgetItem(parent_item)
-            current_item.setText(0, file_name)
+            current_item = PathTreeItem(real_path, source_model=source_model, parent=parent_item)
         else:
-            current_item = QtWidgets.QTreeWidgetItem(self)
-            current_item.setText(0, file_name)
+            current_item = PathTreeItem(real_path, source_model=source_model, parent=self)
 
-        if os.path.isfile(real_path):
-            current_item.setWhatsThis(0, "fullPath:"+ os.path.abspath(real_path))
-        else:
-            print(real_path, os.path.isfile(real_path))
 
-        parent_item_dict = {}
-        parent_item_dict[real_path] = current_item
         if os.path.isdir(real_path):
             for root, dirs, files in os.walk(real_path):
-                parent_item = parent_item_dict[root]
+                parent_item = current_item
                 for dir in dirs:
-                    item = QtWidgets.QTreeWidgetItem(parent_item)
-                    item.setText(0, dir)
-
                     dir_full_path = os.path.join(root, dir)
-                    parent_item_dict[dir_full_path] = item
+                    self.createItem(dir_full_path, source_model=source_model, parent_item=parent_item)
+
                 for file in files:
-                    item = QtWidgets.QTreeWidgetItem(parent_item)
-                    item.setWhatsThis(0, u"fullPath:"+ os.path.abspath(os.path.join(root, file)))
-                    print(88888888888888, os.path.join(root, file))
-                    item.setText(0, file)
+                    PathTreeItem(file, source_model=source_model, parent=parent_item)
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat("text/uri-list"):
@@ -117,24 +146,27 @@ class TreeWidgetDrop(QtWidgets.QTreeWidget):
 
     def dropEvent(self, event):
 
-        #todo copy file, then judge add or checkout
         currentItem = self.itemAt(event.pos())
+        if currentItem and ("." in currentItem.text(0)) and (not currentItem.childItems):
+            return
+
         drag_file = event.mimeData().text()
         if event.mimeData().hasFormat("text/uri-list"):
             real_path = drag_file.split("file:///")[-1]
-
-            self.createItem(real_path, currentItem)
+            self.createItem(real_path, source_model="drag", parent_item=currentItem)
+        #todo waiting to replace with copy drag item
         elif event.mimeData().hasFormat("application/x-qabstractitemmodeldatalist"):
             source_widget = event.source()
             items = source_widget.selectedItems()
             for item in items:
-                if currentItem:
-                    insert_item = QtWidgets.QTreeWidgetItem(currentItem)
-                else:
-                    insert_item = QtWidgets.QTreeWidgetItem(self)
-                insert_item.setText(0, item.text(0))
-                insert_item.setWhatsThis(0, item.whatsThis(0))
+                parentItem = currentItem if currentItem else self
+                self.accept_drag_items(item, parentItem)
 
+
+    def accept_drag_items(self, customItem, parentItem):
+        new_item = PathTreeItem(customItem.source_path, source_model="server", parent=parentItem)
+        for child_item in customItem.childItems:
+            self.accept_drag_items(child_item, new_item)
 
 
     def dragMoveEvent(self, event):

@@ -52,12 +52,16 @@ class MayaExport():
             self.log = u"Error:{0} 格式不支持导出".format(export_file.split(".")[-1])
             self.result = False
             return
+        pm.select(clear=True)
+        pm.select(export_level)
+
 
         #todo waiting to judge if fbx export need change
         cmds.file(export_file, force=True, typ=file_type, pr=True, es=True)
-
+        pm.select(clear=True)
         self.log = "Success!"
         self.result = True
+
 
 
 

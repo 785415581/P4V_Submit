@@ -44,7 +44,6 @@ class MainWindow(QtWidgets.QMainWindow):
         widgets.currentPathCombox.currentIndexChanged.connect(self.changeCurrentPath)
 
         widgets.connectBtn.clicked.connect(self.buttonClick)
-        widgets.publishBtn.clicked.connect(self.buttonClick)
 
 
         widgets.workTree.setDefaultDropAction(QtCore.Qt.CopyAction)
@@ -111,17 +110,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.control.appFunction.initWindow()
             else:
                 print('error')
-        elif btnName == "publishBtn":
-            step = self.control.appFunction.submitStepComText
-            if step:
-                stepClass = publishInterface.get_step_interface_class(stepName=step)
-                Interface = stepClass()
-                Interface.control = self.control
-                Interface.publish()
-            print('publishBtn')
-        elif btnName == "exportBtn":
-
-            pass
 
 
     def closeEvent(self, event):

@@ -18,6 +18,7 @@ class AlignDelegate(QtWidgets.QItemDelegate):
         option.displayAlignment = QtCore.Qt.AlignCenter
         QtWidgets.QItemDelegate.paint(self, painter, option, index)
 
+
 class Controller(QtCore.QObject):
     def __init__(self):
         super(Controller, self).__init__()

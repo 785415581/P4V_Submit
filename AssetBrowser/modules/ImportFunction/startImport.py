@@ -3,7 +3,7 @@ import json
 import os
 import AssetBrowser.modules.ImportFunction as ImportFunction
 
-def start_import(import_model, select_file, current_step):
+def start_import(import_model, select_file, **kwargs):
     log = ""
     result = False
     config_dict = read_config()
@@ -24,12 +24,14 @@ def start_import(import_model, select_file, current_step):
         log ="Error: Lack ext {0} ".format(ext)
         return log, False
 
+
     import_func = config_dict[soft_env][import_model]["default"]
     if config_dict[soft_env][import_model]["ext"][ext]:
         import_func = config_dict[soft_env][import_model]["ext"][ext]
 
     run_func = getattr(ImportFunction, import_func)
-    log, result = run_func(select_file, current_step)
+    obj = run_func(select_file, **kwargs)
+    log, result = obj.run()
 
     return log, result
 
@@ -55,3 +57,7 @@ def get_env():
         return "Houdini"
 
     return None
+if __name__ == '__main__':
+    import AssetBrowser.modules.ImportFunction as ImportFunction
+    run_func = getattr(ImportFunction, "mayaFunctions.MayaImport")
+    print(run_func)

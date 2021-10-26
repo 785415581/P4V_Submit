@@ -2,6 +2,27 @@ import maya.cmds as cmds
 import pymel.core as pm
 import os
 
+class ObjMaya():
+
+
+    def mayaImport(self):
+        pass
+
+    def mayaInportFBC(self):
+        pass
+
+
+class MayaImport:
+    @staticmethod
+    def mayaImport():
+        cmds.import()
+        ...
+    def mayaInportFBC(self):
+        cmds.setAttr
+        ...
+
+
+
 def createHierarchy(asset=False, shot=False):
     from Tools.maya.createhierarchy import createHierarchy
     createHierarchy(asset, shot)

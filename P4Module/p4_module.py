@@ -166,6 +166,26 @@ class P4Client(object):
 
                 return out, True
 
+    def getClienInfo(self):
+
+        data_keys = ["clientName", "clientRoot", "clientStream", "userName"]
+        format_keys = ["%{0}%".format(data_key) for data_key in data_keys]
+        filters = ";;".join(format_keys)
+        cmd = "p4 -F " + filters + " -ztag info"
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        infos, err = process.communicate()
+        file_dict ={}
+        for res in infos.decode('utf-8').split('\r\n'):
+            if not res:
+                continue
+            data_values = res.split(";;")
+
+
+            for index in range(len(data_keys)):
+                file_dict[data_keys[index]] = data_values[index]
+            # if re.findall(r'#\d+(.*?)delete(.*?)[)]', res):
+            #     continue
+        return file_dict
 
 
 
