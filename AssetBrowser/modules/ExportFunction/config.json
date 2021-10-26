@@ -23,9 +23,9 @@
         "XXX_Idle.ma": "|ani|Idle",
         "XXX_Idle.fbx": "|ani|Idle",
         "XXX_Walk.ma": "|ani|Walk",
-        "XXX_Walk.ma": "|ani|Walk",
+        "XXX_Walk_1.ma": "|ani|Walk",
         "XXX_Run.ma": "|ani|Run",
-        "XXX_Run.ma": "|ani|Run"
+        "XXX_Run_1.ma": "|ani|Run"
       }
     }
 
@@ -34,7 +34,7 @@
   "Unreal": {
     "Import": {
       "default": "imFunctions.UEImport",
-      "beforce": "",
+      "before": "",
       "after": "",
       "ext": {
         "fbx": "imFunctions.UEImport",
@@ -46,7 +46,7 @@
     "Open":
     {
       "default": "imFunctions.UEOpen",
-      "beforce": "",
+      "before": "",
       "after": "",
       "ext": {
         "uproject": "imFunctions.UEOpen"
@@ -58,7 +58,7 @@
   "Houdini": {
     "Import": {
       "default": "imFunctions.HoudiniImport",
-      "beforce": "",
+      "before": "",
       "after": "",
       "ext": {
         "fbx": "",
@@ -70,7 +70,7 @@
     "Open":
     {
       "default": "imFunctions.HoudiniOpen",
-      "beforce": "",
+      "before": "",
       "after": "",
       "ext": {
         "hip": "imFunctions.HoudiniOpen"

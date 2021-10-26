@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import json
 import os
+import imp
+import importlib
 import AssetBrowser.modules.ImportFunction as ImportFunction
 
+
 def start_import(import_model, select_file, **kwargs):
-    log = ""
     result = False
     config_dict = read_config()
     soft_env = get_env()
@@ -21,24 +23,25 @@ def start_import(import_model, select_file, **kwargs):
 
     ext = select_file.split(".")[-1]
     if ext not in config_dict[soft_env][import_model]["ext"]:
-        log ="Error: Lack ext {0} ".format(ext)
+        log = "Error: Lack ext {0} ".format(ext)
         return log, False
-
 
     import_func = config_dict[soft_env][import_model]["default"]
     if config_dict[soft_env][import_model]["ext"][ext]:
         import_func = config_dict[soft_env][import_model]["ext"][ext]
+    if not import_func:
+        log = "Error: no model! "
+        return log, False
 
-    run_func = getattr(ImportFunction, import_func)
-    obj = run_func(select_file, **kwargs)
-    log, result = obj.run()
+    module_path = ".".join(import_func.split(".")[:-1])
+
+    import_module = importlib.import_module("AssetBrowser.modules.ImportFunction." + module_path)
+    imp.reload(import_module)
+
+    run_func = getattr(import_module, import_func.split(".")[-1])
+    log, result = run_func(select_file, **kwargs)
 
     return log, result
-
-
-
-
-
 
 
 def read_config():
@@ -47,17 +50,28 @@ def read_config():
         new_dict = json.load(f)
         f.close()
     return new_dict
+
+
 def get_env():
     module_path = os.__file__
-    if "Engine\Binaries\ThirdParty" in module_path:
-        return "UE"
+    if "Engine/Binaries/ThirdParty" in module_path:
+        return "Unreal"
     if "Maya" in module_path:
         return "Maya"
     if "HOUDIN" in module_path:
         return "Houdini"
 
     return None
+
+
 if __name__ == '__main__':
-    import AssetBrowser.modules.ImportFunction as ImportFunction
-    run_func = getattr(ImportFunction, "mayaFunctions.MayaImport")
-    print(run_func)
+    print(os.__file__)
+    new_dict = read_config()
+    print(new_dict)
+    # from AssetBrowser.modules.ImportFunction import unrealFunctions
+    # import AssetBrowser.modules.ImportFunction as ImportFunction
+    # run_func = getattr(ImportFunction, "unrealFunctions.UnrealImport")
+    # print(run_func)
+    import_model = 'Unreal'
+    select_file = 'aaaaa.fbx'
+    start_import(import_model, select_file, type="Character", asset="aaa", step="Rig")
