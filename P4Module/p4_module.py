@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import subprocess
 import re
@@ -14,7 +15,7 @@ class P4Client(object):
         outlines = p.stdout.readlines()
         if outlines:
             out = outlines[-1].strip()
-            self._user = str(out.decode("utf-8"))
+            self._user = str(out.decode("utf-8", "ignore"))
 
     @property
     def serverPort(self):
@@ -124,47 +125,6 @@ class P4Client(object):
         out = p.stdout.readlines()[-1].strip()
         self.client = str(out.decode("utf-8"))
 
-    def createNewChangelist(self, description="My pending change"):
-        cmd = 'p4 --field "Description={0}" change -o | p4 change -i'.format(description)
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        create_info, err = process.communicate()
-        if err:
-            return err, False
-        change_re = re.compile(r"Change (\d+) created ")
-        match = change_re.match(create_info)
-        if not match:
-            return "Error: Failed to create new changelist", False
-
-        return match.groups[0], False
-
-    def addChangeList(self, local_files):
-        data_keys = ["depotFile", "clientFile", "headRev", "headChange", "haveRev", "headAction"]
-        format_keys = ["%{0}%".format(data_key) for data_key in data_keys]
-        filters = ";;".join(format_keys)
-        add_key = "%no such file%"
-        new_change, res = self.createNewChangelist("Auto Publish")
-        if not res:
-            return new_change, res
-        for local_file in local_files:
-            cmd_stat = "p4 -F " + filters + " -ztag fstat " + local_file
-            process = subprocess.Popen(cmd_stat, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            res_files, err = process.communicate()
-
-            for res in res_files.decode('utf-8').split('\r\n'):
-                if not res:
-                    continue
-                data_values = res.split(";;")
-                if not data_values[0]:
-                    add_cmd = "p4 add -d -c {0} {1}".format(new_change, local_file)
-                else:
-                    add_cmd = "p4 edit -c {0} {1}".format(new_change, local_file)
-
-                process = subprocess.Popen(add_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                out, err = process.communicate()
-                if err:
-                    return err, False
-
-                return out, True
 
     def getClienInfo(self):
 
@@ -172,10 +132,10 @@ class P4Client(object):
         format_keys = ["%{0}%".format(data_key) for data_key in data_keys]
         filters = ";;".join(format_keys)
         cmd = "p4 -F " + filters + " -ztag info"
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         infos, err = process.communicate()
         file_dict ={}
-        for res in infos.decode('utf-8').split('\r\n'):
+        for res in infos.decode('utf-8', "ignore").split('\r\n'):
             if not res:
                 continue
             data_values = res.split(";;")
@@ -197,14 +157,14 @@ class P4Client(object):
         data_keys = ["depotFile", "clientFile", "headRev", "headChange", "haveRev", "headAction"]
         format_keys = ["%{0}%".format(data_key) for data_key in data_keys]
         filters = ";;".join(format_keys)
-        cmd_files = "p4 -F "+filters+" -ztag fstat "+rootPath+"...#have"
-        process = subprocess.Popen(cmd_files, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cmd_files = "p4 -F "+filters+" -ztag fstat "+rootPath+"..."
+        process = subprocess.Popen(cmd_files, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         res_files, err = process.communicate()
         # print(res_files)
         dirs_set = set()
         #print(res_files.decode('utf-8'))
 
-        for res in res_files.decode('utf-8').split('\r\n'):
+        for res in res_files.decode('utf-8', "ignore").split('\r\n'):
             if not res:
                 continue
             data_values = res.split(";;")
@@ -219,12 +179,12 @@ class P4Client(object):
     def getVersions(self, full_path):
         version_list = []
 
-        cmd_files = 'p4 filelog ' + str(full_path)
+        cmd_files = 'p4 filelog -t "{0}"'.format(full_path)
 
-        process = subprocess.Popen(cmd_files, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen(cmd_files, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         res_files, err = process.communicate()
-        for res in res_files.decode('utf-8').split('\r\n'):
-            p = re.compile(r".+#(\d+) change \d+.+by \S+@.+")
+        for res in res_files.decode('utf-8', "ignore").split('\r\n'):
+            p = re.compile(r".+#(\d+) change (\d+) .+ on (.+) by (\S+)@.+ '(.+)'")
             match = p.match(res)
             if match:
                 version_list.append(match.groups())
@@ -233,18 +193,18 @@ class P4Client(object):
 
     def getLocalVersion(self, full_path):
         cmd_files = "p4 -F %haveRev% -ztag fstat {0}#have".format(full_path)
-        process = subprocess.Popen(cmd_files, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen(cmd_files, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         version, err = process.communicate()
         if version:
-            return version.decode("utf-8")
+            return version.decode("utf-8", "ignore")
         return None
 
     def getPath(self, have_path):
         cmd_files = "p4 where " + have_path
-        process = subprocess.Popen(cmd_files, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen(cmd_files, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         paths, err = process.communicate()
         if paths:
-            paths = paths.decode("utf-8")
+            paths = paths.decode("utf-8", "ignore")
             p = re.compile(r"(.+) (.+) (.+)")
             match = p.match(paths)
             if match:
@@ -253,13 +213,97 @@ class P4Client(object):
 
         return None, None, None
 
+    def createNewChangelist(self, description="My pending change"):
+        #todo test chinese
+        cmd = 'p4 --field "Description={0}" change -o | p4 change -i'.format(description)
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        create_info, err = process.communicate()
+
+        if err:
+            return err, False
+        change_re = re.compile(r"Change (\d+) created")
+        match = change_re.match(create_info.decode("utf-8", "ignore"))
+        if not match:
+            return "Error: Failed to create new changelist {0}".format(create_info), False
+
+        return match.groups()[0], True
+
+    def checkout(self, local_files, publish_log="Auto Publish"):
+        data_keys = ["depotFile", "clientFile", "headRev", "headChange", "haveRev", "headAction"]
+        format_keys = ["%{0}%".format(data_key) for data_key in data_keys]
+        filters = ";;".join(format_keys)
+        add_key = "%no such file%"
+
+        new_change, res = self.createNewChangelist(publish_log)
+        print(new_change, res)
+        if not res:
+            return new_change, res
+
+        for local_file in local_files:
+            cmd_stat = "p4 -F " + filters + " -ztag fstat " + local_file
+            process = subprocess.Popen(cmd_stat, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            res_files, err = process.communicate()
+
+            for res in res_files.decode('utf-8', "ignore").split('\r\n'):
+                if not res:
+                    continue
+                data_values = res.split(";;")
+
+                if not data_values[0]:
+                    add_cmd = "p4 add -d -c {0} {1}".format(new_change, local_file)
+                    process = subprocess.Popen(add_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                    out, err = process.communicate()
+                    out=out.decode('utf-8', "ignore")
+
+                    if err:
+                        return err, False
+                    if "reopen" in out:
+                        reopen_cmd = "p4 reopen -c {0} {1}".format(new_change, local_file)
+                        process = subprocess.Popen(reopen_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                        out, err = process.communicate()
+                else:
+                    edit_cmd = "p4 edit -c {0} {1}".format(new_change, local_file)
+                    print(edit_cmd)
+                    process = subprocess.Popen(edit_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                    out, err = process.communicate()
+                    out = out.decode("utf-8", "ignore")
+                    if "reopen" in out:
+                        reopen_cmd = "p4 reopen -c {0} {1}".format(new_change, local_file)
+                        process = subprocess.Popen(reopen_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                        out, err = process.communicate()
+
+
+                    sync_cmd = "p4 sync {0}".format(local_file)
+                    print(sync_cmd)
+                    process = subprocess.Popen(sync_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                    out, err = process.communicate()
+
+
+                    resolve_cmd = "p4 resolve -ay {0}".format(local_file)
+                    print(resolve_cmd)
+                    process = subprocess.Popen(resolve_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                    out, err = process.communicate()
+
+        return new_change, True
+
+
+    def submitChangelist(self, changeListNum):
+        submit_cmd = "p4 submit -c {0}".format(str(changeListNum))
+        process = subprocess.Popen(submit_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        out, err = process.communicate()
+        if err:
+            return err, False
+
+        return "Submit success!", True
 
 
 
-    def syncFile(self, p4File):
-        cmd = 'p4 sync -f {}'.format(p4File)
-        print(cmd)
-        os.popen(cmd)
+    def syncFile(self, p4File, version=None):
+        cmd = 'p4 sync -f "{}"'.format(p4File)
+        if version:
+            cmd = 'p4 sync -f "{0}"#{1}'.format(p4File, str(version))
+        p = subprocess.Popen(cmd, shell=True)
+        return_code = p.wait()
 
     def syncFiles(self, p4Files):
         for p4File in p4Files:

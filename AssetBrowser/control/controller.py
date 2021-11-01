@@ -57,7 +57,7 @@ class Controller(QtCore.QObject):
 
         self.view.workTree.clear()
         self.view.workTree.setColumnCount(3)
-        self.view.workTree.setHeaderLabels(["Files", "ServerVersion", "LocalVersion"])
+        self.view.workTree.setHeaderLabels(["Files", "LocalVersion", "ServerVersion"])
 
         self.view.workTree.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
 
@@ -74,11 +74,18 @@ class Controller(QtCore.QObject):
 
     def initSignal(self):
         self.view.workTree.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.view.listWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+
+
         self.view.assets_file_list.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.view.passwordBtn.pressed.connect(self.appFunction.showPassword)
         self.view.passwordBtn.released.connect(self.appFunction.hidePassword)
+
+        self.view.listWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.view.listWidget.customContextMenuRequested.connect(self.appFunction.showWorkTreeHandle)
+
+        self.view.history_list.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.view.history_list.customContextMenuRequested.connect(self.appFunction.showHistoryHandle)
+
         self.view.workTree.itemClicked.connect(self.appFunction.listPath)
         self.view.listWidget.itemClicked.connect(self.appFunction.printTest)
         self.view.assets_file_list.customContextMenuRequested.connect(self.appFunction.showWorkListHandle)
@@ -88,12 +95,13 @@ class Controller(QtCore.QObject):
         self.view.extend.stateChanged.connect(self.appFunction.extendTree)
         self.view.show_log_check.stateChanged.connect(self.appFunction.show_log)
 
-        self.view.import_select_button.pressed.connect(partial(self.appFunction.Import_btn_clicked, "import"))
-        self.view.reference_select_button.pressed.connect(partial(self.appFunction.Import_btn_clicked, "reference"))
-        self.view.open_select_button.pressed.connect(partial(self.appFunction.Import_btn_clicked, "open"))
-        self.view.down_asset_button.pressed.connect(partial(self.appFunction.Import_btn_clicked, "downAsset"))
+        self.view.import_select_button.clicked.connect(partial(self.appFunction.Import_btn_clicked, "import"))
+        self.view.reference_select_button.clicked.connect(partial(self.appFunction.Import_btn_clicked, "reference"))
+        self.view.open_select_button.clicked.connect(partial(self.appFunction.Import_btn_clicked, "open"))
+        self.view.down_asset_button.clicked.connect(partial(self.appFunction.Import_btn_clicked, "downAsset"))
         self.view.exportBtn.clicked.connect(partial(self.appFunction.Export_btn_clicked, "ExportScene"))
         self.view.publishBtn.clicked.connect(partial(self.appFunction.Export_btn_clicked, "Publish"))
+        # self.view.history_list.doubleClicked.connect(self.appFunction.change_version)
 
     def createAsset(self, control):
         self._utils.control = control

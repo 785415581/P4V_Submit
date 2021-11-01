@@ -1,7 +1,10 @@
 # -*- coding: UTF-8 -*-
 import pymel.core as pm
 import maya.cmds as cmds
-from ..global_setting import MAYALEVEL
+import imp
+from ..global_setting import MAYALEVEL, ANISTEP
+import AssetBrowser.view.baseWidget as baseWidget
+imp.reload(baseWidget)
 
 
 class MayaExport():
@@ -19,7 +22,7 @@ class MayaExport():
 
     def unit_check(self):
         liner = cmds.currentUnit(query=True, linear=True)
-        if liner not is "cm":
+        if liner != "cm":
             return False
 
     def check_hierarchy(self):
@@ -36,6 +39,7 @@ class MayaExport():
                 has_child = True
 
         if (not exist) or (not has_child):
+
             self.log = u"Error:检查组{0}".format(";".join(work_paths))
             self.result = False
             return
@@ -44,8 +48,8 @@ class MayaExport():
         self.log = ""
         self.result = False
         if not pm.PyNode(export_level).listRelatives():
-            self.log = u"Error:检查组{0}".format(export_level)
-            self.result = False
+            self.log = u"组{0}为空".format(export_level)
+            self.result = True
             return
 
         if export_file.endswith(".ma"):
@@ -58,12 +62,14 @@ class MayaExport():
             return
         pm.select(clear=True)
         pm.select(export_level)
-
+        # baseWidget.LogPlainText().add_log(export_level, e=True)
+        # baseWidget.LogPlainText().add_log(file_type, e=True)
+        # baseWidget.LogPlainText().add_log("33333333333333", e=True)
 
         #todo waiting to judge if fbx export need change
         cmds.file(export_file, force=True, typ=file_type, pr=True, es=True)
         pm.select(clear=True)
-        self.log = "Success!"
+        self.log = file_type
         self.result = True
 
 

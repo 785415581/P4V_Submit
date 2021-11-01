@@ -3,7 +3,9 @@
 
 cmd_out_decode = "utf-8"
 ASSETTYPE=["Animal", "Character", "Fashion", "Weapon"]
-STEP=["Animation", "Mesh", "Rig", "Texture"]
+ANISTEP = "Animation"
+STEP=[ANISTEP, "Mesh", "Rig", "Texture"]
+ANIMODEL = ["Idle", "Walk", "Run"]
 
 MAYALEVEL = {
     "Rig":{
@@ -18,7 +20,7 @@ MAYALEVEL = {
         "type": "asset"
     },
 
-    "Animation": {
+    ANISTEP: {
         "work": ["|ani|Idle", "|ani|Walk", "|ani|Run"],
         "publish": ["|ani|Idle", "|ani|Walk", "|ani|Run"],
         "type": "shot"

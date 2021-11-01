@@ -1,18 +1,19 @@
 
-import AssetBrowser.modules.publish_hooks.moveFile as moveFile
+import AssetBrowser.modules.publish_hooks.basePublish as basePublish
 
 import imp
-imp.reload(moveFile)
+imp.reload(basePublish)
 
-def startPublish(item_files, basePublish):
-    for item_file in item_files:
-        ws_file = moveFile(item_file)
-        log, res = basePublish.addChangeList(ws_file)
-        if not res:
-            return log, res
-        log, res = basePublish.submit()
-        if not res:
-            return log, res
+def startPublish(item_files, **kwargs):
+    basePublishInstance = basePublish.BasePublish()
+    basePublishInstance.p4Model = kwargs["p4model"]
+
+
+    log, res = basePublishInstance.checkout(item_files, publish_log=kwargs["log"])
+    if not res:
+        return log, res
+    log, res = basePublishInstance.submit()
+    return log, res
 
 
 

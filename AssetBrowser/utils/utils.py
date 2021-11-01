@@ -50,7 +50,8 @@ class Utils:
 
     @staticmethod
     def getPathPre(*argv):
-        depot_path_tem = "{0}/Assets/{1}/{2}/{3}".format(*argv)
+
+        depot_path_tem = "{0}/Assets/{1}/{2}/{3}/{4}".format(*argv)
         return depot_path_tem
 
 
@@ -61,11 +62,11 @@ class Utils:
     def colorText(text, w=False, e=False):
 
         if w:
-            text = "<span style=\" font-size:8pt; font-weight:600; color:#FFA500;\" > {0} </span>".format(text)
+            text = u"<span style=\" font-size:8pt; font-weight:600; color:#FFA500;\" > {0} </span>".format(text)
         elif e:
-            text = "<span style=\" font-size:8pt; font-weight:600; color:#FF0000;\" > {0} </span>".format(text)
+            text = u"<span style=\" font-size:8pt; font-weight:600; color:#FF0000;\" > {0} </span>".format(text)
         else:
-            text = "<span style=\" font-size:8pt; font-weight:600; color:#000000;\" > {0} </span>".format(text)
+            text = u"<span style=\" font-size:8pt; font-weight:600; color:#000000;\" > {0} </span>".format(text)
         return text
 
 
@@ -76,7 +77,7 @@ class Utils:
         asset_type_filter = "|".join(global_setting.ASSETTYPE)
         submit_step_filter = "|".join(global_setting.STEP)
 
-        p = re.compile(r"//Assets/main/Assets/("+ asset_type_filter +")/(.+)/("+ submit_step_filter + ")/(\S+)")
+        p = re.compile(r"//Assets/main/Assets/("+ asset_type_filter +")/(.+)/("+ submit_step_filter + ")/publish/(\S+)")
         for p4_file_path, infos in p4_file_infos.items():
             match = p.match(p4_file_path)
             if match:

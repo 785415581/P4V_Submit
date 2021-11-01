@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import re
 
 from PySide2 import QtCore
 from PySide2 import QtGui
@@ -10,9 +9,13 @@ import AssetBrowser.modules.app_setting as app_setting
 import AssetBrowser.modules.global_setting as global_setting
 import AssetBrowser.utils.Leaf as Leaf
 import AssetBrowser.utils.utils as utils
-import AssetBrowser.utils.P4Utils as P4Utils
+import AssetBrowser.utils.moveFile as moveFile
+
 import AssetBrowser.modules.ImportFunction.startImport as startImport
 import AssetBrowser.modules.ExportFunction.startExport as startExport
+
+import AssetBrowser.modules.publish_hooks.startPublish as startPublish
+
 import AssetBrowser.view.baseWidget as baseWidget
 
 import imp
@@ -20,12 +23,15 @@ imp.reload(app_setting)
 imp.reload(global_setting)
 imp.reload(Leaf)
 imp.reload(utils)
-imp.reload(P4Utils)
+
 imp.reload(startImport)
 imp.reload(startExport)
+imp.reload(moveFile)
+imp.reload(startPublish)
 imp.reload(baseWidget)
 import tempfile
 import shutil
+from functools import partial
 
 class AppFunc():
     def __init__(self):
@@ -96,10 +102,17 @@ class AppFunc():
         self.full_file_dict, self.half_file_dict, self.data_dict = utils.Utils().getAssetsData(self.p4_file_infos)
 
         self.view.typeComboBox.addItems(list(self.data_dict.keys()))
-        current_type = self.view.typeComboBox.currentText()
-        self.view.assetNameComboBox.addItems(list(self.data_dict[current_type].keys()))
-        current_asset = self.view.assetNameComboBox.currentText()
+        for default_type in global_setting.ASSETTYPE:
+            if default_type not in self.data_dict.keys():
+                self.view.typeComboBox.addItem(default_type)
+
         self.view.submitStepCom.addItems(global_setting.STEP)
+
+        current_type = self.view.typeComboBox.currentText()
+        if current_type in self.data_dict:
+            self.view.assetNameComboBox.addItems(list(self.data_dict[current_type].keys()))
+
+
 
     def changeType(self, index):
         print("change type")
@@ -147,26 +160,39 @@ class AppFunc():
         # actionC.setDisabled(True)
         print("run")
         current_item = self.view.listWidget.itemAt(pos)
-        if current_item:
-            actionA = QtWidgets.QAction('New Folder')
-            actionB = QtWidgets.QAction('Delete Folder')
-            actionC = QtWidgets.QAction('Sync to local')
-            #todo wait to judge file or fold to show actionC
-            # currentTreeItemPath = current_item.whatsThis(0)
-            # print(currentTreeItemPath)
+        actionNew =None
+        actionDel = None
+        if not current_item:
 
-            # if os.path.isfile(currentTreeItemPath):
-            #     contextMenuTree.addAction(actionC)
-            # app = QtWidgets.QApplication.instance()
-            # if app and 'maya' in app.applicationName().lower():
-            #     actionD = QtWidgets.QAction('import file')
-            #     contextMenuTree.addAction(actionD)
-            contextMenuTree.addAction(actionA)
-            contextMenuTree.addAction(actionB)
-            contextMenuTree.addAction(actionC)
-            actionA.triggered.connect(lambda: self.addFolder(self.view))
-            actionB.triggered.connect(lambda: self.deleteFolder(self.view))
-            actionC.triggered.connect(lambda: self.syncFile(self.view))
+            actionNew = QtWidgets.QAction('New Folder')
+
+            parent_item = current_item
+            
+        else:
+            if not ("." in current_item.text(0) and (not current_item.childItems)):
+                actionNew = QtWidgets.QAction('New Folder')
+            actionDel = QtWidgets.QAction('Delete')
+            parent_item = self.view.listWidget
+            
+        if actionNew:
+            contextMenuTree.addAction(actionNew)
+            actionNew.triggered.connect(partial(self.addFolder(parent_item)))
+        if actionDel:
+            contextMenuTree.addAction(actionDel)
+            actionDel.triggered.connect(partial(self.deleteItems(parent_item)))
+
+        contextMenuTree.exec_(QtGui.QCursor().pos())
+
+    def showHistoryHandle(self, pos):
+        contextMenuTree = QtWidgets.QMenu()
+
+        row = self.view.history_list.rowAt(pos.y())
+        data = self.view.history_list.model().itemData(self.view.history_list.model().index(row, 0))
+        if data:
+            actionNew = QtWidgets.QAction('Get This Resivion')
+            contextMenuTree.addAction(actionNew)
+            actionNew.triggered.connect(lambda: self.change_version(data))
+
 
         contextMenuTree.exec_(QtGui.QCursor().pos())
 
@@ -201,23 +227,21 @@ class AppFunc():
                                                                 os.path.dirname(item.filePath))
         item.exportPath.exportDirectory = outputPath
 
-    def addFolder(self, views):
-        print(views)
+    def addFolder(self, parent_item):
+        source_path = "/NewFolder"
+        if isinstance(parent_item, baseWidget.PathTreeItem):
+            source_path = parent_item.source_path + source_path
+        baseWidget.PathTreeItem(source_path, parent=parent_item)
 
-    def deleteFolder(self, views):
-        print(views)
+    def deleteItems(self, args):
+        print(args)
+        index = self.view.listWidget.indexFromItem(current_item)
+        self.view.listWidget.takeTopLevelItem(index)
 
-    def syncFile(self, view):
-        items = view.workTree.selectedItems()
-        self.validation()
-        for item in items:
-            p4Path = item.whatsThis(0)
-            if re.findall(r'#\d+(.*?)[)]', p4Path):
-                p4Path = re.sub(r'#\d+(.*?)[)]', str(), p4Path).replace('\\', '/')
-                P4Utils.syncFile(p4Path)
-            else:
-                p4Path = p4Path + '/...'
-                P4Utils.syncFile(p4Path)
+
+
+
+
 
     def __deleteItem(self, view):
         items = view.listview.selectedItems()
@@ -231,7 +255,7 @@ class AppFunc():
         current_asset = self.view.assetNameComboBox.currentText()
         current_step = self.view.submitStepCom.currentText()
         data_key = "{0}_{1}_{2}".format(current_type, current_asset, current_step)
-        print(self.full_file_dict)
+        #print(self.full_file_dict)
         if data_key not in self.full_file_dict:
             return
 
@@ -262,7 +286,7 @@ class AppFunc():
                 if matrix_index >= len(levels):
                     continue
 
-                current_path = levels[matrix_index]
+                current_path = server_file.split(levels[matrix_index])[0] + levels[matrix_index]
                 if (current_path not in level_items):
                     if matrix_index > 0:
                         parent = levels[matrix_index-1]
@@ -273,15 +297,17 @@ class AppFunc():
                     level_items[current_path] = item
                     levels[matrix_index] = item
                     if (matrix_index == len(levels)-1) and server_file in self.p4_file_infos:
-                        if self.p4_file_infos[server_file]["headRev"]:
-                            label = QtWidgets.QLabel(self.p4_file_infos[server_file]["headRev"])
-                            label.setAlignment(QtCore.Qt.AlignCenter)
-                            self.view.workTree.setItemWidget(item, 1, label)
-
                         if self.p4_file_infos[server_file]["haveRev"]:
                             label = QtWidgets.QLabel(self.p4_file_infos[server_file]["haveRev"])
                             label.setAlignment(QtCore.Qt.AlignCenter)
+                            self.view.workTree.setItemWidget(item, 1, label)
+                            item.have_rev = self.p4_file_infos[server_file]["haveRev"]
+
+                        if self.p4_file_infos[server_file]["headRev"]:
+                            label = QtWidgets.QLabel(self.p4_file_infos[server_file]["headRev"])
+                            label.setAlignment(QtCore.Qt.AlignCenter)
                             self.view.workTree.setItemWidget(item, 2, label)
+
                 else:
                     levels[matrix_index] = level_items[current_path]
 
@@ -295,6 +321,7 @@ class AppFunc():
         half_path = item.half_path
         servePre, localPre = self.getPathPre()
 
+
         res = servePre + half_path
         if self.clientRoot and res not in self.currentPathList:
             self.view.currentPathCombox.addItem(res.replace('\\', '/'))
@@ -303,10 +330,35 @@ class AppFunc():
             self.view.currentPathCombox.setItemData(index - 1, item, QtCore.Qt.UserRole)
         self.view.currentPathCombox.setCurrentText(res.replace('\\', '/'))
 
+        if self.view.show_history.isChecked():
+            version_list = self.p4Model.getVersions(item.source_path)
+            self.view.history_list.history_parent = item
+            self.view.history_list.model().setData(list(version_list))
+        else:
+            self.view.history_list.model().setData(list())
+
+    def change_version(self, item_data):
+        version = item_data[0]
+
+        sel_item = self.view.history_list.history_parent
+        if not sel_item:
+            print("No Asset select")
+            return
+
+        if sel_item.source_path in self.p4_file_infos:
+            self.p4Model.syncFile(sel_item.source_path, version=str(version))
+            self.p4_file_infos[sel_item.source_path]["haveRev"] = str(version)
+            sel_item.have_rev = str(version)
+
+        label = QtWidgets.QLabel(version)
+        label.setAlignment(QtCore.Qt.AlignCenter)
+        self.view.workTree.setItemWidget(sel_item, 1, label)
+
 
 
     def printTest(self, item):
         print(item.source_path)
+        print(item.half_path)
 
     def show_log(self):
         if self.view.show_log_check.isChecked():
@@ -337,23 +389,35 @@ class AppFunc():
         print("{0} btn pressed".format(model))
         sel_items = self.view.workTree.selectedItems()
         if not sel_items:
-            self.add_log(u"Warning:未选择文件",w=True)
+            self.add_log(u"Warning:未选择文件", w=True)
             return
 
         current_type = self.view.typeComboBox.currentText()
         current_asset = self.view.assetNameComboBox.currentText()
         current_step = self.view.submitStepCom.currentText()
 
-        servePre, localPre = self.getPathPre()
+        servePrePublish, localPrePublish = self.getPathPre()
+        # servePreWork, localPreWork = self.getPathPre("private")
         for item in sel_items:
             half_path = item.half_path.replace('\\', '/')
-            local_path = localPre + half_path
-            if local_path:
-                log, result = startImport.start_import(model, local_path, current_step)
+            local_pub_path = localPrePublish + half_path
+
+            if local_pub_path:
+                #sync local version first
+                self.p4Model.syncFile(local_pub_path, version=item.have_rev)
+                # #copy to private fold
+                # local_work_path = localPreWork + half_path
+                # moveFile.moveImportFile(local_pub_path, local_work_path)
+
+                #start import
+                log, result = startImport.start_import(model, local_pub_path, type=current_type,
+                                                       asset=current_asset, step=current_step, view=self.view)
                 if result:
                     self.add_log(log)
                 else:
                     self.add_log(log, e=True)
+
+        return "", True
 
     def Export_btn_clicked(self, model):
         current_type = self.view.typeComboBox.currentText()
@@ -370,9 +434,10 @@ class AppFunc():
 
             if result:
                 self.add_log(log)
-                self.view.listWidget.clear()
+                #self.view.listWidget.clear()
                 for sub in os.listdir(export_fold):
-                    self.view.listWidget.createItem(os.path.join(export_fold, sub), source_modle="export")
+
+                    self.view.listWidget.createItem(os.path.join(export_fold, sub), source_model="export")
             else:
                 self.add_log(log, e=True)
                 shutil.rmtree(export_fold)
@@ -380,22 +445,37 @@ class AppFunc():
 
 
         elif model == "Publish":
-            File_list = []
-            item = QtWidgets.QTreeWidgetItemIterator(self.view.listWidget)
-            while item.value():
-                print(11111111111111)
-                print(item)
-                item = item.__iadd__()
+            comment_log = self.view.textEdit.toPlainText()
+            servePre, localPre = self.getPathPre()
+            iter = QtWidgets.QTreeWidgetItemIterator(self.view.listWidget)
+            dst_files = []
+            while iter.value():
+                item = iter.value()
+                source_path = item.source_path
+                source_model = item.source_model
+                have_rev = item.have_rev
+                dst_path = localPre + item.half_path
+                moveFile.movePublishFile(source_path, dst_path, source_model, have_rev, self.p4Model)
+                dst_files.append(dst_path)
+                iter = iter.__iadd__(1)
 
-    def getPathPre(self):
+            log, result = startPublish.startPublish(dst_files, p4model=self.p4Model, log=comment_log)
+            if result:
+                self.add_log(log)
+
+            else:
+                self.add_log(log, e=True)
+            self.view.listWidget.clear()
+
+    def getPathPre(self, area="publish"):
         current_type = self.view.typeComboBox.currentText()
         current_asset = self.view.assetNameComboBox.currentText()
         current_step = self.view.submitStepCom.currentText()
         client_info_dict = self.p4Model.getClienInfo()
         client_root = client_info_dict["clientRoot"]
         client_stream = client_info_dict["clientStream"]
-        servePre = utils.Utils.getPathPre(client_stream, current_type, current_asset, current_step)
-        workPre = utils.Utils.getPathPre(client_root, current_type, current_asset, current_step)
+        servePre = utils.Utils.getPathPre(client_stream, current_type, current_asset, current_step, area)
+        workPre = utils.Utils.getPathPre(client_root, current_type, current_asset, current_step, area)
 
         return servePre.replace("\\", "/"), workPre.replace("\\", "/")
 

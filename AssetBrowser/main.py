@@ -3,18 +3,18 @@ import ctypes
 import os
 import sys
 sys.path.append("R:\ProjectX\Scripts\Python37\Lib\site-packages")
+import time
 from functools import partial
 
-from PySide2 import QtCore
-from PySide2 import QtGui
-from PySide2 import QtWidgets
-import AssetBrowser.publishInterface as publishInterface
+from PySide2 import QtCore, QtWidgets
+
+# import AssetBrowser.publishInterface as publishInterface
 import AssetBrowser.control.controller as controller
 import AssetBrowser.modules.ui_main as ui_main
 import AssetBrowser.view.baseWidget as baseWidget
 
 import imp
-imp.reload(publishInterface)
+# imp.reload(publishInterface)
 imp.reload(controller)
 imp.reload(ui_main)
 imp.reload(baseWidget)
@@ -27,19 +27,21 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None, *args):
         super(MainWindow, self).__init__(parent)
 
-        #todo treewidget waiting to deal with fold and file item
-        #todo darg fold need to do
-        #todo mark full path or half path on item,need to solve fold and file
         self.setWindowTitle(u'Publish for P4V中文')
         self.ui = ui_main.Ui_MainWindow()
         self.ui.setupUi(self)
+
+
+
         global widgets
         widgets = self.ui
         self.control = controller.Controller()
+
         self.control.view = widgets
         self.control.init()
         self.control.initSignal()
         self.control.appFunction.initUser()
+
 
         widgets.currentPathCombox.currentIndexChanged.connect(self.changeCurrentPath)
 
@@ -55,6 +57,7 @@ class MainWindow(QtWidgets.QMainWindow):
         widgets.assets_file_list.setSelectionMode(QtWidgets.QAbstractItemView.ContiguousSelection)
         widgets.assets_file_list.installEventFilter(self)
         widgets.assetNameComboBox.installEventFilter(self)
+
 
     def eventFilter(self, watched, event):
         if event.type() == QtCore.QEvent.DragEnter:
@@ -85,8 +88,9 @@ class MainWindow(QtWidgets.QMainWindow):
         return QtCore.QObject.eventFilter(self, watched, event)
 
     def changeCurrentPath(self, index):
-        treeWidgetItem = widgets.currentPathCombox.itemData(index, QtCore.Qt.UserRole)
-        widgets.workTree.setCurrentItem(treeWidgetItem)
+        pass
+        # treeWidgetItem = widgets.currentPathCombox.itemData(index, QtCore.Qt.UserRole)
+        # widgets.workTree.setCurrentItem(treeWidgetItem)
 
 
 
@@ -118,6 +122,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 if __name__ == '__main__':
+    from PySide2 import QtGui
     app = QtWidgets.QApplication(sys.argv)
     app.setWindowIcon(QtGui.QIcon("icon.png"))
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('Hero_Publish')

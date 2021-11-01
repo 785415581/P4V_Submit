@@ -5,6 +5,7 @@ import sys
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
+import AssetBrowser.utils.utils as utils
 
 
 class ListWidgetItem(QtWidgets.QListWidgetItem):
@@ -64,6 +65,7 @@ class PathTreeItem(QtWidgets.QTreeWidgetItem):
         self.source_path = source_path
         self.source_model = source_model
         self.childItems = []
+        self.have_rev = None
 
         #todo waiting to debug type
 
@@ -80,14 +82,6 @@ class PathTreeItem(QtWidgets.QTreeWidgetItem):
             self.half_path = self.parentItem.half_path + current_text
         else:
             self.half_path = current_text
-
-
-
-
-
-
-
-
 
         """
         item = QtWidgets.QTreeWidgetItem(parent)
@@ -179,4 +173,70 @@ class TreeWidgetDrop(QtWidgets.QTreeWidget):
 
             else:
                 event.ignore()
+
+
+class CustomModel(QtCore.QAbstractTableModel):
+    def __init__(self, data=[], headers = []):
+        super(CustomModel, self).__init__()
+        self._data = data
+        self._headers = headers
+
+    def rowCount(self, index):
+        # The length of the outer list.
+        return len(self._data)
+
+    def columnCount(self, index):
+        # The following takes the first sub-list, and returns
+        # the length (only works if all rows are an equal length)
+        if self._data:
+            return len(self._data[0])
+        else:
+            return 0
+
+    def data(self, index, role=QtGui.Qt.DisplayRole):
+        if index.isValid():
+            if role == QtGui.Qt.DisplayRole or role == QtGui.Qt.EditRole:
+                value = self._data[index.row()][index.column()]
+                return value
+
+    def setData(self, data):
+        self.beginResetModel()
+        self._data =data
+        self.endResetModel()
+        return True
+
+    def flags(self, index):
+        return QtGui.Qt.ItemIsSelectable | QtGui.Qt.ItemIsEnabled | QtGui.Qt.ItemIsEditable
+
+
+    def headerData(self, int, orientation, role):
+        if orientation != QtCore.Qt.Horizontal:
+            return
+        if role == QtCore.Qt.DisplayRole:
+            return self._headers[int]
+
+    def set_header_data(self, heads):
+        self._headers = heads
+        for headix, head in enumerate(self._headers):
+            self.setHeaderData(headix, QtCore.Qt.Horizontal, head, role=QtCore.Qt.DisplayRole)
+
+
+class LogPlainTextInstance(type(QtWidgets.QPlainTextEdit)):
+    def __call__(self, *args, **kwargs):
+        instance = self.__new__(self, *args, **kwargs)
+        instance.__init__(*args, **kwargs)
+        return instance
+
+
+class LogPlainText(QtWidgets.QPlainTextEdit):
+    __metaclass__ = LogPlainTextInstance
+
+
+    def add_log(self, log_text, w=False, e=False):
+        logText = utils.Utils.colorText(log_text, w, e)
+        self.appendHtml(logText)
+
+
+
+
 

@@ -34,7 +34,7 @@
       "before": "",
       "after": "",
       "ext": {
-        "ma": "",
+        "ma": "mayaFunctions.MayaOpenMa",
         "mb": ""
        }
     }

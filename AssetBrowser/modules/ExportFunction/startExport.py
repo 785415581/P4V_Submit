@@ -27,8 +27,9 @@ def start_export(current_type, current_asset, current_step, export_fold):
 
 
     try:
+
         for file_name, infos in config_dict[soft_env][current_step]["files"].items():
-            export_file = os.path.join(export_fold, file_name.replace("XXX", current_asset))
+            export_file = os.path.join(export_fold, file_name.replace("XXX", current_asset.split("/")[-1]))
             export_func_name = config_dict[soft_env][current_step]["function"]
             module_path = ".".join(export_func_name.split(".")[:-1])
 

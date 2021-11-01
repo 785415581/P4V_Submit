@@ -264,11 +264,17 @@ class Ui_MainWindow(object):
         self.groupBox = QGroupBox(self.splitter)
         self.groupBox.setObjectName(u"groupBox")
         self.groupBox.setFont(font1)
+
+        checkBox_layout = QHBoxLayout()
         self.extend = QCheckBox(u"展开")
+        self.show_history = QCheckBox(u"显示history")
+        checkBox_layout.addWidget(self.extend)
+        checkBox_layout.addWidget(self.show_history)
 
 
         self.verticalLayout = QVBoxLayout(self.groupBox)
-        self.verticalLayout.addWidget(self.extend)
+        self.verticalLayout.addLayout(checkBox_layout)
+
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.workTree = QTreeWidget(self.groupBox)
         __qtreewidgetitem = QTreeWidgetItem()
@@ -366,6 +372,7 @@ class Ui_MainWindow(object):
         file_list_grp.setLayout(file_list_layout)
 
         self.comment_line = QPlainTextEdit()
+
         comment_layout = QHBoxLayout()
         comment_layout.addWidget(self.comment_line)
         comment_grp = QGroupBox("Comment")
@@ -393,13 +400,40 @@ class Ui_MainWindow(object):
 
 
 
+
+        self.tab_3 = QWidget()
+        self.tab_3.setObjectName(u"tab_3")
+
+        verticalLayout_tab_3 = QVBoxLayout(self.tab_3)
+        verticalLayout_tab_3.setObjectName(u"verticalLayout_tab_3")
+        self.history_list = QTableView()
+        custom_model = baseWidget.CustomModel()
+        custom_model.set_header_data(["Revision", "Changelist", "Date Submitted", "Submitted By", "Description"])
+        self.history_list.setModel(custom_model)
+        self.history_list.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.history_list.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.history_list.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        # self.history_list.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
+        # self.history_list.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        history_list_layout = QHBoxLayout()
+        history_list_layout.addWidget(self.history_list)
+        history_list_grp = QGroupBox("History List")
+        history_list_grp.setLayout(history_list_layout)
+
+
+
+        verticalLayout_tab_3.addWidget(history_list_grp)
+
         self.tabWidget.addTab(self.tab_2, "")
+        self.tabWidget.addTab(self.tab_3, "")
 
         self.verticalLayout_6.addWidget(self.tabWidget)
 
         self.splitter.addWidget(self.groupBox_2)
 
         self.verticalLayout_7.addWidget(self.splitter)
+
 
         #########add log lineedit
         self.log_edit = QPlainTextEdit()
@@ -440,7 +474,6 @@ class Ui_MainWindow(object):
 
         self.tabWidget.setCurrentIndex(0)
 
-
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
 
@@ -472,6 +505,8 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"当前资产提交", None))
 
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"多资产提交", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3),
+                                  QCoreApplication.translate("MainWindow", u"History", None))
 
 
     # retranslateUi
