@@ -148,7 +148,7 @@ class FBXUnrealObj(UnrealObj):
         """
         importTask = unreal.AssetImportTask()
         importTask.set_editor_property("automated", False)
-        importTask.set_editor_property('destination_name', destination_name)
+        # importTask.set_editor_property('destination_name', destination_name)
         importTask.set_editor_property('destination_path', destination_path)
         importTask.set_editor_property('filename', filename)
         importTask.set_editor_property('replace_existing', True)

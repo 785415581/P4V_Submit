@@ -142,18 +142,20 @@ class AppFunc():
 
     def initUser(self):
         value = self.appSetting.getConfig()
-
-        if  value["user"]:
+        first_password = ""
+        if value["user"]:
             first_user = value["user"][0]
-            first_passward = value["user"][1]
+            if len(value["user"])>1:
+                first_password = value["user"][1]
+
         else:
             first_user = self.p4Model.user
-            first_passward = self.p4Model.password
+            first_password = self.p4Model.password
 
 
         self.view.userLn.insertItem(0, first_user)
         self.view.userLn.setCurrentIndex(0)
-        self.view.passwordLn.setText(first_passward)
+        self.view.passwordLn.setText(first_password)
 
     def showWorkTreeHandle(self, pos):
         contextMenuTree = QtWidgets.QMenu()
