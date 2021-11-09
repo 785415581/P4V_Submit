@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import subprocess
 import re
@@ -95,7 +94,7 @@ class P4Client(object):
         script create new workspace when it hasn't.
         :return:
         """
-        initWorkSpaceScriptPath = r'R:/ProjectX/Tools/bat/AutoWorkspace/AutoWorkspace.bat'
+        initWorkSpaceScriptPath = r'\\10.0.200.5\HeroFileServer\ProjectX\Tools\bat\AutoWorkspace\AutoWorkspace.bat'
         userName = self.user
         password = self.password
         streamName = self.getStreamName()
@@ -115,7 +114,7 @@ class P4Client(object):
         script create new workspace when it hasn't.
         :return:
         """
-        initWorkSpaceScriptPath = r'R:/ProjectX/Tools/bat/AutoWorkspaceAssets/AutoWorkspace.bat'
+        initWorkSpaceScriptPath = r'\\10.0.200.5\HeroFileServer\ProjectX\Tools\bat\AutoWorkspaceAssets\AutoWorkspace.bat'
         userName = self.user
         password = self.password
         cmd = '{script} {user} {password}'.format(script=initWorkSpaceScriptPath, user=userName, password=password)
@@ -140,16 +139,11 @@ class P4Client(object):
                 continue
             data_values = res.split(";;")
 
-
             for index in range(len(data_keys)):
                 file_dict[data_keys[index]] = data_values[index]
             # if re.findall(r'#\d+(.*?)delete(.*?)[)]', res):
             #     continue
         return file_dict
-
-
-
-
 
     def getFiles(self, rootPath):
         file_dict = {}
@@ -294,9 +288,28 @@ class P4Client(object):
         if err:
             return err, False
 
-        return "Submit success!", True
+    def getFileLabels(self, p4File):
+        labels = list()
+        cmd = 'p4 labels {}#head'.format(p4File)
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        res_labels, err = process.communicate()
+        for res in res_labels.decode('utf-8').split('\r\n'):
+            label = re.findall(r'([^Label\s]\w+)\s\d', res)
+            if label:
+                labels.append(label[0])
+        return labels
+
+    @staticmethod
+    def addFileLabels(p4File, label):
+        cmd = 'p4 tag -l {label} {fileName}#head'.format(label=label, fileName=p4File)
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        res, err = process.communicate()
 
 
+    def deleteFileLabels(self, p4File, label):
+        cmd = 'p4 tag -l {label} {fileName}#head'.format(label=label, fileName=p4File)
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        res, err = process.communicate()
 
     def syncFile(self, p4File, version=None):
         cmd = 'p4 sync -f "{}"'.format(p4File)
@@ -320,6 +333,10 @@ if __name__ == '__main__':
     p4Module.user = 'qinjiaxin'
     p4Module.password = 'qinjiaxin_1145qq'
     p4Module.validation()
-    root = p4Module.getStreamName()
-    print(root)
+    os.popen("p4 set P4CLIENT={}".format(p4Module.client))
+    # p4File = 'D:/Dev/Assets/Assets/Character/Cyber_Leopard/Animations/Cyber_Leopard_Attack_F/111.ma'
+    p4File = '//Assets/main/Assets/Character/Cyber_Leopard/Animations/Cyber_Leopard_Attack_F/111.ma'
+    # labels = p4Module.getFileLabels(p4File)
+    p4Module.addFileLabels(p4File, 'ScriptTest')
+    # print(labels)
 

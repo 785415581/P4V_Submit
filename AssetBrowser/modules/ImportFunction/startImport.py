@@ -4,12 +4,16 @@ import os
 import imp
 import importlib
 import AssetBrowser.modules.ImportFunction as ImportFunction
+DEBUG = False
 
 
 def start_import(import_model, select_file, **kwargs):
     result = False
     config_dict = read_config()
     soft_env = get_env()
+    # TODO: Multi-select import problem
+    # for select_file, info in kwargs.items():
+
     if not soft_env:
         log = u"Error: 没有获取到软件环境"
         return log, result
@@ -40,7 +44,6 @@ def start_import(import_model, select_file, **kwargs):
 
     run_func = getattr(import_module, import_func.split(".")[-1])
     log, result = run_func(select_file, **kwargs)
-
     return log, result
 
 
@@ -54,13 +57,14 @@ def read_config():
 
 def get_env():
     module_path = os.__file__
-    if "Engine/Binaries/ThirdParty" in module_path:
+    if "Engine\\Binaries\\ThirdParty" in module_path:
         return "Unreal"
     if "Maya" in module_path:
         return "Maya"
     if "HOUDIN" in module_path:
         return "Houdini"
-
+    if DEBUG:
+        return "Unreal"
     return None
 
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>769</width>
-    <height>726</height>
+    <width>789</width>
+    <height>808</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,79 +17,11 @@
    <property name="styleSheet">
     <string notr="true"/>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_7" stretch="0,0,0,0,0,5">
+   <layout class="QVBoxLayout" name="verticalLayout_11" stretch="0,0,0,0,0,5,2">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,5">
-          <item>
-           <widget class="QLabel" name="label">
-            <property name="font">
-             <font>
-              <family>Microsoft JhengHei UI</family>
-             </font>
-            </property>
-            <property name="text">
-             <string>Server</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="serverLn">
-            <property name="font">
-             <font>
-              <family>Consolas</family>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
-            <property name="editable">
-             <bool>true</bool>
-            </property>
-            <item>
-             <property name="text">
-              <string>10.0.201.12:1666</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,5">
-          <item>
-           <widget class="QLabel" name="label_2">
-            <property name="font">
-             <font>
-              <family>Microsoft JhengHei UI</family>
-             </font>
-            </property>
-            <property name="text">
-             <string>Workspace</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="workLn">
-            <property name="font">
-             <font>
-              <family>Consolas</family>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
-            <property name="editable">
-             <bool>true</bool>
-            </property>
-            <item>
-             <property name="text">
-              <string>qinjiaxin_01YXHY1235_Assets</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
-        </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,5">
           <item>
@@ -100,7 +32,7 @@
              </font>
             </property>
             <property name="text">
-             <string>User</string>
+             <string>PerforceUser</string>
             </property>
            </widget>
           </item>
@@ -201,7 +133,7 @@
         <property name="minimumSize">
          <size>
           <width>160</width>
-          <height>110</height>
+          <height>70</height>
          </size>
         </property>
         <property name="cursor">
@@ -394,23 +326,8 @@ background-position: left center;
     </item>
     <item>
      <widget class="QSplitter" name="splitter">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-        <horstretch>3</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>0</height>
-       </size>
-      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="childrenCollapsible">
-       <bool>false</bool>
       </property>
       <widget class="QGroupBox" name="groupBox">
        <property name="font">
@@ -422,7 +339,17 @@ background-position: left center;
        <property name="title">
         <string>AssetName</string>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QVBoxLayout" name="verticalLayout_10">
+        <item>
+         <widget class="QCheckBox" name="extend">
+          <property name="text">
+           <string>展开</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
         <item>
          <widget class="QTreeWidget" name="workTree">
           <property name="styleSheet">
@@ -441,12 +368,39 @@ QTreeWidget::branch::open::has-children{
           <property name="selectionMode">
            <enum>QAbstractItemView::ExtendedSelection</enum>
           </property>
-          <column>
-           <property name="text">
-            <string notr="true">1</string>
-           </property>
-          </column>
          </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QPushButton" name="import_select_button">
+            <property name="text">
+             <string>Import</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="reference_select_button">
+            <property name="text">
+             <string>Reference</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="open_select_button">
+            <property name="text">
+             <string>Open</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="down_asset_button">
+            <property name="text">
+             <string>下载资产下所有</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -471,7 +425,7 @@ QTreeWidget::branch::open::has-children{
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
-            <string>单文件提交</string>
+            <string>当前资产提交</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
@@ -526,6 +480,16 @@ QTreeWidget::branch::open::has-children{
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="exportBtn">
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
+              <property name="text">
+               <string>ExportScene</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="publishBtn">
               <property name="cursor">
                <cursorShape>PointingHandCursor</cursorShape>
@@ -539,20 +503,78 @@ QTreeWidget::branch::open::has-children{
           </widget>
           <widget class="QWidget" name="tab_2">
            <attribute name="title">
-            <string>多文件提交</string>
+            <string>多资产提交</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_8">
-              <property name="font">
-               <font>
-                <family>Consolas</family>
-                <pointsize>16</pointsize>
-               </font>
+            <item row="1" column="0">
+             <widget class="QPushButton" name="exportBtn_assets">
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
               </property>
               <property name="text">
-               <string>Under functional development...</string>
+               <string>exportAssets</string>
               </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QPushButton" name="publishBtn_assets">
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
+              <property name="text">
+               <string>publishAssets</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QSplitter" name="splitter_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <widget class="QGroupBox" name="file_list_grp">
+               <property name="title">
+                <string>File List</string>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_7">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QListWidget" name="assets_file_list"/>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QGroupBox" name="comment_grp">
+               <property name="title">
+                <string>Comment</string>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_8">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QTextEdit" name="comment_line"/>
+                </item>
+               </layout>
+              </widget>
              </widget>
             </item>
            </layout>
@@ -563,6 +585,29 @@ QTreeWidget::branch::open::has-children{
       </widget>
      </widget>
     </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_9">
+      <item>
+       <widget class="QCheckBox" name="show_log_check">
+        <property name="text">
+         <string>ShowLog</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_log">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QPlainTextEdit" name="log_edit"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -570,7 +615,7 @@ QTreeWidget::branch::open::has-children{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>769</width>
+     <width>789</width>
      <height>23</height>
     </rect>
    </property>

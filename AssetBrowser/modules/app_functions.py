@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 
 from PySide2 import QtCore
 from PySide2 import QtGui
@@ -43,7 +44,7 @@ class AppFunc():
         self._clientRoot = None
         self._validation = None
         self.p4Model = None
-        self.currentPathList=[]
+        self.currentPathList = []
 
 
     @property
@@ -109,11 +110,10 @@ class AppFunc():
                 self.view.typeComboBox.addItem(default_type)
 
         self.view.submitStepCom.addItems(global_setting.STEP)
+
         current_type = self.view.typeComboBox.currentText()
         if current_type in self.data_dict:
             self.view.assetNameComboBox.addItems(list(self.data_dict[current_type].keys()))
-
-
 
     def changeType(self, index):
         print("change type")
@@ -158,10 +158,12 @@ class AppFunc():
     def showWorkTreeHandle(self, pos):
         contextMenuTree = QtWidgets.QMenu()
         # actionC.setDisabled(True)
+        print("run")
         current_item = self.view.listWidget.itemAt(pos)
-        actionNew =None
+        actionNew = None
         actionDel = None
         if not current_item:
+
             actionNew = QtWidgets.QAction('New Folder')
             parent_item = self.view.listWidget
             
@@ -190,10 +192,9 @@ class AppFunc():
             contextMenuTree.addAction(actionNew)
             actionNew.triggered.connect(lambda: self.changeVersion(data))
 
-
         contextMenuTree.exec_(QtGui.QCursor().pos())
 
-  
+
 
     def showWorkListHandle(self, pos):
         contextMenuList = QtWidgets.QMenu()
@@ -369,7 +370,6 @@ class AppFunc():
         background-image: url(:/icons/icons/no_display_password.png);}""")
         self.view.passwordLn.setEchoMode(QtWidgets.QLineEdit.Password)
 
-
     def btnImportClicked(self, model):
         print("{0} btn pressed".format(model))
         sel_items = self.view.workTree.selectedItems()
@@ -383,21 +383,35 @@ class AppFunc():
             return
 
         servePrePublish, localPrePublish = self.getPathPre()
-        
+        fileInfo = dict()
         for item in sel_items:
             half_path = item.half_path.replace('\\', '/')
             local_pub_path = localPrePublish + half_path
 
             #sync local version first
             self.p4Model.syncFile(local_pub_path, version=item.have_rev)
+            if local_pub_path:
+                # sync local version first
+                self.p4Model.syncFile(local_pub_path, version=item.have_rev)
+                fileLabel = self.p4Model.getFileLabels(local_pub_path)
+                # #copy to private fold
+                # local_work_path = localPreWork + half_path
+                # moveFile.moveImportFile(local_pub_path, local_work_path)
 
-            #start import
-            log, result = startImport.start_import(model, local_pub_path, type=current_type,
-                                                   asset=current_asset, step=current_step, view=self.view)
-            if result:
-                app_utils.add_log(log)
-            else:
-                app_utils.add_log(log, error=True)
+                fileInfo[local_pub_path] = {}
+                fileInfo[local_pub_path]['localPath'] = local_pub_path
+                fileInfo[local_pub_path]['serverPath'] = servePrePublish + half_path
+                fileInfo[local_pub_path]['type'] = current_type
+                fileInfo[local_pub_path]['asset'] = current_asset
+                fileInfo[local_pub_path]['step'] = current_step
+                fileInfo[local_pub_path]['labels'] = fileLabel
+
+                # start import
+                log, result = startImport.start_import(model, local_pub_path, fileInfo=fileInfo)
+                if result:
+                    app_utils.add_log(log)
+                else:
+                    app_utils.add_log(log, error=True)
 
         return "", True
 
@@ -421,6 +435,8 @@ class AppFunc():
             log, result = startExport.start_export(export_fold, type=current_type, asset=current_asset, step=current_step)
 
             if result:
+                self.add_log(log)
+                # self.view.listWidget.clear()
                 app_utils.add_log(log)
                 for sub in os.listdir(export_fold):
                     self.view.listWidget.createItem(os.path.join(export_fold, sub), source_model="export")

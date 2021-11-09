@@ -32,9 +32,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = ui_main.Ui_MainWindow()
         self.ui.setupUi(self)
 
-
-
-
         global widgets
         widgets = self.ui
         self.control = controller.Controller()
@@ -44,11 +41,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.control.initSignal()
         self.control.appFunction.initUser()
 
-
         widgets.currentPathCombox.currentIndexChanged.connect(self.changeCurrentPath)
 
         widgets.connectBtn.clicked.connect(self.buttonClick)
-
 
         widgets.workTree.setDefaultDropAction(QtCore.Qt.CopyAction)
         widgets.workTree.setDragDropMode(QtWidgets.QAbstractItemView.DragOnly)
@@ -59,7 +54,6 @@ class MainWindow(QtWidgets.QMainWindow):
         widgets.assets_file_list.setSelectionMode(QtWidgets.QAbstractItemView.ContiguousSelection)
         widgets.assets_file_list.installEventFilter(self)
         widgets.assetNameComboBox.installEventFilter(self)
-
 
     def eventFilter(self, watched, event):
         if event.type() == QtCore.QEvent.DragEnter:
@@ -94,8 +88,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # treeWidgetItem = widgets.currentPathCombox.itemData(index, QtCore.Qt.UserRole)
         # widgets.workTree.setCurrentItem(treeWidgetItem)
 
-
-
     def buttonClick(self):
         btn = self.sender()
         btnName = btn.objectName()
@@ -119,11 +111,9 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 app_utils.add_log("Failed to get stream:{0}".format(clientStream), error=True)
 
-
     def closeEvent(self, event):
         event.accept()
         self.control.appFunction.callBack()
-
 
 
 if __name__ == '__main__':

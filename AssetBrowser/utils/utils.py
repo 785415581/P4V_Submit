@@ -117,18 +117,4 @@ if __name__ == '__main__':
     value = _utils.getConfig()
     from pprint import pprint
     # pprint(value)
-    dir_set = _utils.listdir('//Assets/main/TATest')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    dir_set = _utils.getAssetsData('//Assets/main/TATest')
