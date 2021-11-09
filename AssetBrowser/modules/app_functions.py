@@ -383,6 +383,7 @@ class AppFunc():
 
         servePrePublish, localPrePublish = self.getPathPre()
         fileInfo = dict()
+        fileExt = list()
         for item in sel_items:
             half_path = item.half_path.replace('\\', '/')
             local_pub_path = localPrePublish + half_path
@@ -404,13 +405,15 @@ class AppFunc():
                 fileInfo[local_pub_path]['asset'] = current_asset
                 fileInfo[local_pub_path]['step'] = current_step
                 fileInfo[local_pub_path]['labels'] = fileLabel
-
-                # start import
-                log, result = startImport.start_import(model, local_pub_path, fileInfo=fileInfo)
-                if result:
-                    app_utils.add_log(log)
-                else:
-                    app_utils.add_log(log, error=True)
+                fileInfo[local_pub_path]['ext'] = local_pub_path.split('.')[-1]
+                fileExt.append(local_pub_path.split('.')[-1])
+        fileExt = fileExt[0]
+        # start import
+        log, result = startImport.start_import(model, fileInfo=fileInfo, ext=fileExt)
+        if result:
+            app_utils.add_log(log)
+        else:
+            app_utils.add_log(log, error=True)
 
         return "", True
 

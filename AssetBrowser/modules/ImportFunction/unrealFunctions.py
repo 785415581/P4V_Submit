@@ -20,7 +20,7 @@ import importlib
 importlib.reload(DialogAddLabel)
 
 
-def UnrealImportFBX(select_file, **kwargs):
+def UnrealImportFBX(**kwargs):
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
         app.setWindowIcon(QtGui.QIcon("icon.png"))
@@ -28,7 +28,7 @@ def UnrealImportFBX(select_file, **kwargs):
     kwargs.update({"obj": FBXUnrealObj()})
     fileInfo = kwargs.get('fileInfo')
     window = DialogAddLabel.AddLabels()
-    window.selectFile = select_file
+    window.selectFiles = fileInfo
     window.kwargs = kwargs
     window.initUI()
     window.addFileItem(fileInfo)
@@ -45,7 +45,7 @@ def UnrealImportTex(select_file, **kwargs):
     kwargs.update({"obj": TexUnrealObj()})
     fileInfo = kwargs.get('fileInfo')
     window = DialogAddLabel.AddLabels()
-    window.selectFile = select_file
+    window.selectFiles = fileInfo
     window.kwargs = kwargs
     window.initUI()
     window.addFileItem(fileInfo)
@@ -110,6 +110,8 @@ class FBXUnrealObj(UnrealObj):
     def init_destination_name(self, default=None):
         if default:
             return default
+        if self.step == 'Rig':
+            return "SM_{}".format(self.step.upper())
         return "SM_{}".format(self.step.upper())
 
     def build_static_mesh_import_options(self):
@@ -137,26 +139,28 @@ class FBXUnrealObj(UnrealObj):
 
         return options
 
-    def creatImportTask(self, filename, destination_path, destination_name, options=None):
+    def creatImportTask(self, fileInfo, destination_path, destination_name, options=None):
         """
             :param destination_name:
-            :param filename: 导入的文件的路径  eg: 'F:/workPlace/Scripts/MyTexture.TGA'
+            :param filename: 导入的文件的信息  g: kwargs
             :param destination_path: 导出后置产要放在什么位置 eg: '/GAME/Texture'
             :param options: 导入置产属性，     静态属性可由函数build_static_mesh_import_options获得，
                                         骨骼属性可由build_skeletal_mesh_import_options获得
             :return: Task 返回一个导入任务
         """
-        importTask = unreal.AssetImportTask()
-        importTask.set_editor_property("automated", False)
-        # importTask.set_editor_property('destination_name', destination_name)
-        importTask.set_editor_property('destination_path', destination_path)
-        importTask.set_editor_property('filename', filename)
-        importTask.set_editor_property('replace_existing', True)
-        importTask.set_editor_property('replace_existing_settings', True)
-        importTask.set_editor_property('options', options)
-        importTask.set_editor_property('save', True)
-
-        return importTask
+        taskList = list()
+        for filePath, info in fileInfo.items():
+            importTask = unreal.AssetImportTask()
+            importTask.set_editor_property("automated", False)
+            # importTask.set_editor_property('destination_name', destination_name)
+            importTask.set_editor_property('destination_path', destination_path)
+            importTask.set_editor_property('filename', filePath)
+            importTask.set_editor_property('replace_existing', True)
+            importTask.set_editor_property('replace_existing_settings', True)
+            importTask.set_editor_property('options', options)
+            importTask.set_editor_property('save', True)
+            taskList.append(importTask)
+        return taskList
 
     def execute_import_tasks(self, tasks):
         """
@@ -165,7 +169,7 @@ class FBXUnrealObj(UnrealObj):
         :return: True
         """
         asset_tools = unreal.AssetToolsHelpers.get_asset_tools()  # 创建一个资产工具
-        asset_tools.import_asset_tasks([tasks])  # 导入资产
+        asset_tools.import_asset_tasks(tasks)  # 导入资产
 
 
 class TexUnrealObj(UnrealObj):
@@ -185,15 +189,16 @@ class TexUnrealObj(UnrealObj):
     def build_static_mesh_import_options(self):
         return None
 
-    def creatImportTask(self, filename, destination_path, destination_name, options=None):
-
-        importTask = unreal.AssetImportTask()
-        importTask.set_editor_property('filename', filename)
-        importTask.set_editor_property('destination_path', destination_path)
-        # importTask.set_editor_property('destination_name', destination_name)
-        importTask.set_editor_property('save', True)
-
-        return importTask
+    def creatImportTask(self, fileInfo, destination_path, destination_name, options=None):
+        taskList = list()
+        for filePath, info in fileInfo.items():
+            importTask = unreal.AssetImportTask()
+            importTask.set_editor_property('filename', filePath)
+            importTask.set_editor_property('destination_path', destination_path)
+            # importTask.set_editor_property('destination_name', destination_name)
+            importTask.set_editor_property('save', True)
+            taskList.append(importTask)
+        return taskList
 
     def execute_import_tasks(self, tasks):
         """
@@ -202,6 +207,6 @@ class TexUnrealObj(UnrealObj):
         :return: True
         """
         asset_tools = unreal.AssetToolsHelpers.get_asset_tools()  # 创建一个资产工具
-        asset_tools.import_asset_tasks([tasks])  # 导入资产
+        asset_tools.import_asset_tasks(tasks)  # 导入资产
 
 
