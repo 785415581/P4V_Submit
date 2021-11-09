@@ -29,6 +29,7 @@ class Ui_Dialog(object):
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.itemListWidget = QListWidget(self.groupBox_3)
         self.itemListWidget.setObjectName(u"itemListWidget")
+        self.itemListWidget.setSelectionMode(QAbstractItemView.MultiSelection)
 
         self.verticalLayout_2.addWidget(self.itemListWidget)
 
@@ -41,7 +42,6 @@ class Ui_Dialog(object):
         self.splitter.setObjectName(u"splitter")
         self.splitter.setOrientation(Qt.Horizontal)
         self.levelColumnView = QColumnView(self.splitter)
-
         self.levelColumnView.setObjectName(u"levelColumnView")
         self.splitter.addWidget(self.levelColumnView)
 
