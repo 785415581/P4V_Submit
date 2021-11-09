@@ -30,6 +30,8 @@ def copy_to_ws(source_path, dst_path):
     if not os.path.exists(os.path.dirname(dst_path)):
         os.makedirs(os.path.dirname(dst_path))
     if os.path.isdir(source_path):
+        if os.path.exists(dst_path):
+            shutil.rmtree(dst_path)
         shutil.copytree(source_path, dst_path)
     else:
         shutil.copyfile(source_path, dst_path)

@@ -10,21 +10,26 @@ def createHierarchy(asset=False, shot=False):
 
 def mayaImport(sel_file, type):
 
-    cmds.file(sel_file, i=True, type=type, ignoreVersion=True, mergeNamespacesOnClash=True, namespace=':')
+    createNodes = cmds.file(sel_file, i=True, type=type, ignoreVersion=True, mergeNamespacesOnClash=True, namespace=':',
+                            returnNewNodes=True)
+
+
+    return createNodes
 
 
 def MayaImportMa(sel_file, **kwargs):
     # createHierarchy()
-    mayaImport(sel_file, "mayaAscii")
-    return "", True
+    createNodes = mayaImport(sel_file, "mayaAscii")
+    return "", createNodes
 
 def MayaImportMb(sel_file, **kwargs):
-    mayaImport(sel_file, "mayaBinary")
-    return "", True
+    createNodes = mayaImport(sel_file, "mayaBinary")
+    return "", createNodes
 
 def MayaImportFBX(sel_file, **kwargs):
-    mayaImport(sel_file, "FBX")
-    return "", True
+
+    createNodes = mayaImport(sel_file, "FBX")
+    return "", createNodes
 
 def MayaImportABC(sel_file, **kwargs):
     if not cmds.pluginInfo("AbcImport.mll", l=True, q=True):
@@ -46,10 +51,10 @@ def mayaReference(sel_file, file_type, namespace, **kwargs):
 
     model = None
     if kwargs["step"] == "Rig":
-        import AssetBrowser.view.aniModelWidget as aniModelWidget
+        import AssetBrowser.view.widgetAniModel as widgetAniModel
         import imp
-        imp.reload(aniModelWidget)
-        modelWin = aniModelWidget.AniModelWidget()
+        imp.reload(widgetAniModel)
+        modelWin = widgetAniModel.AniModelWidget()
         modelWin.exec_()
         model = modelWin.select_model
         modelWin.destroy()

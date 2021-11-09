@@ -5,7 +5,7 @@ import os
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
-import AssetBrowser.modules.app_setting as app_setting
+import AssetBrowser.modules.app_utils as app_utils
 import AssetBrowser.modules.global_setting as global_setting
 import AssetBrowser.utils.Leaf as Leaf
 import AssetBrowser.utils.utils as utils
@@ -13,13 +13,14 @@ import AssetBrowser.utils.moveFile as moveFile
 
 import AssetBrowser.modules.ImportFunction.startImport as startImport
 import AssetBrowser.modules.ExportFunction.startExport as startExport
+import AssetBrowser.modules.ToolFunction.startTool as startTool
 
 import AssetBrowser.modules.publish_hooks.startPublish as startPublish
 
 import AssetBrowser.view.baseWidget as baseWidget
 
 import imp
-imp.reload(app_setting)
+imp.reload(app_utils)
 imp.reload(global_setting)
 imp.reload(Leaf)
 imp.reload(utils)
@@ -35,7 +36,7 @@ from functools import partial
 
 class AppFunc():
     def __init__(self):
-        self.appSetting = app_setting.AppSetting()
+        self.appSetting = app_utils.AppSetting()
         self.appSetting.init()
         self._view = None
         self._clientStream = None
@@ -99,7 +100,8 @@ class AppFunc():
 
         self.p4_file_infos = self.p4Model.getFiles(self.clientStream)
 
-        self.full_file_dict, self.half_file_dict, self.data_dict = utils.Utils().getAssetsData(self.p4_file_infos)
+        self.full_file_dict, self.half_file_dict, self.data_dict, self.subAssetDict = utils.Utils().getAssetsData(self.p4_file_infos)
+
 
         self.view.typeComboBox.addItems(list(self.data_dict.keys()))
         for default_type in global_setting.ASSETTYPE:
@@ -107,7 +109,6 @@ class AppFunc():
                 self.view.typeComboBox.addItem(default_type)
 
         self.view.submitStepCom.addItems(global_setting.STEP)
-
         current_type = self.view.typeComboBox.currentText()
         if current_type in self.data_dict:
             self.view.assetNameComboBox.addItems(list(self.data_dict[current_type].keys()))
@@ -141,11 +142,10 @@ class AppFunc():
 
     def initUser(self):
         value = self.appSetting.getConfig()
-        # self.view.serverLn.addItems(value['serverPort'])
-        # self.view.workLn.addItems(value['workSpace'])
-        if "users" in value and value["users"]:
-            first_user = list(value["users"].keys())[0]
-            first_passward = list(value["users"].values())[0]
+
+        if  value["user"]:
+            first_user = value["user"][0]
+            first_passward = value["user"][1]
         else:
             first_user = self.p4Model.user
             first_passward = self.p4Model.password
@@ -158,28 +158,25 @@ class AppFunc():
     def showWorkTreeHandle(self, pos):
         contextMenuTree = QtWidgets.QMenu()
         # actionC.setDisabled(True)
-        print("run")
         current_item = self.view.listWidget.itemAt(pos)
         actionNew =None
         actionDel = None
         if not current_item:
-
             actionNew = QtWidgets.QAction('New Folder')
-
-            parent_item = current_item
+            parent_item = self.view.listWidget
             
         else:
             if not ("." in current_item.text(0) and (not current_item.childItems)):
                 actionNew = QtWidgets.QAction('New Folder')
             actionDel = QtWidgets.QAction('Delete')
-            parent_item = self.view.listWidget
+            parent_item = current_item
             
         if actionNew:
             contextMenuTree.addAction(actionNew)
-            actionNew.triggered.connect(partial(self.addFolder(parent_item)))
+            actionNew.triggered.connect(partial(self.addFolder, parent_item))
         if actionDel:
             contextMenuTree.addAction(actionDel)
-            actionDel.triggered.connect(partial(self.deleteItems(parent_item)))
+            actionDel.triggered.connect(partial(self.deleteItems, parent_item))
 
         contextMenuTree.exec_(QtGui.QCursor().pos())
 
@@ -191,14 +188,12 @@ class AppFunc():
         if data:
             actionNew = QtWidgets.QAction('Get This Resivion')
             contextMenuTree.addAction(actionNew)
-            actionNew.triggered.connect(lambda: self.change_version(data))
+            actionNew.triggered.connect(lambda: self.changeVersion(data))
 
 
         contextMenuTree.exec_(QtGui.QCursor().pos())
 
-    def add_log(self, log_text, w=False, e=False):
-        logText = utils.Utils.colorText(log_text, w, e)
-        self.view.log_edit.appendHtml(logText)
+  
 
     def showWorkListHandle(self, pos):
         contextMenuList = QtWidgets.QMenu()
@@ -233,29 +228,22 @@ class AppFunc():
             source_path = parent_item.source_path + source_path
         baseWidget.PathTreeItem(source_path, parent=parent_item)
 
-    def deleteItems(self, args):
-        print(args)
-        index = self.view.listWidget.indexFromItem(current_item)
-        self.view.listWidget.takeTopLevelItem(index)
+    def deleteItems(self, item):
+        for item in self.view.listWidget.selectedItems():
+            if not item.parentItem:
+                self.view.listWidget.takeTopLevelItem(self.view.listWidget.indexFromItem(item).row()).text(0)
+
+            else:
+                item.parentItem.takeChild(self.view.listWidget.currentIndex().row())
 
 
-
-
-
-
-    def __deleteItem(self, view):
-        items = view.listview.selectedItems()
-        for i in range(len(items)):
-            itemNum = view.listview.row(items[i])
-            item = view.listview.takeItem(itemNum)
 
     def setTreeWidget(self):
         self.view.workTree.clear()
-        current_type = self.view.typeComboBox.currentText()
-        current_asset = self.view.assetNameComboBox.currentText()
-        current_step = self.view.submitStepCom.currentText()
+        current_type, current_asset, current_step = self.getAssetStep()
+
         data_key = "{0}_{1}_{2}".format(current_type, current_asset, current_step)
-        #print(self.full_file_dict)
+
         if data_key not in self.full_file_dict:
             return
 
@@ -287,12 +275,12 @@ class AppFunc():
                     continue
 
                 current_path = server_file.split(levels[matrix_index])[0] + levels[matrix_index]
-                if (current_path not in level_items):
-                    if matrix_index > 0:
-                        parent = levels[matrix_index-1]
-                    else:
-                        parent = self.view.workTree
+                if matrix_index > 0:
+                    parent = levels[matrix_index - 1]
+                else:
+                    parent = self.view.workTree
 
+                if (current_path not in level_items):
                     item = baseWidget.PathTreeItem(current_path, source_model="server", parent=parent)
                     level_items[current_path] = item
                     levels[matrix_index] = item
@@ -316,11 +304,9 @@ class AppFunc():
         if self.view.extend.isChecked():
             self.view.workTree.expandAll()
 
-
     def listPath(self, item):
         half_path = item.half_path
         servePre, localPre = self.getPathPre()
-
 
         res = servePre + half_path
         if self.clientRoot and res not in self.currentPathList:
@@ -329,6 +315,7 @@ class AppFunc():
             index = self.view.currentPathCombox.count()
             self.view.currentPathCombox.setItemData(index - 1, item, QtCore.Qt.UserRole)
         self.view.currentPathCombox.setCurrentText(res.replace('\\', '/'))
+        # app_utils.add_log(res.replace(servePre, localPre))
 
         if self.view.show_history.isChecked():
             version_list = self.p4Model.getVersions(item.source_path)
@@ -337,12 +324,12 @@ class AppFunc():
         else:
             self.view.history_list.model().setData(list())
 
-    def change_version(self, item_data):
+    def changeVersion(self, item_data):
         version = item_data[0]
 
         sel_item = self.view.history_list.history_parent
         if not sel_item:
-            print("No Asset select")
+            app_utils.add_log("No Asset select", error=True)
             return
 
         if sel_item.source_path in self.p4_file_infos:
@@ -354,13 +341,11 @@ class AppFunc():
         label.setAlignment(QtCore.Qt.AlignCenter)
         self.view.workTree.setItemWidget(sel_item, 1, label)
 
-
-
     def printTest(self, item):
         print(item.source_path)
         print(item.half_path)
 
-    def show_log(self):
+    def showLog(self):
         if self.view.show_log_check.isChecked():
             self.view.groupBox_log.setHidden(False)
         else:
@@ -385,64 +370,63 @@ class AppFunc():
         self.view.passwordLn.setEchoMode(QtWidgets.QLineEdit.Password)
 
 
-    def Import_btn_clicked(self, model):
+    def btnImportClicked(self, model):
         print("{0} btn pressed".format(model))
         sel_items = self.view.workTree.selectedItems()
         if not sel_items:
-            self.add_log(u"Warning:未选择文件", w=True)
+            app_utils.add_log(u"Warning:未选择文件", warning=True)
             return
 
-        current_type = self.view.typeComboBox.currentText()
-        current_asset = self.view.assetNameComboBox.currentText()
-        current_step = self.view.submitStepCom.currentText()
+        current_type, current_asset, current_step = self.getAssetStep()
+        if not current_type or not current_asset or not current_step:
+            app_utils.add_log(u"检查type,asset, type", error=True)
+            return
 
         servePrePublish, localPrePublish = self.getPathPre()
-        # servePreWork, localPreWork = self.getPathPre("private")
+        
         for item in sel_items:
             half_path = item.half_path.replace('\\', '/')
             local_pub_path = localPrePublish + half_path
 
-            if local_pub_path:
-                #sync local version first
-                self.p4Model.syncFile(local_pub_path, version=item.have_rev)
-                # #copy to private fold
-                # local_work_path = localPreWork + half_path
-                # moveFile.moveImportFile(local_pub_path, local_work_path)
+            #sync local version first
+            self.p4Model.syncFile(local_pub_path, version=item.have_rev)
 
-                #start import
-                log, result = startImport.start_import(model, local_pub_path, type=current_type,
-                                                       asset=current_asset, step=current_step, view=self.view)
-                if result:
-                    self.add_log(log)
-                else:
-                    self.add_log(log, e=True)
+            #start import
+            log, result = startImport.start_import(model, local_pub_path, type=current_type,
+                                                   asset=current_asset, step=current_step, view=self.view)
+            if result:
+                app_utils.add_log(log)
+            else:
+                app_utils.add_log(log, error=True)
 
         return "", True
 
-    def Export_btn_clicked(self, model):
-        current_type = self.view.typeComboBox.currentText()
-        current_asset = self.view.assetNameComboBox.currentText()
-        current_step = self.view.submitStepCom.currentText()
+    def btnExportClicked(self, model):
+        current_type, current_asset, current_step = self.getAssetStep()
+        if not current_type or not current_asset or not current_step:
+            app_utils.add_log(u"检查type,asset, type", error=True)
+            return
 
         if model == "ExportScene":
+            import AssetBrowser.view.widgetStep as widgetStep
+            imp.reload(widgetStep)
+            step_win = widgetStep.StepWidget(current_step)
+            step_win.exec_()
+            current_step = step_win.select_step if step_win.select_step else current_step
+            index = self.view.submitStepCom.findText(current_step, QtCore.Qt.MatchFixedString)
+            self.view.submitStepCom.setCurrentIndex(index)
+            step_win.destroy()
 
-            publish_temp_fold = os.path.join(tempfile.tempdir, "publish_temp")
-            if not os.path.exists(publish_temp_fold):
-                os.mkdir(publish_temp_fold)
-            export_fold = tempfile.mkdtemp(dir=publish_temp_fold)
-            log, result = startExport.start_export(current_type, current_asset, current_step, export_fold)
+            export_fold = utils.Utils.createPublishTemp()
+            log, result = startExport.start_export(export_fold, type=current_type, asset=current_asset, step=current_step)
 
             if result:
-                self.add_log(log)
-                #self.view.listWidget.clear()
+                app_utils.add_log(log)
                 for sub in os.listdir(export_fold):
-
                     self.view.listWidget.createItem(os.path.join(export_fold, sub), source_model="export")
             else:
-                self.add_log(log, e=True)
+                app_utils.add_log(log, error=True)
                 shutil.rmtree(export_fold)
-
-
 
         elif model == "Publish":
             comment_log = self.view.textEdit.toPlainText()
@@ -459,28 +443,99 @@ class AppFunc():
                 dst_files.append(dst_path)
                 iter = iter.__iadd__(1)
 
+            if not dst_files:
+                app_utils.add_log("Failed to get publish file,Please Check", error=True)
+                return
+
             log, result = startPublish.startPublish(dst_files, p4model=self.p4Model, log=comment_log)
             if result:
-                self.add_log(log)
+                app_utils.add_log(log)
+                app_utils.add_log(u"成功提交！")
+                self.initWindow()
 
             else:
-                self.add_log(log, e=True)
+                app_utils.add_log(log, error=True)
+
             self.view.listWidget.clear()
 
+        elif model=="PublishSubasset":
+            current_type, current_asset, current_step = self.getAssetStep()
+            if not current_type or not current_asset or not current_step:
+                app_utils.add_log(u"检查type,asset, type", error=True)
+                return
+
+            comment_log = self.view.textEdit.toPlainText()
+            servePre, localPre = self.getPathPre()
+            iter = QtWidgets.QTreeWidgetItemIterator(self.view.listWidget)
+            dst_files = []
+
+            while iter.value():
+                item = iter.value()
+                source_path = item.source_path
+                source_model = item.source_model
+                have_rev = item.have_rev
+
+                if current_asset in self.subAssetDict[current_type]:
+                    for sub_asset in self.subAssetDict[current_type][current_asset]:
+                        if sub_asset in item.half_path:
+                            half_path = item.half_path.replace("/"+sub_asset, "")
+                            subLocalPre = localPre.replace("/{0}/".format(current_asset), "/{0}/".format(sub_asset))
+                            dst_path = subLocalPre + half_path
+                            moveFile.movePublishFile(source_path, dst_path, source_model, have_rev, self.p4Model)
+                            dst_files.append(dst_path)
+                iter = iter.__iadd__(1)
+            if not dst_files:
+                app_utils.add_log("Failed to get publish file,Please Check", error=True)
+                return
+            log, result = startPublish.startPublish(dst_files, p4model=self.p4Model, log=comment_log)
+            if result:
+                app_utils.add_log(log)
+                app_utils.add_log(u"成功提交！")
+                self.initWindow()
+
+            else:
+                app_utils.add_log(log, error=True)
+            self.view.listWidget.clear()
+
+
+    def btnToolClicked(self, model):
+        current_type, current_asset, current_step = self.getAssetStep()
+        if not current_type or not current_asset or not current_step:
+            app_utils.add_log(u"检查type,asset, type", error=True)
+            return
+
+        servePrePrivate, localPrePrivate = self.getPathPre("private")
+        servePrePublish, localPrePublish = self.getPathPre()
+
+        log, res = startTool.start_tool(model, type=current_type, asset=current_asset, step=current_step,
+                                        servePrePublish=servePrePublish, localPrePublish=localPrePublish,
+                                        localPrePrivate=localPrePrivate,
+                                        view=self.view, subAssets=self.subAssetDict,
+                                        full_path_dict=self.full_file_dict, half_path_dict=self.half_file_dict)
+        if res:
+            app_utils.add_log(log)
+        else:
+            app_utils.add_log(log, error=True)
+
     def getPathPre(self, area="publish"):
-        current_type = self.view.typeComboBox.currentText()
-        current_asset = self.view.assetNameComboBox.currentText()
-        current_step = self.view.submitStepCom.currentText()
+        current_type, current_asset, current_step = self.getAssetStep()
+        if not current_type or not current_asset or not current_step:
+            app_utils.add_log(u"检查type,asset, type", error=True)
+            return
         client_info_dict = self.p4Model.getClienInfo()
         client_root = client_info_dict["clientRoot"]
         client_stream = client_info_dict["clientStream"]
-        servePre = utils.Utils.getPathPre(client_stream, current_type, current_asset, current_step, area)
-        workPre = utils.Utils.getPathPre(client_root, current_type, current_asset, current_step, area)
+        servePre = utils.Utils.getPathPre(client_stream, current_type, current_asset, area, current_step)
+        workPre = utils.Utils.getPathPre(client_root, current_type, current_asset, area, current_step)
 
         return servePre.replace("\\", "/"), workPre.replace("\\", "/")
 
+    def getAssetStep(self):
+        current_type = self.view.typeComboBox.currentText()
+        current_asset = self.view.assetNameComboBox.currentText()
+        current_step = self.view.submitStepCom.currentText()
 
-
+        return current_type, current_asset, current_step
 
 
     def callBack(self):
@@ -494,7 +549,8 @@ class AppFunc():
         # if serverPort not in configValue['serverPort']:
         #     configValue['serverPort'].append(serverPort)
 
-        configValue.setdefault("users", {})[user]=password
+        configValue["user"] = (user, password)
 
         self.appSetting.setConfig(configValue)
+
 

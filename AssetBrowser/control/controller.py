@@ -93,14 +93,20 @@ class Controller(QtCore.QObject):
         self.view.assetNameComboBox.currentTextChanged.connect(self.appFunction.changeAsset)
         self.view.submitStepCom.currentIndexChanged.connect(self.appFunction.changeStep)
         self.view.extend.stateChanged.connect(self.appFunction.extendTree)
-        self.view.show_log_check.stateChanged.connect(self.appFunction.show_log)
+        self.view.show_log_check.stateChanged.connect(self.appFunction.showLog)
 
-        self.view.import_select_button.clicked.connect(partial(self.appFunction.Import_btn_clicked, "import"))
-        self.view.reference_select_button.clicked.connect(partial(self.appFunction.Import_btn_clicked, "reference"))
-        self.view.open_select_button.clicked.connect(partial(self.appFunction.Import_btn_clicked, "open"))
-        self.view.down_asset_button.clicked.connect(partial(self.appFunction.Import_btn_clicked, "downAsset"))
-        self.view.exportBtn.clicked.connect(partial(self.appFunction.Export_btn_clicked, "ExportScene"))
-        self.view.publishBtn.clicked.connect(partial(self.appFunction.Export_btn_clicked, "Publish"))
+        self.view.open_scene_button.clicked.connect(partial(self.appFunction.btnToolClicked, "OpenScene"))
+        self.view.new_scene_button.clicked.connect(partial(self.appFunction.btnToolClicked, "NewScene"))
+        self.view.save_scene_button.clicked.connect(partial(self.appFunction.btnToolClicked, "SaveScene"))
+        self.view.import_subasset_button.clicked.connect(partial(self.appFunction.btnToolClicked, "importSubasset"))
+
+        self.view.import_select_button.clicked.connect(partial(self.appFunction.btnImportClicked, "import"))
+        self.view.reference_select_button.clicked.connect(partial(self.appFunction.btnImportClicked, "reference"))
+        self.view.open_select_button.clicked.connect(partial(self.appFunction.btnImportClicked, "open"))
+        self.view.exportBtn.clicked.connect(partial(self.appFunction.btnExportClicked, "ExportScene"))
+        self.view.exportBtn_subassets.clicked.connect(partial(self.appFunction.btnToolClicked, "ExportSubasset"))
+        self.view.publishBtn.clicked.connect(partial(self.appFunction.btnExportClicked, "Publish"))
+        self.view.publishSubassetBtn.clicked.connect(partial(self.appFunction.btnExportClicked, "PublishSubasset"))
         # self.view.history_list.doubleClicked.connect(self.appFunction.change_version)
 
     def createAsset(self, control):

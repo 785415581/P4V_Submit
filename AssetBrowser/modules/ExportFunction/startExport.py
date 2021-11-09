@@ -6,7 +6,7 @@ import importlib
 import imp
 
 
-def start_export(current_type, current_asset, current_step, export_fold):
+def start_export(export_fold, **kwargs):
     log = ""
     result = False
     config_dict = read_config()
@@ -15,29 +15,29 @@ def start_export(current_type, current_asset, current_step, export_fold):
         log = u"Error: 没有获取到软件环境"
         return log, result
     if soft_env not in config_dict:
-        log = "Error: Lack step {0} under export".format(current_step)
+        log = "Error: Lack step {0} under export".format(kwargs["step"])
 
-    if current_step not in config_dict[soft_env]:
-        log = "Error: Lack {0} export under {1}".format(current_step, soft_env)
+    if kwargs["step"] not in config_dict[soft_env]:
+        log = "Error: Lack {0} export under {1}".format(kwargs["step"], soft_env)
         return log, result
 
-    if not config_dict[soft_env][current_step]["files"]:
-        log = "Error: Lack export function  under {0}| {1}".format(current_step, soft_env)
+    if not config_dict[soft_env][kwargs["step"]]["files"]:
+        log = "Error: Lack export function  under {0}| {1}".format(kwargs["step"], soft_env)
         return log, result
 
 
     try:
 
-        for file_name, infos in config_dict[soft_env][current_step]["files"].items():
-            export_file = os.path.join(export_fold, file_name.replace("XXX", current_asset.split("/")[-1]))
-            export_func_name = config_dict[soft_env][current_step]["function"]
+        for file_name, infos in config_dict[soft_env][kwargs["step"]]["files"].items():
+            export_file = os.path.join(export_fold, file_name.replace("XXX", kwargs["asset"].split("/")[-1]))
+            export_func_name = config_dict[soft_env][kwargs["step"]]["function"]
             module_path = ".".join(export_func_name.split(".")[:-1])
 
             export_module = importlib.import_module("AssetBrowser.modules.ExportFunction."+module_path)
             imp.reload(export_module)
 
             export_func = getattr(export_module, export_func_name.split(".")[-1])
-            log, result = export_func(export_file, infos, current_step)
+            log, result = export_func(export_file, infos, **kwargs)
     except Exception as e:
 
         log = "Error: "+str(e)

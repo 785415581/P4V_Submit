@@ -4,7 +4,9 @@ import maya.cmds as cmds
 import imp
 from ..global_setting import MAYALEVEL, ANISTEP
 import AssetBrowser.view.baseWidget as baseWidget
+import AssetBrowser.modules.app_utils as app_utils
 imp.reload(baseWidget)
+imp.reload(app_utils)
 
 
 class MayaExport():
@@ -26,7 +28,7 @@ class MayaExport():
             return False
 
     def check_hierarchy(self):
-        #todo waiting to judge step name with s or not
+
         self.root_nodes = MAYALEVEL[self.publish_step]
         work_paths = MAYALEVEL[self.publish_step]["work"]
         exist = False
@@ -50,7 +52,7 @@ class MayaExport():
         if not pm.PyNode(export_level).listRelatives():
             self.log = u"组{0}为空".format(export_level)
             self.result = True
-            return
+            return self.log, self.result
 
         if export_file.endswith(".ma"):
             file_type = "mayaAscii"
@@ -59,7 +61,7 @@ class MayaExport():
         else:
             self.log = u"Error:{0} 格式不支持导出".format(export_file.split(".")[-1])
             self.result = False
-            return
+            return self.log, self.result
         pm.select(clear=True)
         pm.select(export_level)
         # baseWidget.LogPlainText().add_log(export_level, e=True)
@@ -69,8 +71,52 @@ class MayaExport():
         #todo waiting to judge if fbx export need change
         cmds.file(export_file, force=True, typ=file_type, pr=True, es=True)
         pm.select(clear=True)
+        self.log = "Finish export...."
+        self.result = True
+
+    def export_rig(self, export_file, export_level):
+        app_utils.add_log("Export Rig")
+        import maya.mel as mel
+        self.log = ""
+        self.result = False
+
+        self.log = ""
+        self.result = False
+
+
+        if export_file.endswith(".ma"):
+            file_type = "mayaAscii"
+        elif export_file.endswith(".fbx"):
+            file_type = "FBX export"
+        else:
+            self.log = u"Error:{0} 格式不支持导出".format(export_file.split(".")[-1])
+            self.result = False
+            return
+
+        jntList = []
+        for child_level in cmds.listRelatives(export_level, allDescendents=True):
+            skin = mel.eval("findRelatedSkinCluster " + child_level)
+            if skin:
+                jntList = pm.skinCluster(skin, q=1, wi=1)
+                pm.parent(jntList[0], w=1)
+                break
+
+        if not jntList:
+            self.log = "No joint found"
+            self.result = False
+            return
+        pm.select(clear=True)
+        pm.select(export_level)
+        pm.select(jntList, add=True)
+
+        cmds.file(export_file, force=True, typ=file_type, pr=True, es=True)
+        pm.select(clear=True)
         self.log = file_type
         self.result = True
+
+
+
+
 
 
 

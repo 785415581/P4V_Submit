@@ -5,7 +5,7 @@ import sys
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
-import AssetBrowser.utils.utils as utils
+
 
 
 class ListWidgetItem(QtWidgets.QListWidgetItem):
@@ -120,16 +120,18 @@ class TreeWidgetDrop(QtWidgets.QTreeWidget):
         else:
             current_item = PathTreeItem(real_path, source_model=source_model, parent=self)
 
-
         if os.path.isdir(real_path):
             for root, dirs, files in os.walk(real_path):
+
                 parent_item = current_item
                 for dir in dirs:
                     dir_full_path = os.path.join(root, dir)
                     self.createItem(dir_full_path, source_model=source_model, parent_item=parent_item)
 
                 for file in files:
-                    PathTreeItem(file, source_model=source_model, parent=parent_item)
+                    file_full = os.path.join(root, file)
+                    PathTreeItem(file_full, source_model=source_model, parent=parent_item)
+                return
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat("text/uri-list"):
@@ -221,20 +223,22 @@ class CustomModel(QtCore.QAbstractTableModel):
             self.setHeaderData(headix, QtCore.Qt.Horizontal, head, role=QtCore.Qt.DisplayRole)
 
 
-class LogPlainTextInstance(type(QtWidgets.QPlainTextEdit)):
-    def __call__(self, *args, **kwargs):
-        instance = self.__new__(self, *args, **kwargs)
-        instance.__init__(*args, **kwargs)
-        return instance
-
 
 class LogPlainText(QtWidgets.QPlainTextEdit):
-    __metaclass__ = LogPlainTextInstance
+    def __init__(self, parent=None):
+        super(LogPlainText, self).__init__(parent)
 
 
-    def add_log(self, log_text, w=False, e=False):
-        logText = utils.Utils.colorText(log_text, w, e)
-        self.appendHtml(logText)
+
+
+
+
+
+
+
+
+
+
 
 
 

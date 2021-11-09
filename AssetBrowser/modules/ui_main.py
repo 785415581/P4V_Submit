@@ -14,6 +14,8 @@ from PySide2.QtWidgets import *
 
 from AssetBrowser import resources_rc
 import AssetBrowser.view.baseWidget as baseWidget
+
+
 import imp
 imp.reload(baseWidget)
 
@@ -222,6 +224,8 @@ class Ui_MainWindow(object):
         self.assetNameComboBox.setMinimumSize(QSize(150, 0))
         self.assetNameComboBox.setFont(font1)
         self.assetNameComboBox.setEditable(True)
+        pcompleter = QCompleter(self.assetNameComboBox.model())
+        self.assetNameComboBox.setCompleter(pcompleter)
 
         self.horizontalLayout_5.addWidget(self.assetNameComboBox)
 
@@ -244,12 +248,26 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_5.addLayout(self.horizontalLayout_6)
 
+
         self.horizontalSpacer = QSpacerItem(368, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_5.addItem(self.horizontalSpacer)
 
 
         self.verticalLayout_7.addWidget(self.groupBox_3)
+
+        tool_layout = QHBoxLayout()
+
+        self.open_scene_button = QPushButton(u"Open Private")
+        self.new_scene_button = QPushButton(u"New Scene")
+        self.save_scene_button = QPushButton(u"Save Scene")
+        self.import_subasset_button = QPushButton("Import SubAssets")
+        tool_layout.addWidget(self.open_scene_button)
+        # tool_layout.addWidget(self.new_scene_button)
+        tool_layout.addWidget(self.save_scene_button)
+        tool_layout.addWidget(self.import_subasset_button)
+
+        self.horizontalLayout_5.addLayout(tool_layout)
 
         self.splitter = QSplitter(self.centralwidget)
         self.splitter.setObjectName(u"splitter")
@@ -297,12 +315,14 @@ class Ui_MainWindow(object):
         self.import_select_button = QPushButton(u"Import")
         self.reference_select_button = QPushButton("Reference")
         self.open_select_button = QPushButton("Open")
-        self.down_asset_button = QPushButton(u"下载资产下所有")
+
+
         self.import_layout.addWidget(self.import_select_button)
         self.import_layout.addWidget(self.reference_select_button)
         self.import_layout.addWidget(self.open_select_button)
-        self.import_layout.addWidget(self.down_asset_button)
+
         self.verticalLayout.addLayout(self.import_layout)
+
 
         self.splitter.addWidget(self.groupBox)
         self.groupBox_2 = QGroupBox(self.splitter)
@@ -347,15 +367,29 @@ class Ui_MainWindow(object):
         self.splitter_2.addWidget(self.groupBox_5)
 
         self.verticalLayout_5.addWidget(self.splitter_2)
+
+        export_layout = QHBoxLayout()
         self.exportBtn = QPushButton(self.tab)
         self.exportBtn.setObjectName(u"exportBtn")
         self.exportBtn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.verticalLayout_5.addWidget(self.exportBtn)
+        export_layout.addWidget(self.exportBtn)
+        self.exportBtn_subassets = QPushButton("ExportSubAssets")
+        self.exportBtn_subassets.setObjectName(u"exportBtn_exportBtn_subassets")
+        self.exportBtn_subassets.setCursor(QCursor(Qt.PointingHandCursor))
+        export_layout.addWidget(self.exportBtn_subassets)
+        self.verticalLayout_5.addLayout(export_layout)
+
+        publish_layout = QHBoxLayout()
         self.publishBtn = QPushButton(self.tab)
         self.publishBtn.setObjectName(u"publishBtn")
         self.publishBtn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.publishSubassetBtn = QPushButton("PublishSubAssets")
+        self.publishSubassetBtn.setObjectName(u"publishSubassetBtn")
+        self.publishSubassetBtn.setCursor(QCursor(Qt.PointingHandCursor))
+        publish_layout.addWidget(self.publishBtn)
+        publish_layout.addWidget(self.publishSubassetBtn)
 
-        self.verticalLayout_5.addWidget(self.publishBtn)
+        self.verticalLayout_5.addLayout(publish_layout)
 
         self.tabWidget.addTab(self.tab, "")
 
@@ -389,6 +423,8 @@ class Ui_MainWindow(object):
         self.exportBtn_assets.setCursor(QCursor(Qt.PointingHandCursor))
         verticalLayout_5_assets.addWidget(self.exportBtn_assets)
 
+
+
         self.publishBtn_assets = QPushButton("publishAssets")
         self.publishBtn_assets.setObjectName(u"publishBtn_assets")
         self.publishBtn_assets.setCursor(QCursor(Qt.PointingHandCursor))
@@ -397,9 +433,6 @@ class Ui_MainWindow(object):
         self.splitter_2.setStretchFactor(0, 1)
 
 ############################################################
-
-
-
 
         self.tab_3 = QWidget()
         self.tab_3.setObjectName(u"tab_3")
@@ -436,7 +469,16 @@ class Ui_MainWindow(object):
 
 
         #########add log lineedit
-        self.log_edit = QPlainTextEdit()
+        # import AssetBrowser.modules.app_utils as app_utils
+        # app_utils.ParentView().view = self.centralwidget
+
+        #这里的reload不要删，实现maya里重载单例log,
+        import AssetBrowser.view.singleton as singleton
+        import imp
+        imp.reload(singleton)
+
+
+        self.log_edit = singleton.logEdit
         log_layout = QVBoxLayout()
 
 
@@ -445,11 +487,11 @@ class Ui_MainWindow(object):
         self.groupBox_log.setLayout(log_layout)
         self.groupBox_log.setObjectName(u"groupBox_log")
         self.groupBox_log.setFont(font1)
-        self.groupBox_log.setHidden(True)
+        self.groupBox_log.setHidden(False)
 
         self.show_log_check = QCheckBox("ShowLog")
         self.verticalLayout_7.addWidget(self.show_log_check)
-        self.show_log_check.setChecked(False)
+
         self.verticalLayout_7.addWidget(self.groupBox_log)
         # self.verticalLayout_7.setStretch(0, 0)
         # self.verticalLayout_7.setStretch(1, 0)
@@ -496,6 +538,7 @@ class Ui_MainWindow(object):
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"Asset", None))
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"Step", None))
         self.extend.setChecked(True)
+        self.show_log_check.setChecked(True)
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"AssetName", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"Submit", None))
         self.groupBox_4.setTitle(QCoreApplication.translate("MainWindow", u"File List", None))

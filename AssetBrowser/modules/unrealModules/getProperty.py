@@ -10,7 +10,7 @@ def printAllProperties():
     obj = unreal.Actor()
     object_class = obj.get_class()
     for x in unreal.MyBlueprintFunctionLibraryTest.get_all_properties(object_class):
-        print(x)
+
         y = x
         while len(y) < 50:
             y = ' ' + y

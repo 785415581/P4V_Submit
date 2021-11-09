@@ -22,20 +22,7 @@ class Utils:
     def control(self, value):
         self._control = value
 
-    def createAsset(self):
-        clientRoot = self.control.appFunction.clientRoot
-        assetType = self.control.appFunction.typeComboBoxText
-        assetName = self.control.appFunction.assetNameComboBoxText
-        assetPath = os.path.join(clientRoot, assetType, assetName)
-        # if not os.path.isdir(assetPath):
-        #     os.mkdir(assetPath)
-        # with open(os.path.join(os.path.dirname(__file__), 'config.yml'), 'r') as fp:
-        #     config = yaml.load(fp.read(), Loader=yaml.FullLoader)
-        #     childFolder = config[assetType]
-        #     if childFolder:
-        #         for folder in childFolder:
-        #             folderPath = os.path.join(assetPath, folder)
-        #             os.mkdir(folderPath)
+
 
     def formatName(self, filePath):
         aType = self.control.appFunction.typeComboBoxText
@@ -54,30 +41,27 @@ class Utils:
         depot_path_tem = "{0}/Assets/{1}/{2}/{3}/{4}".format(*argv)
         return depot_path_tem
 
-
-
-
-
     @staticmethod
-    def colorText(text, w=False, e=False):
+    def createPublishTemp():
+        import tempfile
+        publish_temp_fold = os.path.join(tempfile.tempdir, "publish_temp")
+        if not os.path.exists(publish_temp_fold):
+            os.mkdir(publish_temp_fold)
+        export_fold = tempfile.mkdtemp(dir=publish_temp_fold)
+        return export_fold
 
-        if w:
-            text = u"<span style=\" font-size:8pt; font-weight:600; color:#FFA500;\" > {0} </span>".format(text)
-        elif e:
-            text = u"<span style=\" font-size:8pt; font-weight:600; color:#FF0000;\" > {0} </span>".format(text)
-        else:
-            text = u"<span style=\" font-size:8pt; font-weight:600; color:#000000;\" > {0} </span>".format(text)
-        return text
 
 
     def getAssetsData(self, p4_file_infos):
-        data_dicts = OrderedDict()
-        half_file_dicts = {}
         full_file_dicts = {}
+        half_file_dicts = {}
+        data_dicts = OrderedDict()
+        subasset_dicts = {}
+
         asset_type_filter = "|".join(global_setting.ASSETTYPE)
         submit_step_filter = "|".join(global_setting.STEP)
 
-        p = re.compile(r"//Assets/main/Assets/("+ asset_type_filter +")/(.+)/("+ submit_step_filter + ")/publish/(\S+)")
+        p = re.compile(r"//Assets/main/Assets/("+ asset_type_filter +")/(.+)/publish/("+ submit_step_filter + ")/(\S+)")
         for p4_file_path, infos in p4_file_infos.items():
             match = p.match(p4_file_path)
             if match:
@@ -88,18 +72,13 @@ class Utils:
                 if file_type not in data_dicts[asset_type][asset_name]:
                     data_dicts[asset_type][asset_name].append(file_type)
 
-
                 full_file_dicts.setdefault(data_key, []).append(p4_file_path)
                 half_file_dicts[p4_file_path] = half_path
+                if "/" in asset_name:
+                    subasset_dicts.setdefault(asset_type, {})
+                    subasset_dicts[asset_type].setdefault(asset_name.split("/")[0], set()).add(asset_name)
 
-
-
-        return full_file_dicts, half_file_dicts, data_dicts
-
-
-
-
-
+        return full_file_dicts, half_file_dicts, data_dicts, subasset_dicts
 
     def getRegx(self, crType):
         config = self.getConfig()

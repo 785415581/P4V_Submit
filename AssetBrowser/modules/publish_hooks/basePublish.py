@@ -16,7 +16,7 @@ class BasePublish(object):
 
 
     def checkout(self, ws_files, publish_log="Tool Publish"):
-        publish_log = getpass.getuser()+" " + publish_log
+        publish_log = publish_log + ":" + getpass.getuser()
         create_return, res = self.p4Model.checkout(ws_files, publish_log = publish_log)
         if not res:
             return create_return, res
@@ -28,7 +28,7 @@ class BasePublish(object):
         if not self._changelist:
             return "Error: failed to get changelist", False
 
-        log, res = self.p4Model.submitChangelist(self._changelist, )
+        log, res = self.p4Model.submitChangelist(self._changelist)
 
         return "Sucess: finish submit changelist,{0}".format(str(self._changelist)), True
 

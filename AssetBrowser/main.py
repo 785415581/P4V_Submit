@@ -12,6 +12,7 @@ from PySide2 import QtCore, QtWidgets
 import AssetBrowser.control.controller as controller
 import AssetBrowser.modules.ui_main as ui_main
 import AssetBrowser.view.baseWidget as baseWidget
+import AssetBrowser.modules.app_utils as app_utils
 
 import imp
 # imp.reload(publishInterface)
@@ -30,6 +31,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle(u'Publish for P4V中文')
         self.ui = ui_main.Ui_MainWindow()
         self.ui.setupUi(self)
+
 
 
 
@@ -98,27 +100,30 @@ class MainWindow(QtWidgets.QMainWindow):
         btn = self.sender()
         btnName = btn.objectName()
         if btnName == "connectBtn":
+            app_utils.add_log("Start Connect perofrce...")
             self.control.p4Model.user = self.ui.userLn.currentText()
             self.control.p4Model.password = self.ui.passwordLn.text()
 
             self.control.p4Model.validation()
             self.control.p4Model.initAssetsClient()
             clientRoot = self.control.p4Model.getRoot()
-            print("clientRoot = {}".format(clientRoot))
+            app_utils.add_log("Finish Connect perofrce...")
+            app_utils.add_log("clientRoot = {}".format(clientRoot))
             clientStream = self.control.p4Model.getStreamName()
-            print("clientStream = {}".format(clientStream))
+            app_utils.add_log("clientStream = {}".format(clientStream))
             if clientStream:
                 self.control.appFunction.validation = self.control.p4Model.validation
                 self.control.appFunction.clientRoot = clientRoot
                 self.control.appFunction.clientStream = clientStream
                 self.control.appFunction.initWindow()
             else:
-                print('error')
+                app_utils.add_log("Failed to get stream:{0}".format(clientStream), error=True)
 
 
     def closeEvent(self, event):
         event.accept()
         self.control.appFunction.callBack()
+
 
 
 if __name__ == '__main__':
