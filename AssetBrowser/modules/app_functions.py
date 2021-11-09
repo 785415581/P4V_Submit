@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 
 from PySide2 import QtCore
 from PySide2 import QtGui
@@ -19,6 +20,7 @@ import AssetBrowser.modules.publish_hooks.startPublish as startPublish
 import AssetBrowser.view.baseWidget as baseWidget
 
 import imp
+
 imp.reload(app_setting)
 imp.reload(global_setting)
 imp.reload(Leaf)
@@ -33,6 +35,7 @@ import tempfile
 import shutil
 from functools import partial
 
+
 class AppFunc():
     def __init__(self):
         self.appSetting = app_setting.AppSetting()
@@ -42,8 +45,7 @@ class AppFunc():
         self._clientRoot = None
         self._validation = None
         self.p4Model = None
-        self.currentPathList=[]
-
+        self.currentPathList = []
 
     @property
     def view(self):
@@ -112,8 +114,6 @@ class AppFunc():
         if current_type in self.data_dict:
             self.view.assetNameComboBox.addItems(list(self.data_dict[current_type].keys()))
 
-
-
     def changeType(self, index):
         print("change type")
 
@@ -145,41 +145,40 @@ class AppFunc():
         # self.view.workLn.addItems(value['workSpace'])
         if "users" in value and value["users"]:
             first_user = list(value["users"].keys())[0]
-            first_passward = list(value["users"].values())[0]
+            first_password = list(value["users"].values())[0]
         else:
             first_user = self.p4Model.user
-            first_passward = self.p4Model.password
-
+            first_password = self.p4Model.password
 
         self.view.userLn.insertItem(0, first_user)
         self.view.userLn.setCurrentIndex(0)
-        self.view.passwordLn.setText(first_passward)
+        self.view.passwordLn.setText(first_password)
 
     def showWorkTreeHandle(self, pos):
         contextMenuTree = QtWidgets.QMenu()
         # actionC.setDisabled(True)
         print("run")
         current_item = self.view.listWidget.itemAt(pos)
-        actionNew =None
+        actionNew = None
         actionDel = None
         if not current_item:
 
             actionNew = QtWidgets.QAction('New Folder')
 
             parent_item = current_item
-            
+
         else:
             if not ("." in current_item.text(0) and (not current_item.childItems)):
                 actionNew = QtWidgets.QAction('New Folder')
             actionDel = QtWidgets.QAction('Delete')
             parent_item = self.view.listWidget
-            
+
         if actionNew:
             contextMenuTree.addAction(actionNew)
-            actionNew.triggered.connect(partial(self.addFolder(parent_item)))
+            actionNew.triggered.connect(partial(self.addFolder, parent_item))
         if actionDel:
             contextMenuTree.addAction(actionDel)
-            actionDel.triggered.connect(partial(self.deleteItems(parent_item)))
+            actionDel.triggered.connect(partial(self.deleteItems, parent_item))
 
         contextMenuTree.exec_(QtGui.QCursor().pos())
 
@@ -192,7 +191,6 @@ class AppFunc():
             actionNew = QtWidgets.QAction('Get This Resivion')
             contextMenuTree.addAction(actionNew)
             actionNew.triggered.connect(lambda: self.change_version(data))
-
 
         contextMenuTree.exec_(QtGui.QCursor().pos())
 
@@ -233,15 +231,10 @@ class AppFunc():
             source_path = parent_item.source_path + source_path
         baseWidget.PathTreeItem(source_path, parent=parent_item)
 
-    def deleteItems(self, args):
-        print(args)
-        index = self.view.listWidget.indexFromItem(current_item)
-        self.view.listWidget.takeTopLevelItem(index)
-
-
-
-
-
+    def deleteItems(self, parent_item):
+        print(parent_item)
+        # index = self.view.listWidget.indexFromItem(current_item)
+        # self.view.listWidget.takeTopLevelItem(index)
 
     def __deleteItem(self, view):
         items = view.listview.selectedItems()
@@ -255,7 +248,7 @@ class AppFunc():
         current_asset = self.view.assetNameComboBox.currentText()
         current_step = self.view.submitStepCom.currentText()
         data_key = "{0}_{1}_{2}".format(current_type, current_asset, current_step)
-        #print(self.full_file_dict)
+        # print(self.full_file_dict)
         if data_key not in self.full_file_dict:
             return
 
@@ -287,16 +280,16 @@ class AppFunc():
                     continue
 
                 current_path = server_file.split(levels[matrix_index])[0] + levels[matrix_index]
-                if (current_path not in level_items):
+                if current_path not in level_items:
                     if matrix_index > 0:
-                        parent = levels[matrix_index-1]
+                        parent = levels[matrix_index - 1]
                     else:
                         parent = self.view.workTree
 
                     item = baseWidget.PathTreeItem(current_path, source_model="server", parent=parent)
                     level_items[current_path] = item
                     levels[matrix_index] = item
-                    if (matrix_index == len(levels)-1) and server_file in self.p4_file_infos:
+                    if (matrix_index == len(levels) - 1) and server_file in self.p4_file_infos:
                         if self.p4_file_infos[server_file]["haveRev"]:
                             label = QtWidgets.QLabel(self.p4_file_infos[server_file]["haveRev"])
                             label.setAlignment(QtCore.Qt.AlignCenter)
@@ -316,11 +309,9 @@ class AppFunc():
         if self.view.extend.isChecked():
             self.view.workTree.expandAll()
 
-
     def listPath(self, item):
         half_path = item.half_path
         servePre, localPre = self.getPathPre()
-
 
         res = servePre + half_path
         if self.clientRoot and res not in self.currentPathList:
@@ -354,11 +345,8 @@ class AppFunc():
         label.setAlignment(QtCore.Qt.AlignCenter)
         self.view.workTree.setItemWidget(sel_item, 1, label)
 
-
-
     def printTest(self, item):
         print(item.source_path)
-        print(item.half_path)
 
     def show_log(self):
         if self.view.show_log_check.isChecked():
@@ -384,7 +372,6 @@ class AppFunc():
         background-image: url(:/icons/icons/no_display_password.png);}""")
         self.view.passwordLn.setEchoMode(QtWidgets.QLineEdit.Password)
 
-
     def Import_btn_clicked(self, model):
         print("{0} btn pressed".format(model))
         sel_items = self.view.workTree.selectedItems()
@@ -398,20 +385,29 @@ class AppFunc():
 
         servePrePublish, localPrePublish = self.getPathPre()
         # servePreWork, localPreWork = self.getPathPre("private")
+        fileInfo = dict()
         for item in sel_items:
             half_path = item.half_path.replace('\\', '/')
             local_pub_path = localPrePublish + half_path
 
             if local_pub_path:
-                #sync local version first
+                # sync local version first
                 self.p4Model.syncFile(local_pub_path, version=item.have_rev)
+                fileLabel = self.p4Model.getFileLabels(local_pub_path)
                 # #copy to private fold
                 # local_work_path = localPreWork + half_path
                 # moveFile.moveImportFile(local_pub_path, local_work_path)
 
-                #start import
-                log, result = startImport.start_import(model, local_pub_path, type=current_type,
-                                                       asset=current_asset, step=current_step, view=self.view)
+                fileInfo[local_pub_path] = {}
+                fileInfo[local_pub_path]['localPath'] = local_pub_path
+                fileInfo[local_pub_path]['serverPath'] = servePrePublish + half_path
+                fileInfo[local_pub_path]['type'] = current_type
+                fileInfo[local_pub_path]['asset'] = current_asset
+                fileInfo[local_pub_path]['step'] = current_step
+                fileInfo[local_pub_path]['labels'] = fileLabel
+
+                # start import
+                log, result = startImport.start_import(model, local_pub_path, fileInfo=fileInfo)
                 if result:
                     self.add_log(log)
                 else:
@@ -434,9 +430,8 @@ class AppFunc():
 
             if result:
                 self.add_log(log)
-                #self.view.listWidget.clear()
+                # self.view.listWidget.clear()
                 for sub in os.listdir(export_fold):
-
                     self.view.listWidget.createItem(os.path.join(export_fold, sub), source_model="export")
             else:
                 self.add_log(log, e=True)
@@ -479,10 +474,6 @@ class AppFunc():
 
         return servePre.replace("\\", "/"), workPre.replace("\\", "/")
 
-
-
-
-
     def callBack(self):
         self.appSetting.init()
         configValue = self.appSetting.getConfig()
@@ -494,7 +485,6 @@ class AppFunc():
         # if serverPort not in configValue['serverPort']:
         #     configValue['serverPort'].append(serverPort)
 
-        configValue.setdefault("users", {})[user]=password
+        configValue.setdefault("users", {})[user] = password
 
         self.appSetting.setConfig(configValue)
-

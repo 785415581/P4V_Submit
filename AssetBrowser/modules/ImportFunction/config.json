@@ -49,7 +49,7 @@
         "fbx": "unrealFunctions.UnrealImportFBX",
         "abc": "",
         "tiff": "",
-        "png": ""
+        "png": "unrealFunctions.UnrealImportTex"
        }
     },
     "Open":

@@ -1,0 +1,88 @@
+#
+Resource:
+  Animal:
+    Bear: {}
+    Dinosaur: {}
+    Horse: {}
+    Leopard: {}
+  Building:
+    Apartment: {}
+    Construction: {}
+    Facility: {}
+    Interior: {}
+    Factory: {}
+    Furniture: {}
+    House: {}
+    Mansion: {}
+    Parts:
+      Balcony: {}
+      Beam: {}
+      Door: {}
+      Pillar: {}
+      Railing: {}
+      Roof: {}
+      Stair: {}
+      Trim: {}
+      Wall: {}
+      Window: {}
+  Character:
+    Backpack: {}
+    Body: {}
+    Bottom: {}
+    Bracelet: {}
+    Coat: {}
+    EMP: {}
+    Glasses: {}
+    Gloves: {}
+    Hair: {}
+    Hat: {}
+    Head: {}
+    Mask: {}
+    Shirt: {}
+    Shoes: {}
+  Collect:
+    Box: {}
+    Ore: {}
+    Plant: {}
+    Tool: {}
+  Decal:
+    Blood: {}
+    Door: {}
+    Debris: {}
+    Graffiti: {}
+    Leakage: {}
+    Metal: {}
+    Moss: {}
+    Stone: {}
+    Street: {}
+    Trim: {}
+    Vegetation: {}
+    Other: {}
+  Effect: {}
+  HDRI:
+    Interior: {}
+    Sky: {}
+  Prop:
+    Food: {}
+    Historical: {}
+    Industrial: {}
+    Machine: {}
+    Pipe: {}
+    Vehicle: {}
+  Nature:
+    Rock: {}
+    Cliff: {}
+  Street: {}
+  UI:
+    Action: {}
+    CrossHair: {}
+    Store: {}
+  Vegetation:
+    Bush: {}
+    Grass: {}
+    Tree: {}
+  Weapon:
+    Bow: {}
+    Grenade: {}
+    Gun: {}
+    Melee: {}

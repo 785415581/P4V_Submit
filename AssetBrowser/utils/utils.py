@@ -2,13 +2,16 @@
 import os
 import re
 import sys
+
 sys.path.append("R:\ProjectX\Scripts\Python37\Lib\site-packages")
 import yaml
 import subprocess
 from collections import OrderedDict
 import AssetBrowser.modules.global_setting as global_setting
 import imp
+
 imp.reload(global_setting)
+
 
 class Utils:
     def __init__(self):
@@ -54,10 +57,6 @@ class Utils:
         depot_path_tem = "{0}/Assets/{1}/{2}/{3}/{4}".format(*argv)
         return depot_path_tem
 
-
-
-
-
     @staticmethod
     def colorText(text, w=False, e=False):
 
@@ -69,7 +68,6 @@ class Utils:
             text = u"<span style=\" font-size:8pt; font-weight:600; color:#000000;\" > {0} </span>".format(text)
         return text
 
-
     def getAssetsData(self, p4_file_infos):
         data_dicts = OrderedDict()
         half_file_dicts = {}
@@ -77,7 +75,8 @@ class Utils:
         asset_type_filter = "|".join(global_setting.ASSETTYPE)
         submit_step_filter = "|".join(global_setting.STEP)
 
-        p = re.compile(r"//Assets/main/Assets/("+ asset_type_filter +")/(.+)/("+ submit_step_filter + ")/publish/(\S+)")
+        p = re.compile(
+            r"//Assets/main/Assets/(" + asset_type_filter + ")/(.+)/(" + submit_step_filter + ")/publish/(\S+)")
         for p4_file_path, infos in p4_file_infos.items():
             match = p.match(p4_file_path)
             if match:
@@ -88,18 +87,10 @@ class Utils:
                 if file_type not in data_dicts[asset_type][asset_name]:
                     data_dicts[asset_type][asset_name].append(file_type)
 
-
                 full_file_dicts.setdefault(data_key, []).append(p4_file_path)
                 half_file_dicts[p4_file_path] = half_path
 
-
-
         return full_file_dicts, half_file_dicts, data_dicts
-
-
-
-
-
 
     def getRegx(self, crType):
         config = self.getConfig()
@@ -137,19 +128,6 @@ if __name__ == '__main__':
     _utils = Utils()
     value = _utils.getConfig()
     from pprint import pprint
+
     # pprint(value)
-    dir_set = _utils.listdir('//Assets/main/TATest')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    dir_set = _utils.getAssetsData('//Assets/main/TATest')
