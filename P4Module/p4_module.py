@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import subprocess
 import re
@@ -94,7 +95,7 @@ class P4Client(object):
         script create new workspace when it hasn't.
         :return:
         """
-        initWorkSpaceScriptPath = r'\\10.0.200.5\HeroFileServer\ProjectX\Tools\bat\AutoWorkspace\AutoWorkspace.bat'
+        initWorkSpaceScriptPath = r'R:/ProjectX/Tools/bat/AutoWorkspace/AutoWorkspace.bat'
         userName = self.user
         password = self.password
         streamName = self.getStreamName()
@@ -114,7 +115,7 @@ class P4Client(object):
         script create new workspace when it hasn't.
         :return:
         """
-        initWorkSpaceScriptPath = r'\\10.0.200.5\HeroFileServer\ProjectX\Tools\bat\AutoWorkspaceAssets\AutoWorkspace.bat'
+        initWorkSpaceScriptPath = r'R:/ProjectX/Tools/bat/AutoWorkspaceAssets/AutoWorkspace.bat'
         userName = self.user
         password = self.password
         cmd = '{script} {user} {password}'.format(script=initWorkSpaceScriptPath, user=userName, password=password)
@@ -162,7 +163,8 @@ class P4Client(object):
             if not res:
                 continue
             data_values = res.split(";;")
-
+            if not data_values[2]:
+                continue
             file_dict.setdefault(data_values[0], {})
             for index in range(len(data_keys)):
                 file_dict[data_values[0]][data_keys[index]] = data_values[index]
@@ -207,10 +209,18 @@ class P4Client(object):
 
         return None, None, None
 
-    def createNewChangelist(self, description="My pending change"):
-        #todo test chinese
-        cmd = 'p4 --field "Description={0}" change -o | p4 change -i'.format(description)
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    def createNewChangelist(self, description=u"My pending change"):
+        import locale
+        import sys
+
+        cmd = u'p4 --field "Description={0}" change -o | p4 change -i'.format(description)
+
+
+        if sys.version.startswith("3"):
+            process = subprocess.Popen(cmd.encode(sys.getdefaultencoding()).decode("GB18030"), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        else:
+            process = subprocess.Popen(cmd.encode("utf-8"), stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE, shell=True)
         create_info, err = process.communicate()
 
         if err:
@@ -243,7 +253,7 @@ class P4Client(object):
                     continue
                 data_values = res.split(";;")
 
-                if not data_values[0]:
+                if not data_values[0] or not data_values[2]:
                     add_cmd = "p4 add -d -c {0} {1}".format(new_change, local_file)
                     process = subprocess.Popen(add_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                     out, err = process.communicate()
@@ -280,13 +290,14 @@ class P4Client(object):
 
         return new_change, True
 
-
     def submitChangelist(self, changeListNum):
         submit_cmd = "p4 submit -c {0}".format(str(changeListNum))
         process = subprocess.Popen(submit_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = process.communicate()
         if err:
             return err, False
+
+        return "Submit success!", True
 
     def getFileLabels(self, p4File):
         labels = list()
@@ -299,12 +310,12 @@ class P4Client(object):
                 labels.append(label[0])
         return labels
 
+
     @staticmethod
     def addFileLabels(p4File, label):
         cmd = 'p4 tag -l {label} {fileName}#head'.format(label=label, fileName=p4File)
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         res, err = process.communicate()
-
 
     def deleteFileLabels(self, p4File, label):
         cmd = 'p4 tag -l {label} {fileName}#head'.format(label=label, fileName=p4File)
