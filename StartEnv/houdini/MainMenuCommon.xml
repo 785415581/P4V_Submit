@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mainMenu>
+    <menuBar>
+        <subMenu id="file_menu"></subMenu>
+        <subMenu id="edit_menu"></subMenu>
+        <subMenu id="render_menu"></subMenu>
+        <subMenu id="takes_menu_mm" platform="mbsd"></subMenu>
+        <subMenu id = "assets_menu"></subMenu>
+        <subMenu id="desktop_submenu" platform="mbsd"></subMenu>
+        <subMenu id="radial_submenu" platform="mbsd"></subMenu>
+        <subMenu id="windows_menu"></subMenu>
+        <subMenu id="help_menu"></subMenu>
+
+        <subMenu id="JGTools">
+            <insertAfter>help_menu</insertAfter>
+            <label>JGTools</label>
+            <scriptItem id="h.publish">
+                <label>Publish</label>
+                <scriptCode><![CDATA[import sys
+import hou
+sys.path.insert(0,"D:/chenghh/gitlab/publish")
+sys.path.append("R:\ProjectX\Scripts\Python37\Lib\site-packages")
+import yaml
+import AssetBrowser.main as main
+import imp
+imp.reload(main)
+
+from PySide2 import QtWidgets
+try:
+ win.close()
+ win.deleteLater()
+except:
+ pass
+
+parent = hou.ui.mainQtWindow()
+win = main.MainWindow(parent)
+win.show()]]>
+                </scriptCode>
+            </scriptItem >
+        </subMenu>
+    </menuBar>
+</mainMenu>
