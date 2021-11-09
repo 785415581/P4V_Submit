@@ -28,12 +28,13 @@ def UnrealImportFBX(**kwargs):
     kwargs.update({"obj": FBXUnrealObj()})
     fileInfo = kwargs.get('fileInfo')
     window = DialogAddLabel.AddLabels()
+    window.setWindowModality(QtCore.Qt.ApplicationModal)
     window.selectFiles = fileInfo
     window.kwargs = kwargs
     window.initUI()
     window.addFileItem(fileInfo)
     window.show()
-
+    unreal.parent_external_window_to_slate(window.winId())
     return "", ""
 
 
@@ -45,12 +46,13 @@ def UnrealImportTex(select_file, **kwargs):
     kwargs.update({"obj": TexUnrealObj()})
     fileInfo = kwargs.get('fileInfo')
     window = DialogAddLabel.AddLabels()
+    window.setWindowModality(QtCore.Qt.ApplicationModal)
     window.selectFiles = fileInfo
     window.kwargs = kwargs
     window.initUI()
     window.addFileItem(fileInfo)
     window.show()
-
+    unreal.parent_external_window_to_slate(window.winId())
     return "", ""
 
 

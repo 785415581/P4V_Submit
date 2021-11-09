@@ -28,7 +28,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         self.itemLabels = None
         self._select_file = None
         self._kwargs = None
-
+        self._configData = None
         self.setupUi(self)
         self.columnView = self.levelColumnView
         self.columnView.setColumnWidths([20, 20, 20])
@@ -52,11 +52,20 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
     def kwargs(self, value):
         self._kwargs = value
 
+    @property
+    def configData(self):
+        return self._configData
+
+    @configData.setter
+    def configData(self, value):
+        self._configData = value
+
     def initUI(self):
         model = QtGui.QStandardItemModel()
         with open(os.path.dirname(__file__) + '/FileStructure.json') as fp:
             data = json.load(fp)
-        self.setData(data, model)
+        self.configData = data
+        self.setData(self.configData, model)
         self.columnView.setModel(model)
 
     def initSignal(self):
@@ -97,15 +106,42 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         columnView.contextMenu.show()
 
     def actionHandler(self, columnView):
-        item = columnView.model().itemFromIndex(columnView.currentIndex())
-        subItem = QtGui.QStandardItem('rrrr')
-        item.parent().appendRow(subItem)
-        print(item.parent(), item.parent().text())
-        print(columnView.currentIndex().parent().row())
-        print("成功")
+        # ToDo: add label
+        index = columnView.currentIndex()
+        container = list()
+        container = self.getAllSelectColumnItem(index, container)
+        count = columnView.model().columnCount(index)
+        text, ok = QtWidgets.QInputDialog.getText(self, 'Text Input Dialog', '输入姓名')
+        if ok:
+            item = columnView.model().itemFromIndex(index)
+            print(index)
+            print(item.parent())
+            count = columnView.model().columnCount(index)
+            print(count)
+            if item.hasChildren():
+                item.rowCount()
 
-    def stepOption(self):
-        pass
+            subItem = QtGui.QStandardItem(text)
+
+            item.setChild(0, 0, subItem)
+            item.parent().appendRow(subItem)
+            container.insert(0, text)
+            container.reverse()
+            configData = self.feedbackConfig(container, self.configData)
+            from pprint import pprint
+            pprint(configData)
+        # print(item.parent(), item.parent().text())
+        # print(columnView.currentIndex().parent().row())
+
+    def feedbackConfig(self, container, configData):
+
+        for label in container:
+            if label in configData:
+                container.remove(label)
+                self.feedbackConfig(container, configData[label])
+            else:
+                configData.update({label: {}})
+        return configData
 
     def setImportOption(self):
         for index in range(self.itemListWidget.count()):
@@ -191,11 +227,10 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         return labels
 
     def setLabelsCombineUnrealPath(self, labels):
-        with open(os.path.dirname(__file__) + '/FileStructure.json') as fp:
-            data = json.load(fp)
+
         for label in labels:
             router = []
-            if label not in data:
+            if label not in self.configData:
                 index = str()
                 for level in range(len(labels)):
                     if labels[level]:
@@ -209,7 +244,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             else:
                 for label in labels:
                     router = []
-                    result = self.find_by_exhaustion(label, data, router)
+                    result = self.find_by_exhaustion(label, self.configData, router)
                     if result:
                         index = str()
                         for level in range(len(result[1])):
