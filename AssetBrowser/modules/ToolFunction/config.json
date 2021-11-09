@@ -1,0 +1,56 @@
+
+
+
+{
+  "Maya": {
+    "OpenScene":
+    {
+      "default": "defaultFunctions.defaultMayaNew"
+    },
+    "NewScene":
+    {
+      "default": "mayaFunctions.mayaNew"
+    },
+    "SaveScene":
+    {
+      "default": "mayaFunctions.mayaSave"
+    },
+    "importSubasset":
+    {
+      "default": "mayaFunctions.mayaImportSubAssets"
+    },
+    "ExportSubasset":
+    {
+      "default": "mayaFunctions.mayaExportSubAssets"
+    }
+  },
+
+
+
+  "Houdini": {
+    "OpenScene": {
+      "default": "defaultFunctions.defaultHoudiniNew"
+    },
+    "SaveScene":
+    {
+      "default": "houdiniFunctions.houdiniSave"
+    }
+
+  },
+
+
+
+  "Default": {
+    "OpenScene":
+    {
+      "default": "defaultFunctions.defaultNew"
+    },
+    "NewScene": {
+      "default": "defaultFunctions.defaultNew"
+    }
+
+  }
+
+
+
+}

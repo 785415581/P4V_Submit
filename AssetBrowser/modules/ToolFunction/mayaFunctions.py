@@ -1,0 +1,160 @@
+import maya.cmds as cmds
+import os
+import imp
+import AssetBrowser.modules.app_utils as app_utils
+imp.reload(app_utils)
+
+
+def mayaNew(**kwargs):
+    from Tools.maya.createHierarchy import createHierarchy
+    from AssetBrowser.modules.global_setting import ANISTEP
+
+    private_fold = kwargs["localPreWork"]
+    private_fold = os.path.join(private_fold, "maya")
+    if not os.path.exists(private_fold):
+        os.makedirs(private_fold)
+    file_name = "{0}_{1}_v001.ma".format(kwargs["asset"].replace("/", "_"), kwargs["step"])
+    work_file_path = os.path.join(private_fold, file_name)
+    cmds.file(f=1, new=1)
+
+    if kwargs["step"] == ANISTEP:
+        createHierarchy(shot=True)
+    else:
+        createHierarchy(asset=True)
+
+    cmds.file(rename=work_file_path)
+    cmds.file(save=True, type='mayaAscii')
+    return "Create New file:{0}".format(work_file_path), True
+
+
+def mayaSave(**kwargs):
+    import glob
+    private_fold = os.path.join(kwargs["localPrePrivate"], "maya")
+    if not os.path.exists(private_fold):
+        os.makedirs(private_fold)
+
+    file_pre = "{0}_{1}_v".format(kwargs["asset"].replace("/", "_"), kwargs["step"])
+    file_name = file_pre + "*.ma"
+    work_file_path = os.path.join(private_fold, file_name)
+    version_list = glob.glob(work_file_path)
+    if version_list:
+        version_list.sort()
+        last_version = version_list[-1]
+        version_num = os.path.basename(last_version).split(".ma")[0].split(file_pre)[-1]
+        new_version = str(int(version_num)+1).zfill(3)
+    else:
+        new_version = "001"
+
+    file_name = file_pre + new_version + ".ma"
+    work_file_path = os.path.join(private_fold, file_name)
+
+    cmds.file(rename=work_file_path)
+    cmds.file(save=True, type='mayaAscii')
+
+    return "Save File {0}".format(work_file_path), True
+
+
+def mayaImportSubAssets(**kwargs):
+    import pymel.core as pm
+    from Tools.maya.createHierarchy import createHierarchy
+    from AssetBrowser.modules.global_setting import ANISTEP
+    if kwargs["step"] == ANISTEP:
+        createHierarchy(shot=True)
+    else:
+        createHierarchy(asset=True)
+
+    import AssetBrowser.modules.ImportFunction.startImport as startImport
+    import imp
+    imp.reload(startImport)
+
+    subAssetDict = kwargs["subAssets"]
+    if kwargs["type"] not in subAssetDict:
+        return "Type {0} has not subAssets".format(kwargs["type"]), False
+    if kwargs["asset"] not in subAssetDict[kwargs["type"]]:
+        return "Asset {0} has not subAssets".format(kwargs["asset"]), False
+    subassets = subAssetDict[kwargs["type"]][kwargs["asset"]]
+
+    for subasset in subassets:
+        data_key = "{0}_{1}_{2}".format(kwargs["type"], subasset, kwargs["step"])
+        if data_key not in kwargs["full_path_dict"]:
+            app_utils.add_log("Subasset {0} Lack File".format(data_key), error=True)
+            continue
+
+        asset_files = kwargs["full_path_dict"][data_key]
+        asset_level = "/{0}/".format(kwargs["asset"])
+        subasset_level = "/{0}/".format(subasset)
+        
+        server_pre = kwargs["servePrePublish"].replace(asset_level, subasset_level)
+        local_pre = kwargs["localPrePublish"].replace(asset_level, subasset_level)
+
+        for asset_file in asset_files:
+            if not asset_file.endswith(".fbx"):
+                continue
+                
+            asset_file = asset_file.replace(server_pre, local_pre)
+            log, create_nodes = startImport.start_import("import", asset_file, type=kwargs["type"],
+                                     asset=kwargs["asset"], step=kwargs["step"])
+
+            sub_level = "|master|" + kwargs["step"]+"|"+subasset.split("/")[-1]
+            if not pm.objExists(sub_level):
+                trans_node = pm.createNode("transform", n=subasset.split("/")[-1], p="|master|" + kwargs["step"])
+            for create_node in create_nodes:
+                if "|master" in create_node and len(create_node.split("|")) < 5 and create_node != sub_level:
+                    pm.parent(pm.PyNode(create_node), trans_node)
+
+    return "", True
+
+
+def mayaExportSubAssets(**kwargs):
+    import tempfile
+    import imp
+    import AssetBrowser.modules.ExportFunction.startExport as startExport
+    import AssetBrowser.utils.utils as utils
+    imp.reload(startExport)
+
+    import AssetBrowser.view.widgetStep as widgetStep
+    imp.reload(widgetStep)
+    step_win = widgetStep.StepWidget(kwargs["step"])
+    step_win.exec_()
+    kwargs["step"] = step_win.select_step if step_win.select_step else kwargs["step"]
+    index = kwargs["view"].submitStepCom.findText(kwargs["step"])
+    kwargs["view"].submitStepCom.setCurrentIndex(index)
+    step_win.destroy()
+
+
+    if kwargs["type"] not in kwargs["subAssets"]:
+        return "Failed to get subassets {0}".format(kwargs["asset"]), False
+    if kwargs["asset"] in kwargs["subAssets"][kwargs["type"]]:
+        subassets = kwargs["subAssets"][kwargs["type"]][kwargs["asset"]]
+    else:
+        if kwargs["step"] == "Mesh":
+            subassets = [kwargs["asset"]+"/" + outline_name for outline_name in cmds.listRelatives("|master|Mesh", children=True)]
+            kwargs["subAssets"][kwargs["type"]][kwargs["asset"]] = set(subassets)
+        else:
+            return "Failed to get subassets {0}".format(kwargs["asset"]), False
+
+    export_fold = utils.Utils.createPublishTemp()
+
+    for subasset in subassets:
+        subasset_fold = export_fold + "/"+ subasset
+        if not os.path.exists(subasset_fold):
+            os.makedirs(subasset_fold)
+        kwargs["asset"] = subasset
+        log, result = startExport.start_export(subasset_fold, sub_level=subasset.split("/")[-1], **kwargs)
+        app_utils.add_log(log)
+        if not result:
+            os.rmdir(subasset_fold)
+
+    for sub in os.listdir(export_fold):
+        kwargs["view"].listWidget.createItem(os.path.join(export_fold, sub), source_model="export")
+
+
+    return "", True
+
+
+
+
+
+
+
+
