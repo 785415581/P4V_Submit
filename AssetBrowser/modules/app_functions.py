@@ -142,16 +142,13 @@ class AppFunc():
 
     def initUser(self):
         value = self.appSetting.getConfig()
-        first_password = ""
+        first_user = self.p4Model.user
+        first_password = self.p4Model.password
+
         if value["user"]:
             first_user = value["user"][0]
             if len(value["user"])>1:
                 first_password = value["user"][1]
-
-        else:
-            first_user = self.p4Model.user
-            first_password = self.p4Model.password
-
 
         self.view.userLn.insertItem(0, first_user)
         self.view.userLn.setCurrentIndex(0)
