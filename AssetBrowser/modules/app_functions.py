@@ -371,6 +371,7 @@ class AppFunc():
 
     def btnImportClicked(self, model):
         print("{0} btn pressed".format(model))
+        from collections import Iterable
         sel_items = self.view.workTree.selectedItems()
         if not sel_items:
             app_utils.add_log(u"Warning:未选择文件", warning=True)
@@ -394,9 +395,6 @@ class AppFunc():
                 # sync local version first
                 self.p4Model.syncFile(local_pub_path, version=item.have_rev)
                 fileLabel = self.p4Model.getFileLabels(local_pub_path)
-                # #copy to private fold
-                # local_work_path = localPreWork + half_path
-                # moveFile.moveImportFile(local_pub_path, local_work_path)
 
                 fileInfo[local_pub_path] = {}
                 fileInfo[local_pub_path]['localPath'] = local_pub_path
@@ -411,6 +409,9 @@ class AppFunc():
         # start import
         log, result = startImport.start_import(model, fileInfo=fileInfo, ext=fileExt)
         if result:
+            if isinstance(result, Iterable):
+                for res in result:
+                    continue
             app_utils.add_log(log)
         else:
             app_utils.add_log(log, error=True)
@@ -528,6 +529,7 @@ class AppFunc():
         log, res = startTool.start_tool(model, type=current_type, asset=current_asset, step=current_step,
                                         servePrePublish=servePrePublish, localPrePublish=localPrePublish,
                                         localPrePrivate=localPrePrivate,
+                                        p4model=self.p4Model,
                                         view=self.view, subAssets=self.subAssetDict,
                                         full_path_dict=self.full_file_dict, half_path_dict=self.half_file_dict)
         if res:

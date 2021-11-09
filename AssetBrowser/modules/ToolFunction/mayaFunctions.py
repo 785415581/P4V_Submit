@@ -87,18 +87,38 @@ def mayaImportSubAssets(**kwargs):
         server_pre = kwargs["servePrePublish"].replace(asset_level, subasset_level)
         local_pre = kwargs["localPrePublish"].replace(asset_level, subasset_level)
 
+        fileExt = list()
+        fileInfo = {}
+
         for asset_file in asset_files:
             if not asset_file.endswith(".fbx"):
                 continue
-                
+            # sync local version first
+            kwargs["p4model"].syncFile(asset_file, version="head")
             asset_file = asset_file.replace(server_pre, local_pre)
-            log, create_nodes = startImport.start_import("import", asset_file, type=kwargs["type"],
-                                     asset=kwargs["asset"], step=kwargs["step"])
+            fileLabel = kwargs["p4model"].getFileLabels(asset_file)
 
-            sub_level = "|master|" + kwargs["step"]+"|"+subasset.split("/")[-1]
-            if not pm.objExists(sub_level):
-                trans_node = pm.createNode("transform", n=subasset.split("/")[-1], p="|master|" + kwargs["step"])
+            fileInfo[asset_file] = {}
+            fileInfo[asset_file]['localPath'] = asset_file
+            fileInfo[asset_file]['serverPath'] = asset_file.replace(local_pre, server_pre)
+            fileInfo[asset_file]['type'] = kwargs["type"]
+            fileInfo[asset_file]['asset'] = kwargs["asset"]
+            fileInfo[asset_file]['step'] = kwargs["step"]
+            fileInfo[asset_file]['labels'] = fileLabel
+            fileInfo[asset_file]['ext'] = asset_file.split('.')[-1]
+            fileExt.append(asset_file.split('.')[-1])
+
+
+        fileExt = fileExt[0]
+        import time
+        log, create_nodes_yield = startImport.start_import("import", fileInfo=fileInfo, ext=fileExt)
+
+        for create_nodes in create_nodes_yield:
             for create_node in create_nodes:
+                sub_level = "|master|" + kwargs["step"] + "|" + subasset.split("/")[-1]
+                if not pm.objExists(sub_level):
+                    trans_node = pm.createNode("transform", n=subasset.split("/")[-1],
+                                               p="|master|" + kwargs["step"])
                 if "|master" in create_node and len(create_node.split("|")) < 5 and create_node != sub_level:
                     pm.parent(pm.PyNode(create_node), trans_node)
 

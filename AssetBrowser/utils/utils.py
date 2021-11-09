@@ -1,9 +1,10 @@
 # _*_coding:utf-8 _*_
+import sys
+sys.path.append("R:/ProjectX/Scripts/Python37/Lib/site-packages")
+
 import os
 import re
-import sys
-sys.path.append("R:\ProjectX\Scripts\Python37\Lib\site-packages")
-import yaml
+
 import subprocess
 from collections import OrderedDict
 import AssetBrowser.modules.global_setting as global_setting
@@ -31,6 +32,7 @@ class Utils:
         # print(aType, aAsset, aStep)
 
     def getConfig(self):
+        import yaml
         with open(os.path.join(os.path.dirname(__file__), 'config.yml'), 'r') as fp:
             config = yaml.load(fp.read(), Loader=yaml.FullLoader)
             return config
