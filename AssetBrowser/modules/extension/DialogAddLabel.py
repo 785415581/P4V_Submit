@@ -13,6 +13,7 @@ from PySide2 import QtGui
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 from P4Module.p4_module import P4Client
+import AssetBrowser.modules.app_utils as app_utils
 from AssetBrowser.modules.extension import DialogAddLabel_UI
 
 import importlib
@@ -36,11 +37,11 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         self.initSignal()
 
     @property
-    def selectFile(self):
+    def selectFiles(self):
         return self._select_file
 
-    @selectFile.setter
-    def selectFile(self, value):
+    @selectFiles.setter
+    def selectFiles(self, value):
         self._select_file = value
 
     @property
@@ -68,6 +69,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         self.__clearLabel()
         data = item.data(QtCore.Qt.UserRole)
         labels = data.get("labels", "")
+
         for label in labels:
             obj = QtWidgets.QLabel()
             obj.setText(label)
@@ -111,10 +113,11 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             data = item.data(QtCore.Qt.UserRole)
             localPath = data.get("localPath", "")
             severPath = data.get("serverPath", "")
-
+            if localPath.split('.')[-1] != self.kwargs.get('ext'):
+                app_utils.add_log("Invalid file format...{}".format(localPath))
+                continue
             labels = self.getLabelsFromLayout()
             unrealPath = self.setLabelsCombineUnrealPath(labels)
-
             self.UnrealObj = self.kwargs.get("obj")
             self.UnrealObj.asset = data.get("asset", "")
             self.UnrealObj.type = data.get("type", "")
@@ -129,7 +132,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
                 return
             destination_name = self.UnrealObj.init_destination_name()
             options = self.UnrealObj.build_static_mesh_import_options()
-            importTask = self.UnrealObj.creatImportTask(self.selectFile, destination_path, destination_name, options)
+            importTask = self.UnrealObj.creatImportTask(self.selectFiles, destination_path, destination_name, options)
             self.UnrealObj.execute_import_tasks(importTask)
             self.feedbackTag(unrealPath, data)
 
@@ -149,6 +152,11 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         container = list()
         container = self.getAllSelectColumnItem(index, container)
         self.itemLabels = container
+        items = self.itemListWidget.selectedItems()
+        for item in items:
+            data = item.data(QtCore.Qt.UserRole)
+            data.update({"labels": container})
+            item.setData(QtCore.Qt.UserRole, data)
         for label in container:
             obj = QtWidgets.QLabel()
             obj.setText(label)

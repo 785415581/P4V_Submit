@@ -92,14 +92,14 @@ class MainWindow(QtWidgets.QMainWindow):
         btn = self.sender()
         btnName = btn.objectName()
         if btnName == "connectBtn":
-            app_utils.add_log("Start Connect perofrce...")
+            app_utils.add_log("Start Connect perforce...")
             self.control.p4Model.user = self.ui.userLn.currentText()
             self.control.p4Model.password = self.ui.passwordLn.text()
 
             self.control.p4Model.validation()
             self.control.p4Model.initAssetsClient()
             clientRoot = self.control.p4Model.getRoot()
-            app_utils.add_log("Finish Connect perofrce...")
+            app_utils.add_log("Finish Connect perforce...")
             app_utils.add_log("clientRoot = {}".format(clientRoot))
             clientStream = self.control.p4Model.getStreamName()
             app_utils.add_log("clientStream = {}".format(clientStream))

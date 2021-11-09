@@ -7,10 +7,11 @@ import AssetBrowser.modules.ImportFunction as ImportFunction
 DEBUG = False
 
 
-def start_import(import_model, select_file, **kwargs):
+def start_import(import_model, **kwargs):
     result = False
     config_dict = read_config()
     soft_env = get_env()
+
     # TODO: Multi-select import problem
     # for select_file, info in kwargs.items():
 
@@ -25,7 +26,7 @@ def start_import(import_model, select_file, **kwargs):
         log = "Error: Can't {0} asset in {1}".format(import_model, soft_env)
         return log, result
 
-    ext = select_file.split(".")[-1]
+    ext = kwargs.get('ext')
     if ext not in config_dict[soft_env][import_model]["ext"]:
         log = "Error: Lack ext {0} ".format(ext)
         return log, False
@@ -43,7 +44,7 @@ def start_import(import_model, select_file, **kwargs):
     imp.reload(import_module)
 
     run_func = getattr(import_module, import_func.split(".")[-1])
-    log, result = run_func(select_file, **kwargs)
+    log, result = run_func(**kwargs)
     return log, result
 
 
