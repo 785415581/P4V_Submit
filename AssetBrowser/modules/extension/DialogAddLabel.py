@@ -9,6 +9,7 @@ import sys
 import json
 import copy
 import random
+import traceback
 from PySide2 import QtGui
 from PySide2 import QtCore
 from PySide2 import QtWidgets
@@ -185,10 +186,21 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             importTask = self.UnrealObj.creatImportTask(self.selectFiles, destination_path, destination_name, options)
             self.UnrealObj.execute_import_tasks(importTask)
             self.feedbackTag(unrealPath, data)
+        self.feedbackConfigData()
+        self.close()
 
-            self.close()
+    def feedbackConfigData(self):
+
+        try:
+            with open(os.path.dirname(__file__) + '/FileStructure.json', 'w') as fd:
+                json.dump(self.configData, fd, indent=2, sort_keys=1)
+                fd.close()
+        except IOError:
+            traceback.print_exc()
 
     def feedbackTag(self, unrealPath, data):
+        if not unrealPath:
+            return
         labels = unrealPath.split('/')[1::]
         labels.remove('Game')
         labels.remove(data.get("step", ""))
