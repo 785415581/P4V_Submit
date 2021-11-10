@@ -447,7 +447,6 @@ class AppFunc():
             log, result = startExport.start_export(export_fold, type=current_type, asset=current_asset, step=current_step)
 
             if result:
-                self.add_log(log)
                 # self.view.listWidget.clear()
                 app_utils.add_log(log)
                 for sub in os.listdir(export_fold):
