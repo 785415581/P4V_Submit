@@ -20,7 +20,7 @@ def write_env(env_file, env_name, script_path):
                 if line.startswith(env_name):
                     houdini_flag=True
                     if script_path not in line:
-                        line = line.rstrip("\n") + r";{0}\n".format(script_path)
+                        line = line.rstrip("\n") + ";{0}\n".format(script_path)
                 lines.append(line)
 
     if not houdini_flag:
