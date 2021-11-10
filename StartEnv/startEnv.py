@@ -30,18 +30,20 @@ def write_env(env_file, env_name, script_path):
         wf.close()
 
 write_env(houdini_env_file,
+          "PYTHONPATH",
+          "R:/ProjectX/Scripts/Python/tools/publish")
+write_env(maya_env_file,
+    "PYTHONPATH",
+    "R:/ProjectX/Scripts/Python/tools/publish")
+
+
+write_env(houdini_env_file,
           "HOUDINI_PATH",
           "R:/ProjectX/Scripts/Python/tools/publish/StartEnv/houdini")
 write_env(maya_env_file,
     "MAYA_SCRIPT_PATH",
     "R:/ProjectX/Scripts/Python/tools/publish/StartEnv/maya/scripts")
 
-write_env(houdini_env_file,
-          "PYTHONPATH",
-          "R:/ProjectX/Scripts/Python/tools/publish")
-write_env(maya_env_file,
-    "PYTHONPATH",
-    "R:/ProjectX/Scripts/Python/tools/publish")
 
 
 import win32com.client
