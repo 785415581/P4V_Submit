@@ -43,7 +43,7 @@ def addJGMenu():
 
     if cmds.menu('AuroraTools', exists=1):
         cmds.deleteUI('AuroraTools')
-    showMyMenu = cmds.menu("AuroraTools", parent="MayaWindow", to=1, aob=1, label=u"JGTools")
+    showMyMenu = cmds.menu("AuroraTools", parent="MayaWindow", to=1, aob=1, label=u"AuroraTools")
     cmds.menuItem(parent=showMyMenu, label='Publish', command=open_window)
     cmds.menuItem(parent=showMyMenu, label='CreateHierarchy', command=createLevel)
 
