@@ -1,4 +1,8 @@
+import sys
+ToolLib = r"R:/ProjectX/Scripts/Python/tools/publish"
 
+if ToolLib not in sys.path:
+    sys.path.append(ToolLib)
 
 
 def maya_main_window():
@@ -10,6 +14,8 @@ def maya_main_window():
 
 
 def open_window(*args):
+    import sys
+    sys.path.insert(0, "D:/chenghh/gitlab/publish")
 
     import AssetBrowser.main as main
     import imp
@@ -20,8 +26,12 @@ def open_window(*args):
         win.deleteLater()
     except:
         pass
-
+    from PySide2.QtWidgets import QApplication
+    for widget in QApplication.topLevelWidgets():
+        if widget.objectName() == "PublishTools":
+            widget.deleteLater()
     win = main.MainWindow(parent=maya_main_window())
+    win.setObjectName('PublishTools')
     win.show()
 
 
@@ -30,10 +40,8 @@ def createLevel(*args):
     createHierarchy.createHierarchy(asset=True)
 
 import maya.cmds as cmds
-
-def addJGMenu():
-    showMyMenu = cmds.menu(parent="MayaWindow", label=u"JGTools")
-    cmds.menuItem(parent=showMyMenu, label='Publish', command=open_window)
-    cmds.menuItem(parent=showMyMenu, label='CreateHierarchy', command=createLevel)
-
-cmds.evalDeferred(addJGMenu)
+if cmds.menu('AuroraTools', exists=1):
+    cmds.deleteUI('AuroraTools')
+showMyMenu = cmds.menu("AuroraTools", parent="MayaWindow", to=1, aob=1, label=u"JGTools")
+cmds.menuItem(parent=showMyMenu, label='Publish', command=open_window)
+cmds.menuItem(parent=showMyMenu, label='CreateHierarchy', command=createLevel)

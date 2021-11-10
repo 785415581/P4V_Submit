@@ -32,7 +32,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         self._configData = None
         self.setupUi(self)
         self.columnView = self.levelColumnView
-        self.columnView.enterEvent = self.enter_event
+        # self.columnView.enterEvent = self.enter_event
         self.columnView.setColumnWidths([20, 20, 20])
         self.columnView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.columnView.customContextMenuRequested.connect(lambda: self.showContextMenu(self.columnView))
