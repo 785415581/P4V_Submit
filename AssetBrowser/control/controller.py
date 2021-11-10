@@ -89,7 +89,7 @@ class Controller(QtCore.QObject):
         self.view.workTree.itemClicked.connect(self.appFunction.listPath)
         self.view.listWidget.itemClicked.connect(self.appFunction.printTest)
         self.view.assets_file_list.customContextMenuRequested.connect(self.appFunction.showWorkListHandle)
-        self.view.typeComboBox.currentTextChanged.connect(self.appFunction.changeType)
+        self.view.typeComboBox.currentIndexChanged.connect(self.appFunction.changeType)
         self.view.assetNameComboBox.currentTextChanged.connect(self.appFunction.changeAsset)
         self.view.submitStepCom.currentIndexChanged.connect(self.appFunction.changeStep)
         self.view.extend.stateChanged.connect(self.appFunction.extendTree)
