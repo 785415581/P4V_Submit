@@ -2,9 +2,11 @@
 
 
 cmd_out_decode = "utf-8"
-ASSETTYPE=["Animal", "Building", "Character", "Effect","Environment", "Prop", "UI", "Weapon"]
+UITYPE="UI"
+ASSETTYPE=["Animal", "Building", "Character", "Effect","Environment", "Prop", UITYPE, "Weapon"]
 ANISTEP = "Animation"
-STEP = [ANISTEP, "Mesh", "Rig", "Texture", "PCG"]
+TEXTURESTEP = "Texture"
+STEP = [ANISTEP, "Mesh", "Rig", TEXTURESTEP, "PCG"]
 ANIMODEL = ["Idle", "Walk", "Run"]
 
 MAYALEVEL = {

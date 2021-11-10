@@ -114,16 +114,25 @@ class AppFunc():
         current_type = self.view.typeComboBox.currentText()
         if current_type in self.data_dict:
             self.view.assetNameComboBox.addItems(list(self.data_dict[current_type].keys()))
+        self.view.typeComboBox.blockSignals(False)
 
     def changeType(self, index):
         print("change type")
 
         self.view.assetNameComboBox.clear()
+        self.view.submitStepCom.clear()
         currentType = self.view.typeComboBox.currentText()
+        if currentType == global_setting.UITYPE:
+            self.view.submitStepCom.addItems([global_setting.TEXTURESTEP])
+        else:
+            self.view.submitStepCom.addItems(global_setting.STEP)
+
         if currentType not in self.data_dict:
             return
 
         self.view.assetNameComboBox.addItems(list(self.data_dict[currentType].keys()))
+
+
         self.setTreeWidget()
 
     def changeAsset(self, index):
