@@ -4,7 +4,8 @@ doc_path = os.path.expanduser("~")+"/Documents"
 maya_path = os.path.join(doc_path, "maya")
 houdini_path = os.path.join(doc_path, "houdini18.5")
 
-maya_env_file = os.path.join(maya_path, "Maya.env")
+maya_env_file_one = os.path.join(maya_path, "2020", "Maya.env")
+maya_env_file_two = os.path.join(maya_path, "2022", "Maya.env")
 houdini_env_file = os.path.join(houdini_path, "houdini.env")
 
 
@@ -32,7 +33,11 @@ def write_env(env_file, env_name, script_path):
 write_env(houdini_env_file,
           "PYTHONPATH",
           "R:/ProjectX/Scripts/Python/tools/publish")
-write_env(maya_env_file,
+write_env(maya_env_file_one,
+    "PYTHONPATH",
+    "R:/ProjectX/Scripts/Python/tools/publish")
+
+write_env(maya_env_file_two,
     "PYTHONPATH",
     "R:/ProjectX/Scripts/Python/tools/publish")
 
@@ -40,8 +45,12 @@ write_env(maya_env_file,
 write_env(houdini_env_file,
           "HOUDINI_PATH",
           "R:/ProjectX/Scripts/Python/tools/publish/StartEnv/houdini")
-write_env(maya_env_file,
-    "MAYA_SCRIPT_PATH",
+write_env(maya_env_file_one,
+    "PYTHONPATH",
+    "R:/ProjectX/Scripts/Python/tools/publish/StartEnv/maya/scripts")
+
+write_env(maya_env_file_two,
+    "PYTHONPATH",
     "R:/ProjectX/Scripts/Python/tools/publish/StartEnv/maya/scripts")
 
 
