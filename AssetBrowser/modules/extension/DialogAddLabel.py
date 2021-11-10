@@ -31,10 +31,14 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         self._configData = None
         self.setupUi(self)
         self.columnView = self.levelColumnView
+        self.columnView.enterEvent = self.enter_event
         self.columnView.setColumnWidths([20, 20, 20])
         self.columnView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.columnView.customContextMenuRequested.connect(lambda: self.showContextMenu(self.columnView))
         self.initSignal()
+
+    def enter_event(self, event):
+        print('2222')
 
     @property
     def selectFiles(self):
@@ -71,6 +75,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
     def initSignal(self):
         self.itemListWidget.itemClicked.connect(self.setDisplayLabel)
         self.columnView.clicked.connect(self.setColumnItemSelect)
+        self.columnView.doubleClicked.connect(self.setConfigData)
         self.okBtn.clicked.connect(self.setImportOption)
         self.cancelBtn.clicked.connect(self.close)
 
@@ -105,33 +110,37 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         actionA.triggered.connect(lambda: self.actionHandler(columnView))
         columnView.contextMenu.show()
 
+    def setConfigData(self, index):
+        print(index)
+
     def actionHandler(self, columnView):
         # ToDo: add label
         index = columnView.currentIndex()
         container = list()
         container = self.getAllSelectColumnItem(index, container)
         count = columnView.model().columnCount(index)
-        text, ok = QtWidgets.QInputDialog.getText(self, 'Text Input Dialog', '输入姓名')
+        text, ok = QtWidgets.QInputDialog.getText(self, 'Text Input Dialog', u'输入子文件夹名称')
         if ok:
             item = columnView.model().itemFromIndex(index)
-            print(index)
-            print(item.parent())
-            count = columnView.model().columnCount(index)
-            print(count)
-            if item.hasChildren():
-                item.rowCount()
-
-            subItem = QtGui.QStandardItem(text)
-
-            item.setChild(0, 0, subItem)
-            item.parent().appendRow(subItem)
-            container.insert(0, text)
             container.reverse()
-            configData = self.feedbackConfig(container, self.configData)
-            from pprint import pprint
-            pprint(configData)
+            lens = self.getChildIndex(container, self.configData)
+            subItem = QtGui.QStandardItem(text)
+            item.setChild(lens, 0, subItem)
+            item.parent().appendRow(subItem)
+            container.append(text)
+            self.configData = self.feedbackConfig(container, self.configData)
+            # from pprint import pprint
+            # pprint(configData)
         # print(item.parent(), item.parent().text())
         # print(columnView.currentIndex().parent().row())
+
+    def getChildIndex(self, container, configData):
+        lens = None
+        for label in container:
+            if label in configData:
+                lens = len(configData[label])
+                configData = configData[label]
+        return lens
 
     def feedbackConfig(self, container, configData):
 
@@ -141,6 +150,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
                 self.feedbackConfig(container, configData[label])
             else:
                 configData.update({label: {}})
+
         return configData
 
     def setImportOption(self):
@@ -158,10 +168,14 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             self.UnrealObj.asset = data.get("asset", "")
             self.UnrealObj.type = data.get("type", "")
             self.UnrealObj.step = data.get("step", "")
-            if self.UnrealObj.step:
-                unrealPath = "/Game/" + unrealPath + "/" + self.UnrealObj.step
+            if unrealPath:
+                if self.UnrealObj.step:
+                    unrealPath = "/Game/" + unrealPath + "/" + self.UnrealObj.asset + "/" + self.UnrealObj.step
+                else:
+                    unrealPath = "/Game/" + unrealPath
             else:
-                unrealPath = "/Game/" + unrealPath
+                unrealPath = "/Game/Resource/" + self.UnrealObj.type + "/" + self.UnrealObj.asset+"/" + self.UnrealObj.step
+
             destination_path = self.UnrealObj.init_destination_path(default=unrealPath)
             if "" in unrealPath.split('/')[1::]:
                 QtWidgets.QMessageBox.warning(self, "Waring", "Invalid path", QtWidgets.QMessageBox.Ok)

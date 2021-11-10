@@ -15,6 +15,7 @@ import AssetBrowser.view.baseWidget as baseWidget
 import AssetBrowser.modules.app_utils as app_utils
 
 import imp
+
 # imp.reload(publishInterface)
 imp.reload(controller)
 imp.reload(ui_main)
@@ -117,10 +118,36 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 if __name__ == '__main__':
+
+    # import sys
+    # import imp
+    # import ctypes
+    # from PySide2 import QtCore
     from PySide2 import QtGui
+    # from PySide2 import QtWidgets
+    #
+    # # import unreal
+    # ToolsLib = r'D:\workSpace\Python\Tools\publish'
+    # if ToolsLib not in sys.path:
+    #     sys.path.append(ToolsLib)
+    #     sys.path.append("\\\\10.0.200.5\HeroFileServer\ProjectX\Scripts\Python37\Lib\site-packages")
+    # from AssetBrowser import main
+    #
+    # imp.reload(main)
+    #
+    # if not QtWidgets.QApplication.instance():
+    #     app = QtWidgets.QApplication(sys.argv)
+    #     app.setWindowIcon(QtGui.QIcon("icon.png"))
+    # global window
+    #
+    # window = main.MainWindow()
+    # ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('Hero_Publish')
+    # window = MainWindow()
+    # window.show()
+    # unreal.parent_external_window_to_slate(window.winId())
+
     app = QtWidgets.QApplication(sys.argv)
     app.setWindowIcon(QtGui.QIcon("icon.png"))
-    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('Hero_Publish')
     window = MainWindow()
     window.show()
     app.exec_()
