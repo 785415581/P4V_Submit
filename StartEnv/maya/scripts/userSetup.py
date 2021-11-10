@@ -30,6 +30,10 @@ def createLevel(*args):
     createHierarchy.createHierarchy(asset=True)
 
 import maya.cmds as cmds
-showMyMenu = cmds.menu(parent="MayaWindow", label=u"JGTools")
-cmds.menuItem(parent=showMyMenu, label='Publish', command=open_window)
-cmds.menuItem(parent=showMyMenu, label='CreateHierarchy', command=createLevel)
+
+def addJGMenu():
+    showMyMenu = cmds.menu(parent="MayaWindow", label=u"JGTools")
+    cmds.menuItem(parent=showMyMenu, label='Publish', command=open_window)
+    cmds.menuItem(parent=showMyMenu, label='CreateHierarchy', command=createLevel)
+
+cmds.evalDeferred(addJGMenu)
