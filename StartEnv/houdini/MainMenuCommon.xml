@@ -11,7 +11,7 @@
         <subMenu id="windows_menu"></subMenu>
         <subMenu id="help_menu"></subMenu>
 
-        <subMenu id="JGTools">
+        <subMenu id="AuroraTools">
             <insertAfter>help_menu</insertAfter>
             <label>JGTools</label>
             <scriptItem id="h.publish">
