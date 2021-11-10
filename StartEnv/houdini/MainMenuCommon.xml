@@ -18,7 +18,6 @@
                 <label>Publish</label>
                 <scriptCode><![CDATA[import sys
 import hou
-sys.path.insert(0,"D:/chenghh/gitlab/publish")
 sys.path.append("R:\ProjectX\Scripts\Python37\Lib\site-packages")
 import yaml
 import AssetBrowser.main as main
