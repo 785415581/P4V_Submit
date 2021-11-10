@@ -27,6 +27,11 @@ def open_window(*args):
     win.show()
 
 
+def createLevel(*args):
+    import Tools.maya.createHierarchy as createHierarchy
+    createHierarchy.createHierarchy(asset=True)
+
 import maya.cmds as cmds
 showMyMenu = cmds.menu(parent="MayaWindow", label=u"JGTools")
 cmds.menuItem(parent=showMyMenu, label='Publish', command=open_window)
+cmds.menuItem(parent=showMyMenu, label='CreateHierarchy', command=createLevel)
