@@ -14,6 +14,9 @@ def maya_main_window():
 
 
 def open_window(*args):
+    import sys
+    sys.path.insert(0, "D:/chenghh/gitlab/publish")
+
     import AssetBrowser.main as main
     import imp
     imp.reload(main)
