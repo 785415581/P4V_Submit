@@ -316,7 +316,7 @@ class AppFunc():
         half_path = item.half_path
         servePre, localPre = self.getPathPre()
 
-        res = servePre + half_path
+        res = localPre + half_path
         if self.clientRoot and res not in self.currentPathList:
             self.view.currentPathCombox.addItem(res.replace('\\', '/'))
             self.currentPathList.append(res)
