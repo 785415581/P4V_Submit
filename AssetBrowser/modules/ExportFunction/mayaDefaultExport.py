@@ -48,7 +48,7 @@ def ani_export(export_file, export_level, **kwargs):
         else:
             export_level = export_level + kwargs["sub_level"]
 
-    me.export_publish_level(export_file, export_level)
+    me.export_ani(export_file, export_level)
 
     return me.log, me.result
 

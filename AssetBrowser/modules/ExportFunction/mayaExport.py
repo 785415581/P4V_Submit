@@ -83,7 +83,6 @@ class MayaExport():
         self.log = ""
         self.result = False
 
-
         if export_file.endswith(".ma"):
             file_type = "mayaAscii"
         elif export_file.endswith(".fbx"):
@@ -109,7 +108,69 @@ class MayaExport():
         pm.select(export_level)
         pm.select(jntList, add=True)
 
-        cmds.file(export_file, force=True, typ=file_type, pr=True, es=True)
+        anils = [0, 'false', 0, 24]
+
+        cmds.FBXProperty('Export|IncludeGrp|Animation', '-v', anils[0])
+        mel.eval('FBXExportBakeComplexAnimation -v %s' % anils[1])
+        mel.eval('FBXExportBakeComplexStart  -v %i' % anils[2])
+        mel.eval('FBXExportBakeComplexEnd  -v %i' % anils[3])
+        mel.eval('FBXExportBakeComplexStep  -v 1')
+        mel.eval('FBXExportBakeResampleAnimation  -v false')
+        mel.eval('FBXExportAnimationOnly  -v false ')
+
+        cmds.file(export_file, force=True, options='v=0', type=file_type, pr=True, es=True)
+        pm.select(clear=True)
+        self.log = file_type
+        self.result = True
+
+
+    def export_ani(self, export_file, export_level):
+        app_utils.add_log("Export Ani")
+        import maya.mel as mel
+        self.log = ""
+        self.result = False
+
+        self.log = ""
+        self.result = False
+
+        if export_file.endswith(".ma"):
+            file_type = "mayaAscii"
+        elif export_file.endswith(".fbx"):
+            file_type = "FBX export"
+        else:
+            self.log = u"Error:{0} 格式不支持导出".format(export_file.split(".")[-1])
+            self.result = False
+            return
+
+        jntList = []
+        for child_level in cmds.listRelatives(export_level, allDescendents=True):
+            skin = mel.eval("findRelatedSkinCluster " + child_level)
+            if skin:
+                jntList = pm.skinCluster(skin, q=1, wi=1)
+                pm.parent(jntList[0], w=1)
+                break
+
+        if not jntList:
+            self.log = "No joint found"
+            self.result = False
+            return
+        start = cmds.playbackOptions(q=True, min=True)
+        end = cmds.playbackOptions(q=True, max=True)
+        anils = [1, 'true', start, end]
+
+        cmds.FBXProperty('Export|IncludeGrp|Animation', '-v', anils[0])
+        mel.eval('FBXExportBakeComplexAnimation -v %s' % anils[1])
+        mel.eval('FBXExportBakeComplexStart  -v %i' % anils[2])
+        mel.eval('FBXExportBakeComplexEnd  -v %i' % anils[3])
+        mel.eval('FBXExportBakeComplexStep  -v 1')
+        mel.eval('FBXExportBakeResampleAnimation  -v false')
+        mel.eval('FBXExportAnimationOnly  -v false ')
+
+        pm.select(clear=True)
+        pm.select(export_level)
+        pm.select(jntList, add=True)
+
+        cmds.file(export_file, force=True, options='v=0', type=file_type, pr=True, es=True)
         pm.select(clear=True)
         self.log = file_type
         self.result = True
