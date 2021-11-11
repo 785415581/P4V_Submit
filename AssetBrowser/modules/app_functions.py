@@ -151,9 +151,8 @@ class AppFunc():
 
     def initUser(self):
         value = self.appSetting.getConfig()
-        first_user = self.p4Model.user
-        first_password = self.p4Model.password
-
+        first_user = ''
+        first_password = ''
         if value["user"]:
             first_user = value["user"][0]
             if len(value["user"])>1:
