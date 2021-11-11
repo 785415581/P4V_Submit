@@ -53,8 +53,8 @@ class MainWindow(QtWidgets.QMainWindow):
         widgets.assets_file_list.setDefaultDropAction(QtCore.Qt.MoveAction)
         widgets.assets_file_list.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
         widgets.assets_file_list.setSelectionMode(QtWidgets.QAbstractItemView.ContiguousSelection)
-        widgets.assets_file_list.installEventFilter(self)
-        widgets.assetNameComboBox.installEventFilter(self)
+        widgets.passwordLn.installEventFilter(self)
+        # widgets.assetNameComboBox.installEventFilter(self)
 
     def eventFilter(self, watched, event):
         if event.type() == QtCore.QEvent.DragEnter:
@@ -75,13 +75,11 @@ class MainWindow(QtWidgets.QMainWindow):
                     item.exportPath.clicked.connect(partial(self.control.appFunction.selectExportPath, item))
 
         elif event.type() == QtCore.QEvent.KeyPress:
-            if watched is self.ui.assetNameComboBox:
-                key = event.key()
-                if key == QtCore.Qt.Key_Enter or key == QtCore.Qt.Key_Return:
-                    pass
-                    # self.control.createAsset(self.control)
-            elif watched is self.ui.submitStepCom:
-                print('222')
+            key = event.key()
+            if watched is self.ui.passwordLn:
+                if key == 16777220:
+                    self.buttonClick()
+
         return QtCore.QObject.eventFilter(self, watched, event)
 
     def changeCurrentPath(self, index):
@@ -90,27 +88,24 @@ class MainWindow(QtWidgets.QMainWindow):
         # widgets.workTree.setCurrentItem(treeWidgetItem)
 
     def buttonClick(self):
-        btn = self.sender()
-        btnName = btn.objectName()
-        if btnName == "connectBtn":
-            app_utils.add_log("Start Connect perforce...")
-            self.control.p4Model.user = self.ui.userLn.currentText()
-            self.control.p4Model.password = self.ui.passwordLn.text()
 
-            self.control.p4Model.validation()
-            self.control.p4Model.initAssetsClient()
-            clientRoot = self.control.p4Model.getRoot()
-            app_utils.add_log("Finish Connect perforce...")
-            app_utils.add_log("clientRoot = {}".format(clientRoot))
-            clientStream = self.control.p4Model.getStreamName()
-            app_utils.add_log("clientStream = {}".format(clientStream))
-            if clientStream:
-                self.control.appFunction.validation = self.control.p4Model.validation
-                self.control.appFunction.clientRoot = clientRoot
-                self.control.appFunction.clientStream = clientStream
-                self.control.appFunction.initWindow()
-            else:
-                app_utils.add_log("Failed to get stream:{0}".format(clientStream), error=True)
+        app_utils.add_log("Start Connect perforce...")
+        self.control.p4Model.user = self.ui.userLn.currentText()
+        self.control.p4Model.password = self.ui.passwordLn.text()
+        self.control.p4Model.validation()
+        self.control.p4Model.initAssetsClient()
+        clientRoot = self.control.p4Model.getRoot()
+        app_utils.add_log("Finish Connect perforce...")
+        app_utils.add_log("clientRoot = {}".format(clientRoot))
+        clientStream = self.control.p4Model.getStreamName()
+        app_utils.add_log("clientStream = {}".format(clientStream))
+        if clientStream:
+            self.control.appFunction.validation = self.control.p4Model.validation
+            self.control.appFunction.clientRoot = clientRoot
+            self.control.appFunction.clientStream = clientStream
+            self.control.appFunction.initWindow()
+        else:
+            app_utils.add_log("Failed to get stream:{0}".format(clientStream), error=True)
 
     def closeEvent(self, event):
         event.accept()

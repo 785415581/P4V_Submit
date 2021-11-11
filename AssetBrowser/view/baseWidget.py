@@ -177,6 +177,19 @@ class TreeWidgetDrop(QtWidgets.QTreeWidget):
             else:
                 event.ignore()
 
+    def keyPressEvent(self, event):
+        if event.key() == 16777223:
+            try:
+                currNode = self.currentItem()
+                parent1 = currNode.parent()
+                parent1.removeChild(currNode)
+            except Exception:
+                try:
+                    rootIndex = self.indexOfTopLevelItem(currNode)
+                    self.takeTopLevelItem(rootIndex)
+                except Exception:
+                    print(Exception)
+
 
 class CustomModel(QtCore.QAbstractTableModel):
     def __init__(self, data=[], headers = []):
