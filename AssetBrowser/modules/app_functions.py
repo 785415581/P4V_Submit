@@ -94,7 +94,7 @@ class AppFunc():
     def initWindow(self):
         self.view.typeComboBox.blockSignals(True)
         # self.view.assetNameComboBox.blockSignals(True)
-        self.view.currentPathCombox.setCurrentText(self.clientStream)
+        # self.view.currentPathCombox.setCurrentText(self.clientStream)
         self.view.typeComboBox.clear()
         self.view.assetNameComboBox.clear()
         self.view.submitStepCom.clear()
