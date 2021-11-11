@@ -38,7 +38,7 @@ def UnrealImportFBX(**kwargs):
     return "", ""
 
 
-def UnrealImportTex(select_file, **kwargs):
+def UnrealImportTex(**kwargs):
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
         app.setWindowIcon(QtGui.QIcon("icon.png"))
