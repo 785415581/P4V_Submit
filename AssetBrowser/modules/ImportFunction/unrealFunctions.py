@@ -38,7 +38,7 @@ def UnrealImportFBX(**kwargs):
     return "", ""
 
 
-def UnrealImportTex(select_file, **kwargs):
+def UnrealImportTex(**kwargs):
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
         app.setWindowIcon(QtGui.QIcon("icon.png"))
@@ -141,7 +141,7 @@ class FBXUnrealObj(UnrealObj):
 
         return options
 
-    def creatImportTask(self, fileInfo, destination_path, destination_name, options=None):
+    def creatImportTask(self, filePath, destination_path, destination_name, options=None):
         """
             :param destination_name:
             :param filename: 导入的文件的信息  g: kwargs
@@ -151,17 +151,17 @@ class FBXUnrealObj(UnrealObj):
             :return: Task 返回一个导入任务
         """
         taskList = list()
-        for filePath, info in fileInfo.items():
-            importTask = unreal.AssetImportTask()
-            importTask.set_editor_property("automated", False)
-            # importTask.set_editor_property('destination_name', destination_name)
-            importTask.set_editor_property('destination_path', destination_path)
-            importTask.set_editor_property('filename', filePath)
-            importTask.set_editor_property('replace_existing', True)
-            importTask.set_editor_property('replace_existing_settings', True)
-            importTask.set_editor_property('options', options)
-            importTask.set_editor_property('save', True)
-            taskList.append(importTask)
+
+        importTask = unreal.AssetImportTask()
+        importTask.set_editor_property("automated", False)
+        # importTask.set_editor_property('destination_name', destination_name)
+        importTask.set_editor_property('destination_path', destination_path)
+        importTask.set_editor_property('filename', filePath)
+        importTask.set_editor_property('replace_existing', True)
+        importTask.set_editor_property('replace_existing_settings', True)
+        importTask.set_editor_property('options', options)
+        importTask.set_editor_property('save', True)
+        taskList.append(importTask)
         return taskList
 
     def execute_import_tasks(self, tasks):
@@ -191,15 +191,18 @@ class TexUnrealObj(UnrealObj):
     def build_static_mesh_import_options(self):
         return None
 
-    def creatImportTask(self, fileInfo, destination_path, destination_name, options=None):
+    def creatImportTask(self, filePath, destination_path, destination_name, options=None):
         taskList = list()
-        for filePath, info in fileInfo.items():
-            importTask = unreal.AssetImportTask()
-            importTask.set_editor_property('filename', filePath)
-            importTask.set_editor_property('destination_path', destination_path)
-            # importTask.set_editor_property('destination_name', destination_name)
-            importTask.set_editor_property('save', True)
-            taskList.append(importTask)
+        importTask = unreal.AssetImportTask()
+        importTask.set_editor_property('filename', filePath)
+        importTask.set_editor_property("automated", True)
+        importTask.set_editor_property('destination_path', destination_path)
+        # importTask.set_editor_property('destination_name', destination_name)
+        importTask.set_editor_property('replace_existing_settings', True)
+        importTask.set_editor_property('replace_existing', True)
+        importTask.set_editor_property('options', options)
+        importTask.set_editor_property('save', True)
+        taskList.append(importTask)
         return taskList
 
     def execute_import_tasks(self, tasks):

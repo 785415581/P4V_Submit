@@ -49,6 +49,7 @@
         "fbx": "unrealFunctions.UnrealImportFBX",
         "abc": "",
         "tiff": "",
+        "jpg": "unrealFunctions.UnrealImportTex",
         "png": "unrealFunctions.UnrealImportTex"
        }
     },

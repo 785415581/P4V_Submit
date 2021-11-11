@@ -16,9 +16,10 @@ from PySide2 import QtWidgets
 from P4Module.p4_module import P4Client
 import AssetBrowser.modules.app_utils as app_utils
 from AssetBrowser.modules.extension import DialogAddLabel_UI
-
+from AssetBrowser.modules.ImportFunction import unrealFunctions
 import importlib
 
+importlib.reload(unrealFunctions)
 importlib.reload(DialogAddLabel_UI)
 
 
@@ -183,7 +184,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
                 return
             destination_name = self.UnrealObj.init_destination_name()
             options = self.UnrealObj.build_static_mesh_import_options()
-            importTask = self.UnrealObj.creatImportTask(self.selectFiles, destination_path, destination_name, options)
+            importTask = self.UnrealObj.creatImportTask(localPath, destination_path, destination_name, options)
             self.UnrealObj.execute_import_tasks(importTask)
             self.feedbackTag(unrealPath, data)
         self.feedbackConfigData()
@@ -204,7 +205,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         labels = unrealPath.split('/')[1::]
         labels.remove('Game')
         labels.remove(data.get("step", ""))
-        labels = list(set(labels).difference(set(data.get("labels", ""))))
+        labels.remove(data.get("asset", ""))
         for label in labels:
             if label:
                 P4Client.addFileLabels(data.get("localPath"), label)

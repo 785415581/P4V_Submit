@@ -139,17 +139,18 @@ class TreeWidgetDrop(QtWidgets.QTreeWidget):
         elif event.mimeData().hasFormat("application/x-qabstractitemmodeldatalist"):
             event.accept()
 
-
     def dropEvent(self, event):
 
         currentItem = self.itemAt(event.pos())
         if currentItem and ("." in currentItem.text(0)) and (not currentItem.childItems):
             return
 
-        drag_file = event.mimeData().text()
-        if event.mimeData().hasFormat("text/uri-list"):
-            real_path = drag_file.split("file:///")[-1]
-            self.createItem(real_path, source_model="drag", parent_item=currentItem)
+        if event.mimeData().hasUrls():
+            event.accept()
+            for url in event.mimeData().urls():
+                localFile = str(url.toLocalFile())
+                self.createItem(localFile, source_model="drag", parent_item=currentItem)
+
         #todo waiting to replace with copy drag item
         elif event.mimeData().hasFormat("application/x-qabstractitemmodeldatalist"):
             source_widget = event.source()
