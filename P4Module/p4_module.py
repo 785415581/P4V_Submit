@@ -318,6 +318,7 @@ class P4Client(object):
         res, err = process.communicate()
 
     def deleteFileLabels(self, p4File, label):
+        # dont delete
         cmd = 'p4 tag -l {label} {fileName}#head'.format(label=label, fileName=p4File)
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         res, err = process.communicate()
