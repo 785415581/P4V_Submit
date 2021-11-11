@@ -143,10 +143,19 @@ class MayaExport():
             return
 
         jntList = []
-        for child_level in cmds.listRelatives(export_level, allDescendents=True):
+        child_nodes = cmds.listRelatives(export_level, allDescendents=True)
+        if not child_nodes:
+            self.log = "Group {0} is null group".format(export_level)
+            self.result = True
+            return
+        for child_level in child_nodes:
             skin = mel.eval("findRelatedSkinCluster " + child_level)
             if skin:
                 jntList = pm.skinCluster(skin, q=1, wi=1)
+                if not jntList:
+                    self.log = "Failed {0} to find jnt"
+                    self.result = False
+                    return
                 pm.parent(jntList[0], w=1)
                 break
 
