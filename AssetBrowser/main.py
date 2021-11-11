@@ -147,7 +147,7 @@ if __name__ == '__main__':
     # unreal.parent_external_window_to_slate(window.winId())
 
     app = QtWidgets.QApplication(sys.argv)
-    app.setWindowIcon(QtGui.QIcon("icon.png"))
+    app.setWindowIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__), 'icon.ico')))
     window = MainWindow()
     window.show()
     app.exec_()
