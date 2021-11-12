@@ -6,7 +6,7 @@ Date: 2021/11/10 16:29
 """
 import sys
 import unreal
-ToolsLib = r'D:\workSpace\Python\Tools\publish'
+ToolsLib = r'R:\ProjectX\Scripts\Python\tools\publish'
 site_package = r'R:\ProjectX\Scripts\Python37\Lib\site-packages'
 for libPath in [ToolsLib, site_package]:
     if libPath not in sys.path:
