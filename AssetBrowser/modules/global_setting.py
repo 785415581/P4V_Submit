@@ -6,7 +6,7 @@ UITYPE="UI"
 ASSETTYPE=["Animal", "Building", "Character", "Effect","Environment", "Prop", UITYPE, "Weapon"]
 ANISTEP = "Animation"
 TEXTURESTEP = "Texture"
-STEP = [ANISTEP, "Mesh", "Rig", TEXTURESTEP, "PCG"]
+STEP = [ANISTEP, "Mesh", "Rig", TEXTURESTEP, "PCG", "Concept", "Icon"]
 ANIMODEL = ["Idle", "Walk", "Run"]
 
 MAYALEVEL = {
