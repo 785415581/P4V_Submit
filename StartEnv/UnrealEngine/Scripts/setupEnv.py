@@ -17,9 +17,9 @@ def main():
     menus = unreal.ToolMenus.get()
     main_menu = menus.find_menu("LevelEditor.MainMenu")
 
-    my_menu = main_menu.add_sub_menu("[My.Menu](http://My.Menu)", "Python", "My Menu", "Assets Library")
+    my_menu = main_menu.add_sub_menu("[My.Menu](http://My.Menu)", "Python", "My Menu", "AuroraTools")
 
-    for name in ["Open Assets Library Window"]:
+    for name in ["Open AuroraTools"]:
         menuEntry = unreal.ToolMenuEntry(
             name=name,
             type=unreal.MultiBlockType.MENU_ENTRY,
