@@ -94,7 +94,7 @@ class AppFunc():
     def initWindow(self):
         self.view.typeComboBox.blockSignals(True)
         # self.view.assetNameComboBox.blockSignals(True)
-        self.view.currentPathCombox.setCurrentText(self.clientStream)
+        # self.view.currentPathCombox.setCurrentText(self.clientStream)
         self.view.typeComboBox.clear()
         self.view.assetNameComboBox.clear()
         self.view.submitStepCom.clear()
@@ -151,9 +151,8 @@ class AppFunc():
 
     def initUser(self):
         value = self.appSetting.getConfig()
-        first_user = self.p4Model.user
-        first_password = self.p4Model.password
-
+        first_user = ''
+        first_password = ''
         if value["user"]:
             first_user = value["user"][0]
             if len(value["user"])>1:
@@ -317,7 +316,7 @@ class AppFunc():
         half_path = item.half_path
         servePre, localPre = self.getPathPre()
 
-        res = servePre + half_path
+        res = localPre + half_path
         if self.clientRoot and res not in self.currentPathList:
             self.view.currentPathCombox.addItem(res.replace('\\', '/'))
             self.currentPathList.append(res)

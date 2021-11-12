@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 os.system(r"net use R: \\10.0.200.5\HeroFileServer")
 doc_path = os.path.expanduser("~")+"/Documents"
@@ -60,9 +61,9 @@ import pythoncom
 
 
 desktop = os.path.expanduser("~") + '/Desktop'
-path = os.path.join(desktop, 'runPablish.lnk')
+path = os.path.join(desktop, '极光资产.lnk')
 target = r'R:\ProjectX\Scripts\Python\tools\publish\StartEnv\bat\runPublish.bat'
-icon = r'R:/ProjectX/Scripts/Python/tools/publish/StartEnv/bat/publish.png'
+icon = r'R:/ProjectX/Scripts/Python/tools/publish/StartEnv/bat/publish_icon.ico'
 
 shell = win32com.client.Dispatch("WScript.Shell")
 shortcut = shell.CreateShortCut(path)
