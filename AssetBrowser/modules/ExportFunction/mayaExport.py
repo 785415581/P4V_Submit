@@ -49,6 +49,7 @@ class MayaExport():
     def export_publish_level(self, export_file, export_level):
         self.log = ""
         self.result = False
+        import maya.mel as mel
         if not pm.PyNode(export_level).listRelatives():
             self.log = u"组{0}为空".format(export_level)
             self.result = True
@@ -64,6 +65,9 @@ class MayaExport():
             return self.log, self.result
         pm.select(clear=True)
         pm.select(export_level)
+        if export_file.endswith(".fbx"):
+            cmds.FBXProperty('Export|IncludeGrp|Animation', '-v', 0)
+            mel.eval("FBXExportSmoothingGroups -v 1")
         # baseWidget.LogPlainText().add_log(export_level, e=True)
         # baseWidget.LogPlainText().add_log(file_type, e=True)
         # baseWidget.LogPlainText().add_log("33333333333333", e=True)
@@ -117,6 +121,7 @@ class MayaExport():
         mel.eval('FBXExportBakeComplexStep  -v 1')
         mel.eval('FBXExportBakeResampleAnimation  -v false')
         mel.eval('FBXExportAnimationOnly  -v false ')
+        mel.eval("FBXExportSmoothingGroups -v 1")
 
         cmds.file(export_file, force=True, options='v=0', type=file_type, pr=True, es=True)
         pm.select(clear=True)
@@ -174,6 +179,7 @@ class MayaExport():
         mel.eval('FBXExportBakeComplexStep  -v 1')
         mel.eval('FBXExportBakeResampleAnimation  -v false')
         mel.eval('FBXExportAnimationOnly  -v false ')
+        mel.eval("FBXExportSmoothingGroups -v 1")
 
         pm.select(clear=True)
         pm.select(export_level)
