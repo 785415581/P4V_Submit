@@ -170,6 +170,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             self.UnrealObj.asset = data.get("asset", "")
             self.UnrealObj.type = data.get("type", "")
             self.UnrealObj.step = data.get("step", "")
+            self.p4Model = data.get("p4Model", "")
             if unrealPath:
                 if self.UnrealObj.step:
                     unrealPath = "/Game/" + unrealPath + "/" + self.UnrealObj.asset + "/" + self.UnrealObj.step
@@ -186,7 +187,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             options = self.UnrealObj.build_static_mesh_import_options()
             importTask = self.UnrealObj.creatImportTask(localPath, destination_path, destination_name, options)
             self.UnrealObj.execute_import_tasks(importTask)
-            self.feedbackTag(unrealPath, data)
+            self.feedbackTag(self.p4Model, unrealPath, data)
         self.feedbackConfigData()
         self.close()
 
@@ -199,16 +200,22 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         except IOError:
             traceback.print_exc()
 
-    def feedbackTag(self, unrealPath, data):
+    def feedbackTag(self, p4Model, unrealPath, data):
         if not unrealPath:
             return
         labels = unrealPath.split('/')[1::]
         labels.remove('Game')
         labels.remove(data.get("step", ""))
         labels.remove(data.get("asset", ""))
+        old_labels = p4Model.getFileLabels(data.get("localPath"))
+        for label in old_labels:
+            if label:
+                p4Model.changeLabelOwner(label, p4Model.user)
+                p4Model.deleteFileLabels(data.get("localPath"), label)
+
         for label in labels:
             if label:
-                P4Client.addFileLabels(data.get("localPath"), label)
+                p4Model.addFileLabels(data.get("localPath"), label)
 
     def setColumnItemSelect(self, index):
         self.__clearLabel()

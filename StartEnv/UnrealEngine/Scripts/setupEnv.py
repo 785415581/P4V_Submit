@@ -26,7 +26,7 @@ def main():
         )
         menuEntry.set_label(name)
         commandType = unreal.ToolMenuStringCommandType.PYTHON
-        menuEntry.set_string_command(commandType, "", 'from StartEnv.UnrealEngine.Scripts.buildEnv import mainFunc\nmainFunc()')
+        menuEntry.set_string_command(commandType, "", 'from StartEnv.UnrealEngine.Scripts import buildEnv\nimport imp\nimp.reload(buildEnv)\nbuildEnv.mainFunc()')
         my_menu.add_menu_entry("Items", menuEntry)
 
     menus.refresh_all_widgets()

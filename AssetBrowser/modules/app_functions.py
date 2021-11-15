@@ -35,6 +35,7 @@ import tempfile
 import shutil
 from functools import partial
 
+
 class AppFunc():
     def __init__(self):
         self.appSetting = app_utils.AppSetting()
@@ -43,7 +44,7 @@ class AppFunc():
         self._clientStream = None
         self._clientRoot = None
         self._validation = None
-        self.p4Model = None
+        self._p4Model = None
         self.currentPathList = []
 
 
@@ -90,6 +91,14 @@ class AppFunc():
     @property
     def submitStepComText(self):
         return self.view.submitStepCom.currentText()
+
+    @property
+    def p4Model(self):
+        return self._p4Model
+
+    @p4Model.setter
+    def p4Model(self, value):
+        self._p4Model = value
 
     def initWindow(self):
         self.view.typeComboBox.blockSignals(True)
@@ -405,6 +414,7 @@ class AppFunc():
                 fileLabel = self.p4Model.getFileLabels(local_pub_path)
 
                 fileInfo[local_pub_path] = {}
+
                 fileInfo[local_pub_path]['localPath'] = local_pub_path
                 fileInfo[local_pub_path]['serverPath'] = servePrePublish + half_path
                 fileInfo[local_pub_path]['type'] = current_type
@@ -412,6 +422,7 @@ class AppFunc():
                 fileInfo[local_pub_path]['step'] = current_step
                 fileInfo[local_pub_path]['labels'] = fileLabel
                 fileInfo[local_pub_path]['ext'] = local_pub_path.split('.')[-1]
+                fileInfo[local_pub_path]['p4Model'] = self.p4Model
                 fileExt.append(local_pub_path.split('.')[-1])
         fileExt = fileExt[0]
         # start import

@@ -301,7 +301,7 @@ class P4Client(object):
 
     def getFileLabels(self, p4File):
         labels = list()
-        cmd = 'p4 labels {}#head'.format(p4File)
+        cmd = 'p4 labels {}#1'.format(p4File)
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         res_labels, err = process.communicate()
         for res in res_labels.decode('utf-8').split('\r\n'):
@@ -313,15 +313,22 @@ class P4Client(object):
 
     @staticmethod
     def addFileLabels(p4File, label):
-        cmd = 'p4 tag -l {label} {fileName}#head'.format(label=label, fileName=p4File)
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cmd = 'p4 tag -l {label} {fileName}#1'.format(label=label, fileName=p4File)
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         res, err = process.communicate()
 
     def deleteFileLabels(self, p4File, label):
-        # dont delete
-        cmd = 'p4 tag -l {label} {fileName}#head'.format(label=label, fileName=p4File)
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        res, err = process.communicate()
+
+        cmd = 'p4 tag -d -l {label} {fileName}#1'.format(label=label, fileName=p4File)
+        p = subprocess.check_call(cmd, shell=True)
+
+    def changeLabelOwner(self, label, owner):
+
+        cmd = 'p4 label -o {label} | {sedPath} "s/^Owner:.*$/Owner:  {owner}/" | p4 label -i'.format(
+            label=label, sedPath=r'R:\ProjectX\Scripts\Plugin\exe\Git\usr\bin\sed.exe', owner=owner
+        )
+        print("cmd = {}".format(cmd))
+        process = subprocess.check_call(cmd, shell=True)
 
     def syncFile(self, p4File, version=None):
         cmd = 'p4 sync -f "{}"'.format(p4File)
