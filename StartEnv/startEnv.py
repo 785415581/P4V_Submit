@@ -73,6 +73,3 @@ shortcut.IconLocation = icon
 shortcut.WindowStyle = 7
 shortcut.save()
 
-from AssetBrowser.utils.log import ToolsLogger
-logger = ToolsLogger.get_logger(getpass.getuser(), save_log=True)
-logger.info("Publish Tools start shortcut icon...")
