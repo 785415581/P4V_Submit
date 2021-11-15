@@ -2,7 +2,7 @@
 import logging
 import os
 import getpass
-from AssetBrowser.utils.log import ToolsLogger
+
 
 os.system(r"net use R: \\10.0.200.5\HeroFileServer")
 doc_path = os.path.expanduser("~") + "/Documents"
@@ -73,5 +73,6 @@ shortcut.IconLocation = icon
 shortcut.WindowStyle = 7
 shortcut.save()
 
+from AssetBrowser.utils.log import ToolsLogger
 logger = ToolsLogger.get_logger(getpass.getuser(), save_log=True)
 logger.info("Publish Tools start shortcut icon...")
