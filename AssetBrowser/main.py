@@ -4,10 +4,11 @@ import os
 import sys
 sys.path.append("R:\ProjectX\Scripts\Python37\Lib\site-packages")
 import time
+import getpass
 from functools import partial
 
-from PySide2 import QtCore, QtWidgets
-
+from PySide2 import QtCore, QtWidgets, QtGui
+from AssetBrowser.utils.log import ToolsLogger
 # import AssetBrowser.publishInterface as publishInterface
 import AssetBrowser.control.controller as controller
 import AssetBrowser.modules.ui_main as ui_main
@@ -28,7 +29,8 @@ widgets = None
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None, *args):
         super(MainWindow, self).__init__(parent)
-
+        logger = ToolsLogger.get_logger(getpass.getuser(), save_log=True)
+        logger.info("Publish Tools start...")
         self.setWindowTitle(u'Publish for P4V中文')
         self.ui = ui_main.Ui_MainWindow()
         self.ui.setupUi(self)
@@ -55,6 +57,18 @@ class MainWindow(QtWidgets.QMainWindow):
         widgets.assets_file_list.setSelectionMode(QtWidgets.QAbstractItemView.ContiguousSelection)
         widgets.passwordLn.installEventFilter(self)
         # widgets.assetNameComboBox.installEventFilter(self)
+
+
+    def initStyle(self):
+        stylePath = "{}/{}".format(os.path.dirname(__file__), 'resources/style.qss')
+        fp = open(stylePath, 'r')
+        style = fp.read()
+        self.setStyleSheet(style)
+
+        window_pale = QtGui.QPalette()
+        window_pale.setBrush(self.backgroundRole(), QtGui.QBrush(QtGui.QPixmap("{}/{}".format(os.path.dirname(__file__), 'resources/background.png'))))
+        self.setPalette(window_pale)
+
 
     def eventFilter(self, watched, event):
         if event.type() == QtCore.QEvent.DragEnter:

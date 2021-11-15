@@ -5,6 +5,8 @@ import imp
 import importlib
 import AssetBrowser.modules.ImportFunction as ImportFunction
 DEBUG = False
+import getpass
+from AssetBrowser.utils.log import ToolsLogger
 
 
 def start_import(import_model, **kwargs):
@@ -45,6 +47,9 @@ def start_import(import_model, **kwargs):
 
     run_func = getattr(import_module, import_func.split(".")[-1])
     log, result = run_func(**kwargs)
+    logger = ToolsLogger.get_logger(getpass.getuser(), save_log=True)
+    logger.info("Publish Tools run import function...")
+
     return log, result
 
 
