@@ -266,6 +266,11 @@ class P4Client(object):
                         process = subprocess.Popen(reopen_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                         out, err = process.communicate()
                 else:
+                    if data_values[2] and not data_values[4]:
+                        conn_cmd = "p4 sync -k {0}".format(local_file)
+                        print(conn_cmd)
+                        process = subprocess.Popen(conn_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                        out, err = process.communicate()
                     edit_cmd = "p4 edit -c {0} {1}".format(new_change, local_file)
                     print(edit_cmd)
                     process = subprocess.Popen(edit_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
