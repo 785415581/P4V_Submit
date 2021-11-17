@@ -16,21 +16,15 @@ def maya_main_window():
 
 def open_window(*args):
 
-
+    from PySide2.QtWidgets import QApplication
     import AssetBrowser.main as main
     import imp
     imp.reload(main)
 
-    try:
-        win.close()
-        win.deleteLater()
-    except:
-        pass
-    from PySide2.QtWidgets import QApplication
     for widget in QApplication.topLevelWidgets():
         if widget.objectName() == "PublishTools":
             widget.deleteLater()
-    win = main.FloatingWindow(parent=maya_main_window())
+    win = main.FloatingWindow()
     win.setObjectName('PublishTools')
     win.show()
 
