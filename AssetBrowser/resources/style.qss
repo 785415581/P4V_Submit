@@ -73,6 +73,9 @@
 #open_select_button:hover { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
 #open_select_button:pressed { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
 
+
+
+
 /*******************************************************************************/
 
 #exportBtn{
@@ -120,43 +123,38 @@
 
 
 #history_list {
+    font: 10pt "Consolas";
+    color: rgb(202, 202, 202);
     background-color: #36393f;
 }
 
-
-
-QFrame HLine, QFrame VLine
-{
-color: red;
-}
-
-
 /*sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss*/
+
 
 QLabel {
 font: 10pt "Consolas";
-color: rgb(255, 255, 255);
+color: rgb(202, 202, 202);
 }
 
 QGroupBox {
 font: 10pt "Consolas";
-color: rgb(255, 255, 255);
+color: rgb(202, 202, 202);
 }
 
 QCheckBox {
 font: 10pt "Consolas";
-color: rgb(255, 255, 255);
+color: rgb(202, 202, 202);
 }
 QPushButton {
 font: 10pt "Consolas";
-color: rgb(255, 255, 255);
+color: rgb(202, 202, 202);
 }
 
 
 QComboBox {
 
 font: 10pt "Consolas";
-color: rgb(255, 255, 255);
+color: rgb(202, 202, 202);
 border: 1px solid rgb(117, 118, 118);
 border-radius: 5px;
 background: #36393f;
@@ -166,7 +164,7 @@ padding: 1px 2px 1px 2px;
 QComboBox QAbstractItemView {
     outline: 0px solid gray;
     border: #36393f;
-    color: rgb(255, 255, 255);
+    color: rgb(202, 202, 202);
     background-color: #36393f;
     selection-background-color: #5285a6;
 }
@@ -240,13 +238,13 @@ QTabWidget::pane {
 
 QPlainTextEdit {
     font: 10pt "Consolas";
-    color: rgb(255, 255, 255);
+    color: rgb(202, 202, 202);
     background-color: #36393f;
 }
 
 QTextEdit {
     font: 10pt "Consolas";
-    color: rgb(255, 255, 255);
+    color: rgb(202, 202, 202);
     background-color: #36393f;
 }
 
