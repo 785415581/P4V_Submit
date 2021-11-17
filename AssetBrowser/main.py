@@ -4,36 +4,154 @@ import os
 import sys
 sys.path.append("R:\ProjectX\Scripts\Python37\Lib\site-packages")
 import time
+import math
 import getpass
 from functools import partial
 
 from PySide2 import QtCore, QtWidgets, QtGui
 from AssetBrowser.utils.log import ToolsLogger
-# import AssetBrowser.publishInterface as publishInterface
 import AssetBrowser.control.controller as controller
-import AssetBrowser.modules.ui_main as ui_main
+import AssetBrowser.view.main_UI as main_UI
 import AssetBrowser.view.baseWidget as baseWidget
 import AssetBrowser.modules.app_utils as app_utils
 
 import imp
 
-# imp.reload(publishInterface)
+imp.reload(main_UI)
 imp.reload(controller)
-imp.reload(ui_main)
 imp.reload(baseWidget)
 
-
 widgets = None
+
+
+class FloatingWindow(QtWidgets.QWidget):
+    def __init__(self):
+        super(FloatingWindow, self).__init__()
+        self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
+        self.updateTime = 0
+        self.threadExits = 0
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground, True)
+        self.cycleTimer = QtCore.QTimer()
+        self.cycleTimer.timeout.connect(self.updateFloatWindow)
+        self.cycleTimer.start(1)
+        self.mainWindow = MainWindow(self)
+        self.mainWindow.show()
+        self.setGeometry(200, 100, 100, 100)
+        self.setToolTip("Esc close this window\nDouble click open publish Window")
+        # self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        # self.customContextMenuRequested.connect(self.showHandle)
+
+
+    def showHandle(self, pos):
+        contextMenu = QtWidgets.QMenu()
+        contextMenu.setObjectName("contextMenu")
+        actionNew = QtWidgets.QAction('New Folder')
+        contextMenu.addAction(actionNew)
+        actionNew.triggered.connect(self.close)
+        contextMenu.exec_(QtGui.QCursor().pos())
+
+    def updateFloatWindow(self):
+        self.updateTime = (self.updateTime + 0.01) % 314
+        self.update()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() == QtCore.Qt.LeftButton:
+            pos = event.pos()
+            self.move(event.globalX() - self.piancha.x(), event.globalY() - self.piancha.y())
+
+    def mousePressEvent(self, event):
+        self.piancha = event.pos()
+
+    def mouseDoubleClickEvent(self, event):
+        if self.mainWindow.isHidden():
+            self.mainWindow.move(500, 300)
+            self.mainWindow.show()
+        else:
+            self.mainWindow.setVisible(False)
+
+    def paintEvent(self, event):
+        po = QtGui.QPainter(self)
+        po.setRenderHint(QtGui.QPainter.Antialiasing)
+        po.setBrush(QtGui.QBrush(QtGui.QColor(10, 130, 200)))  # background color
+        toppen = QtGui.QPen()
+        toppen.setWidth(3)
+        toppen.setColor(QtGui.QColor(220, 220, 220))  # Outside the circle
+        po.setPen(toppen)
+        po.drawEllipse(QtCore.QRect(2, 2, 55, 55))  # Outside the circle size
+        # 0a82c8
+        po.setPen(QtGui.QColor(255, 255, 200))  # byte dance
+        for i in range(10):
+            # print(self.updateTime)
+            po.drawLine(QtCore.QPoint(i * 5 + 7, 30 + math.sin((i + self.updateTime * 5) / 10) * 10),
+                        QtCore.QPoint(i * 5 + 7, 30 + math.sin(((i + 1) + self.updateTime * 7) / 10) * 10))
+
+
+    def enterEvent(self, event):
+        super(FloatingWindow, self).enterEvent(event)
+        if self.threadExits == 0:
+            self.thear = FloatingWindowEnterThread(self)
+            self.threadExits = 1
+            self.thear.start()
+            self.thear.finished.connect(self.finishSingal)
+
+    def finishSingal(self):
+        self.threadExits = 0
+
+    def leaveEvent(self, event):
+        super(FloatingWindow, self).leaveEvent(event)
+        if self.threadExits == 0:
+            self.thear = FloatingWindowLeaveThread(self)
+            self.threadExits = 1
+            self.thear.start()
+            self.thear.finished.connect(self.finishSingal)
+
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Escape:
+            self.mainWindow.close()
+            self.close()
+
+
+class FloatingWindowLeaveThread(QtCore.QThread):
+    def __init__(self, parent):
+        super(FloatingWindowLeaveThread, self).__init__()
+        self.parent = parent
+
+    def run(self):
+        ypos = self.parent.y()
+        if ypos < 10:
+            for i in range(10):
+                self.parent.move(self.parent.x(), ypos - math.sin(3.14159 / 20 * i) * (ypos + 50))
+                time.sleep(0.01)
+        self.parent.thear.exit()
+
+
+class FloatingWindowEnterThread(QtCore.QThread):
+    finishout = QtCore.Signal(int)
+
+    def __init__(self, parent):
+        super(FloatingWindowEnterThread, self).__init__()
+        self.parent = parent
+
+    def run(self):
+        if self.parent.y() < 0:
+            ypos = self.parent.y()
+            for i in range(10):
+                self.parent.move(self.parent.x(), ypos - math.sin(3.14159 / 20 * i) * (ypos - 5))
+                time.sleep(0.01)
+        self.parent.thear.exit()
 
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None, *args):
         super(MainWindow, self).__init__(parent)
+        # super(MainWindow, self).__init__(parent,QtCore.Qt.Window | QtCore.Qt.FramelessWindowHint )
         logger = ToolsLogger.get_logger(getpass.getuser(), save_log=True)
         logger.info("Publish Tools start...")
         self.setWindowTitle(u'Publish for P4V中文')
-        self.ui = ui_main.Ui_MainWindow()
+        self.ui = main_UI.Ui_MainWindow()
         self.ui.setupUi(self)
+        self.initStyle()
 
         global widgets
         widgets = self.ui
@@ -66,7 +184,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setStyleSheet(style)
 
         window_pale = QtGui.QPalette()
-        window_pale.setBrush(self.backgroundRole(), QtGui.QBrush(QtGui.QPixmap("{}/{}".format(os.path.dirname(__file__), 'resources/background.png'))))
+        window_pale.setColor(QtGui.QPalette.Background, QtGui.QColor(54, 57, 63))
         self.setPalette(window_pale)
 
 
@@ -128,35 +246,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
 if __name__ == '__main__':
 
-    # import sys
-    # import imp
-    # import ctypes
-    # from PySide2 import QtCore
-    from PySide2 import QtGui
-    # from PySide2 import QtWidgets
-    #
-    # # import unreal
-    # ToolsLib = r'D:\workSpace\Python\Tools\publish'
-    # if ToolsLib not in sys.path:
-    #     sys.path.append(ToolsLib)
-    #     sys.path.append("\\\\10.0.200.5\HeroFileServer\ProjectX\Scripts\Python37\Lib\site-packages")
-    # from AssetBrowser import main
-    #
-    # imp.reload(main)
-    #
-    # if not QtWidgets.QApplication.instance():
-    #     app = QtWidgets.QApplication(sys.argv)
-    #     app.setWindowIcon(QtGui.QIcon("icon.png"))
-    # global window
-    #
-    # window = main.MainWindow()
-    # ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('Hero_Publish')
+    # app = QtWidgets.QApplication(sys.argv)
+    # app.setWindowIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__), 'icon.ico')))
     # window = MainWindow()
     # window.show()
-    # unreal.parent_external_window_to_slate(window.winId())
-
+    # app.exec_()
     app = QtWidgets.QApplication(sys.argv)
-    app.setWindowIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__), 'icon.ico')))
-    window = MainWindow()
-    window.show()
+    for o in QtWidgets.QApplication.topLevelWidgets():
+        if o.objectName() == "FloatingWindow":
+            o.deleteLater()
+    FloatingBall = FloatingWindow()
+    FloatingBall.show()
     app.exec_()

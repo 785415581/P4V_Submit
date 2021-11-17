@@ -26,7 +26,7 @@ importlib.reload(DialogAddLabel_UI)
 class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
     def __init__(self):
         super(AddLabels, self).__init__()
-
+        self.setWindowFlag(QtCore.Qt.WindowStaysOnTopHint)
         self.itemLabels = None
         self._select_file = None
         self._kwargs = None
@@ -36,7 +36,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         # self.columnView.enterEvent = self.enter_event
         self.columnView.setColumnWidths([20, 20, 20])
         self.columnView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.columnView.customContextMenuRequested.connect(lambda: self.showContextMenu(self.columnView))
+        self.columnView.customContextMenuRequested.connect(self.showContextMenu)
         self.initSignal()
 
     def enter_event(self, event):
@@ -115,15 +115,15 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
     def setConfigData(self, index):
         print(index)
 
-    def actionHandler(self, columnView):
+    def actionHandler(self):
         # ToDo: add label
-        index = columnView.currentIndex()
+        index = self.columnView.currentIndex()
         container = list()
         container = self.getAllSelectColumnItem(index, container)
-        count = columnView.model().columnCount(index)
+        count = self.columnView.model().columnCount(index)
         text, ok = QtWidgets.QInputDialog.getText(self, 'Text Input Dialog', u'输入子文件夹名称')
         if ok:
-            item = columnView.model().itemFromIndex(index)
+            item = self.columnView.model().itemFromIndex(index)
             container.reverse()
             lens = self.getChildIndex(container, self.configData)
             subItem = QtGui.QStandardItem(text)

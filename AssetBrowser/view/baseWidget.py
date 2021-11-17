@@ -97,7 +97,7 @@ class TreeWidgetDrop(QtWidgets.QTreeWidget):
 
     def __init__(self, parent=None):
         super(TreeWidgetDrop, self).__init__(parent)
-
+        self.parent = parent
         self.setHeaderHidden(True)
 
         self.setDragEnabled(True)
@@ -180,9 +180,11 @@ class TreeWidgetDrop(QtWidgets.QTreeWidget):
     def keyPressEvent(self, event):
         if event.key() == 16777223:
             try:
-                currNode = self.currentItem()
-                parent1 = currNode.parent()
-                parent1.removeChild(currNode)
+                currentNodes = self.selectedItems()
+                for currNode in currentNodes:
+                    currNode = self.currentItem()
+                    parent1 = currNode.parent()
+                    parent1.removeChild(currNode)
             except Exception:
                 try:
                     rootIndex = self.indexOfTopLevelItem(currNode)

@@ -17,41 +17,104 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(613, 663)
-        self.verticalLayout_3 = QVBoxLayout(Dialog)
+        Dialog.resize(747, 653)
+        Dialog.setStyleSheet(u"background-color: #36393f;")
+        self.verticalLayout_4 = QVBoxLayout(Dialog)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.frame = QFrame(Dialog)
+        self.frame.setObjectName(u"frame")
+        self.frame.setStyleSheet(u"\n"
+"\n"
+"\n"
+"QPushButton{\n"
+"	font: 10pt \"Consolas\";\n"
+"	color: rgb(255, 255, 255);\n"
+"    border-radius: 5px;\n"
+"    background-color: #5285a6;\n"
+"    background-repeat: no-repeat;\n"
+"    background-position: left center;\n"
+"}\n"
+"QPushButton:hover { background-color: #0a82c8; border-style: solid; border-radius: 5px; }\n"
+"QPushButton:pressed { background-color: #0a82c8; border-style: solid; border-radius: 5px; }\n"
+"\n"
+"QListWidget {\n"
+"	font: 10pt \"Consolas\";\n"
+"	color: rgb(255, 255, 255);\n"
+"    background-color: #36393f;\n"
+"}\n"
+"\n"
+"QColumnView {\n"
+"	font: 10pt \"Consolas\";\n"
+"	color: rgb(255, 255, 255);\n"
+"    background-color: #36393f;\n"
+"}\n"
+"\n"
+"/*sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss*/\n"
+"\n"
+"QLabel {\n"
+"font: 10pt \"Consolas\";\n"
+"color: rgb(255, 255, 255);\n"
+"}\n"
+"\n"
+"\n"
+"QGroupBox {\n"
+"	font: 10pt \"Consolas\";\n"
+"	color: rgb(255, 255, 255);\n"
+"    background-color: #36393f;\n"
+"	border: 1px solid #1e1e1e;\n"
+"}\n"
+"\n"
+"QSplitter"
+                        "::handle:horizontal {\n"
+"    background-color: #242424;\n"
+"}\n"
+"QSplitter::handle:vertical {\n"
+"    background-color: #242424;\n"
+"}")
+        self.frame.setFrameShape(QFrame.StyledPanel)
+        self.frame.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_3 = QVBoxLayout(self.frame)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.splitter_2 = QSplitter(Dialog)
-        self.splitter_2.setObjectName(u"splitter_2")
-        self.splitter_2.setOrientation(Qt.Vertical)
-        self.groupBox_3 = QGroupBox(self.splitter_2)
+        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.groupBox_3 = QGroupBox(self.frame)
         self.groupBox_3.setObjectName(u"groupBox_3")
         self.verticalLayout_2 = QVBoxLayout(self.groupBox_3)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_2.setContentsMargins(6, 15, 6, 6)
         self.itemListWidget = QListWidget(self.groupBox_3)
         self.itemListWidget.setObjectName(u"itemListWidget")
+        self.itemListWidget.setAlternatingRowColors(True)
         self.itemListWidget.setSelectionMode(QAbstractItemView.MultiSelection)
 
         self.verticalLayout_2.addWidget(self.itemListWidget)
 
-        self.splitter_2.addWidget(self.groupBox_3)
-        self.groupBox = QGroupBox(self.splitter_2)
+
+        self.verticalLayout_3.addWidget(self.groupBox_3)
+
+        self.groupBox = QGroupBox(self.frame)
         self.groupBox.setObjectName(u"groupBox")
         self.horizontalLayout = QHBoxLayout(self.groupBox)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(6, 15, 6, 6)
         self.splitter = QSplitter(self.groupBox)
         self.splitter.setObjectName(u"splitter")
         self.splitter.setOrientation(Qt.Horizontal)
         self.levelColumnView = QColumnView(self.splitter)
         self.levelColumnView.setObjectName(u"levelColumnView")
+        self.levelColumnView.setStyleSheet(u"color: rgb(255, 255, 255);")
         self.splitter.addWidget(self.levelColumnView)
 
         self.horizontalLayout.addWidget(self.splitter)
 
-        self.splitter_2.addWidget(self.groupBox)
-        self.groupBox_2 = QGroupBox(self.splitter_2)
+
+        self.verticalLayout_3.addWidget(self.groupBox)
+
+        self.groupBox_2 = QGroupBox(self.frame)
         self.groupBox_2.setObjectName(u"groupBox_2")
         self.horizontalLayout_2 = QHBoxLayout(self.groupBox_2)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setContentsMargins(-1, 15, -1, -1)
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
 
@@ -61,9 +124,8 @@ class Ui_Dialog(object):
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer)
 
-        self.splitter_2.addWidget(self.groupBox_2)
 
-        self.verticalLayout_3.addWidget(self.splitter_2)
+        self.verticalLayout_3.addWidget(self.groupBox_2)
 
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
@@ -73,13 +135,15 @@ class Ui_Dialog(object):
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.okBtn = QPushButton(Dialog)
+        self.okBtn = QPushButton(self.frame)
         self.okBtn.setObjectName(u"okBtn")
+        self.okBtn.setMinimumSize(QSize(50, 0))
 
         self.horizontalLayout_3.addWidget(self.okBtn)
 
-        self.cancelBtn = QPushButton(Dialog)
+        self.cancelBtn = QPushButton(self.frame)
         self.cancelBtn.setObjectName(u"cancelBtn")
+        self.cancelBtn.setMinimumSize(QSize(50, 0))
 
         self.horizontalLayout_3.addWidget(self.cancelBtn)
 
@@ -90,13 +154,16 @@ class Ui_Dialog(object):
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
 
 
+        self.verticalLayout_4.addWidget(self.frame)
+
+
         self.retranslateUi(Dialog)
 
         QMetaObject.connectSlotsByName(Dialog)
     # setupUi
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
+        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Select Label", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("Dialog", u"Items", None))
         self.groupBox.setTitle(QCoreApplication.translate("Dialog", u"Level", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("Dialog", u"Label", None))

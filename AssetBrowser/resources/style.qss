@@ -1,7 +1,263 @@
 
-QMenu{border:1px solid lightgray;}
-QMenu{border-color:green;}
-QMenu::item{padding:0px 40px 0px 20px;}
-QMenu::item{height:30px;}
-QMenu::item{color:blue;}
-QMenu::item{background:white;}
+
+#FloatingWindow{background:rgba(0, 0, 0, 0);}
+
+#connectBtn{
+    font: 15pt "Consolas";
+    border-radius: 20px;
+    background-color: #5285a6;
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+#connectBtn:hover { background-color: #0a82c8; border-style: solid; border-radius: 20px; }
+#connectBtn:pressed { background-color: #0a82c8; border-style: solid; border-radius: 20px; }
+
+#openSceneButton{
+    font: 11pt "Consolas";
+    border-radius: 5px;
+    background-color: #5285a6;
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+#openSceneButton:hover { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+#openSceneButton:pressed { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+
+#save_scene_button{
+    font: 11pt "Consolas";
+    border-radius: 5px;
+    background-color: #5285a6;
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+#save_scene_button:hover { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+#save_scene_button:pressed { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+
+
+#import_subasset_button{
+    font: 11pt "Consolas";
+    border-radius: 5px;
+    background-color: #5285a6;
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+#import_subasset_button:hover { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+#import_subasset_button:pressed { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+
+#importSelectButton{
+    font: 11pt "Consolas";
+    border-radius: 5px;
+    background-color: #5285a6;
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+#importSelectButton:hover { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+#importSelectButton:pressed { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+
+#reference_select_button{
+    font: 11pt "Consolas";
+    border-radius: 5px;
+    background-color: #5285a6;
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+#reference_select_button:hover { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+#reference_select_button:pressed { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+
+#open_select_button{
+    font: 11pt "Consolas";
+    border-radius: 5px;
+    background-color: #5285a6;
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+#open_select_button:hover { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+#open_select_button:pressed { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+
+/*******************************************************************************/
+
+#exportBtn{
+    font: 11pt "Consolas";
+    border-radius: 5px;
+    background-color: #5285a6;
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+#exportBtn:hover { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+#exportBtn:pressed { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+
+
+#exportBtn_exportBtn_subassets{
+    font: 11pt "Consolas";
+    border-radius: 5px;
+    background-color: #5285a6;
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+#exportBtn_exportBtn_subassets:hover { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+#exportBtn_exportBtn_subassets:pressed { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+
+
+#publishBtn{
+    font: 11pt "Consolas";
+    border-radius: 5px;
+    background-color: #5285a6;
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+#publishBtn:hover { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+#publishBtn:pressed { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+
+
+#publishSubassetBtn{
+    font: 11pt "Consolas";
+    border-radius: 5px;
+    background-color: #5285a6;
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+#publishSubassetBtn:hover { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+#publishSubassetBtn:pressed { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+
+
+#history_list {
+    background-color: #36393f;
+}
+
+
+
+QFrame HLine, QFrame VLine
+{
+color: red;
+}
+
+
+/*sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss*/
+
+QLabel {
+font: 10pt "Consolas";
+color: rgb(255, 255, 255);
+}
+
+QGroupBox {
+font: 10pt "Consolas";
+color: rgb(255, 255, 255);
+}
+
+QCheckBox {
+font: 10pt "Consolas";
+color: rgb(255, 255, 255);
+}
+QPushButton {
+font: 10pt "Consolas";
+color: rgb(255, 255, 255);
+}
+
+
+QComboBox {
+
+font: 10pt "Consolas";
+color: rgb(255, 255, 255);
+border: 1px solid rgb(117, 118, 118);
+border-radius: 5px;
+background: #36393f;
+padding: 1px 2px 1px 2px;
+
+}
+QComboBox QAbstractItemView {
+    outline: 0px solid gray;
+    border: #36393f;
+    color: rgb(255, 255, 255);
+    background-color: #36393f;
+    selection-background-color: #5285a6;
+}
+
+
+QLineEdit {
+
+    border-radius: 5px;
+    border: 1px solid rgb(117, 118, 118);
+    background-color: #36393f;
+
+}
+
+/* Tree -----------------------------------------*/
+
+QTreeView {
+	background-color: #36393f;
+    outline: 0px;
+	border: 0px solid #DC143C;
+}
+
+QTreeView::item {
+    color:#d4d4d4;
+	/*background-color: #323232;*/
+	height:30px;
+
+}
+
+QTreeView::item:selected {
+    background-color: #5285a6;
+}
+
+QHeaderView::section {
+    font: 10pt "Consolas";
+    height:25px;
+    color:#FFFFFF;
+    background:#5285a6;
+    border-left:0px solid gray;
+    border-right:1px solid gray;
+    border-top:0px solid gray;
+    border-bottom:0px solid gray;
+}
+
+/* TabWidget -----------------------------------------*/
+QTabBar::tab
+{
+    border-radius: 5px;
+    color:#FFFFFF;
+}
+
+QTabBar::tab:selected
+{
+    margin-right: 5px #5285a6;
+    border-bottom: 5px solid #5285a6;
+    background-color:#5285a6;
+}
+
+
+QTabBar::tab:!selected
+{
+    margin-right: 5px #36393f;
+    border-bottom: 5px solid #36393f;
+    background-color:#36393f;
+}
+
+QTabWidget::pane {
+    color: #36393f;
+    background-color: #36393f;
+    border: -1px solid ;
+}
+
+QPlainTextEdit {
+    font: 10pt "Consolas";
+    color: rgb(255, 255, 255);
+    background-color: #36393f;
+}
+
+QTextEdit {
+    font: 10pt "Consolas";
+    color: rgb(255, 255, 255);
+    background-color: #36393f;
+}
+
+QGroupBox {
+    background-color: #36393f;
+	border: 1px solid #1e1e1e;
+}
+
+QSplitter::handle:horizontal {
+    background-color: #242424;
+}
+QSplitter::handle:vertical {
+    background-color: #242424;
+}

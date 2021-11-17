@@ -3,10 +3,9 @@ import json
 import os
 import imp
 import importlib
-import AssetBrowser.modules.ImportFunction as ImportFunction
-DEBUG = False
 import getpass
 from AssetBrowser.utils.log import ToolsLogger
+from AssetBrowser.modules import global_setting
 
 
 def start_import(import_model, **kwargs):
@@ -69,7 +68,7 @@ def get_env():
         return "Maya"
     if "HOUDIN" in module_path:
         return "Houdini"
-    if DEBUG:
+    if global_setting.DEBUG:
         return "Unreal"
     return None
 
