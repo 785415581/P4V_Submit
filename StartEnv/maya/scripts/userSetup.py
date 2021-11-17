@@ -30,7 +30,7 @@ def open_window(*args):
     for widget in QApplication.topLevelWidgets():
         if widget.objectName() == "PublishTools":
             widget.deleteLater()
-    win = main.MainWindow(parent=maya_main_window())
+    win = main.FloatingWindow(parent=maya_main_window())
     win.setObjectName('PublishTools')
     win.show()
 

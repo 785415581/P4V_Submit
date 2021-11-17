@@ -25,8 +25,8 @@ widgets = None
 
 
 class FloatingWindow(QtWidgets.QWidget):
-    def __init__(self):
-        super(FloatingWindow, self).__init__()
+    def __init__(self, parent=None):
+        super(FloatingWindow, self).__init__(parent)
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
         self.updateTime = 0
         self.threadExits = 0
