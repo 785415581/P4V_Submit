@@ -7,6 +7,7 @@ from AssetBrowser.modules.global_setting import STEP
 class StepWidget(QtWidgets.QDialog):
     def __init__(self, current_step, parent=None):
         super(StepWidget, self).__init__(parent)
+        self.setWindowFlag(QtCore.Qt.WindowStaysOnTopHint)
         self.select_step = None
         self.setWindowTitle(u"选择")
         self.layout = QtWidgets.QVBoxLayout()
