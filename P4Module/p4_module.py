@@ -306,7 +306,7 @@ class P4Client(object):
 
     def getFileLabels(self, p4File):
         labels = list()
-        cmd = 'p4 labels {}#1'.format(p4File)
+        cmd = 'p4 labels {}#1 | sort'.format(p4File)
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         res_labels, err = process.communicate()
         for res in res_labels.decode('utf-8').split('\r\n'):
