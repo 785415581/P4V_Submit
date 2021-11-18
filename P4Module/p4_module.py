@@ -310,13 +310,11 @@ class P4Client(object):
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         res_labels, err = process.communicate()
         for res in res_labels.decode('utf-8').split('\r\n'):
-            pattern = re.compile(r'[^Label](\S)\w+[^\sD]')
-            group = pattern.search(res)
+            pattern = re.compile(r'Label (.+) \d+')
+            group = pattern.match(res)
             if group:
-                label = group.group()
-                label = label.replace(' ', '')
-                if label:
-                    labels.append(label)
+                label = group.groups()[0]
+                labels.append(label)
         return labels
 
 
