@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+import os
 from PySide2 import QtCore, QtGui, QtWidgets
 
 import AssetBrowser.modules.app_functions as app_functions
 import P4Module.p4_module as p4_module
 import AssetBrowser.utils.utils as utils
+from AssetBrowser.modules import global_setting
 
 import imp
 imp.reload(app_functions)
@@ -55,6 +57,9 @@ class Controller(QtCore.QObject):
     def init(self):
         self.appFunction.view = self.view
 
+        if self.get_env() == "Maya":
+            self.view.exportBtn.setEnabled(True)
+            self.view.exportBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.view.workTree.clear()
         self.view.workTree.setColumnCount(3)
         self.view.workTree.setHeaderLabels(["Files", "LocalVersion", "ServerVersion"])
@@ -114,3 +119,16 @@ class Controller(QtCore.QObject):
     def createAsset(self, control):
         self._utils.control = control
         self._utils.createAsset()
+
+    def get_env(self):
+
+        module_path = os.__file__
+        if "Engine\\Binaries\\ThirdParty" in module_path:
+            return "Unreal"
+        if "Maya" in module_path:
+            return "Maya"
+        if "HOUDIN" in module_path:
+            return "Houdini"
+        if global_setting.DEBUG:
+            return "Unreal"
+        return None

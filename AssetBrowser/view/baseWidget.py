@@ -177,6 +177,17 @@ class TreeWidgetDrop(QtWidgets.QTreeWidget):
             else:
                 event.ignore()
 
+    def mouseDoubleClickEvent(self, event):
+
+        item = self.itemAt(event.pos())
+        # item.setFlags(item.flags() or QtCore.Qt.ItemIsEditable)
+        if item:
+            inputDialog = QtWidgets.QInputDialog()
+            text, ok = inputDialog.getText(QtWidgets.QWidget(), 'Folder rename', 'input folder name:')
+            if ok and text:
+                item.setText(0, text)
+                item.set_half_path()
+
     def keyPressEvent(self, event):
         if event.key() == 16777223:
             try:

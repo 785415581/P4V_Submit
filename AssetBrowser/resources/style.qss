@@ -1,7 +1,5 @@
 
 
-#FloatingWindow{background:rgba(0, 0, 0, 0);}
-
 #connectBtn{
     font: 15pt "Consolas";
     border-radius: 20px;
