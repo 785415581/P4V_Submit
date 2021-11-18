@@ -39,14 +39,29 @@ class FloatingWindow(QtWidgets.QWidget):
         self.mainWindow.show()
         self.setGeometry(200, 100, 100, 100)
         self.setToolTip("Esc close this window\nDouble click open publish Window")
-        # self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        # self.customContextMenuRequested.connect(self.showHandle)
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.showHandle)
 
 
     def showHandle(self, pos):
         contextMenu = QtWidgets.QMenu()
+        contextMenu.setStyleSheet('''
+        QMenu {
+                background-color: "#242424";
+                color: "#D5D5D5";
+                border-radius: 2px;
+                border: 1px solid #36393f;
+                }
+    
+        QMenu::indicator {
+                background-color: "#242424";
+                }
+        QMenu::item:selected {
+                background-color: "#36393f";
+                }
+        ''')
         contextMenu.setObjectName("contextMenu")
-        actionNew = QtWidgets.QAction('New Folder')
+        actionNew = QtWidgets.QAction('Close...')
         contextMenu.addAction(actionNew)
         actionNew.triggered.connect(self.close)
         contextMenu.exec_(QtGui.QCursor().pos())

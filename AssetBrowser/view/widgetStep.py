@@ -7,7 +7,47 @@ from AssetBrowser.modules.global_setting import STEP
 class StepWidget(QtWidgets.QDialog):
     def __init__(self, current_step, parent=None):
         super(StepWidget, self).__init__(parent)
+        self.setWindowFlag(QtCore.Qt.WindowStaysOnTopHint)
         self.select_step = None
+        self.setStyleSheet('''
+        
+        QDialog {
+        background-color: #36393f;
+        }
+        QLabel {
+        font: 10pt "Consolas";
+        color: rgb(202, 202, 202);
+        }
+        QPushButton{
+                    font: 15pt "Consolas";
+                    color: rgb(202, 202, 202);
+                    border-radius: 20px;
+                    background-color: #5285a6;
+                    background-repeat: no-repeat;
+                    background-position: left center;
+                }
+        QPushButton:hover { background-color: #0a82c8; border-style: solid; border-radius: 20px; }
+        QPushButton:pressed { background-color: #0a82c8; border-style: solid; border-radius: 20px; }
+
+        
+        QComboBox {
+                font: 10pt "Consolas";
+                color: rgb(202, 202, 202);
+                border: 1px solid rgb(117, 118, 118);
+                border-radius: 5px;
+                background: #36393f;
+                padding: 1px 2px 1px 2px;
+                
+                }
+        QComboBox QAbstractItemView {
+            outline: 0px solid gray;
+            border: #36393f;
+            color: rgb(202, 202, 202);
+            background-color: #36393f;
+            selection-background-color: #5285a6;
+        }
+
+        ''')
         self.setWindowTitle(u"选择")
         self.layout = QtWidgets.QVBoxLayout()
 
@@ -40,3 +80,11 @@ class StepWidget(QtWidgets.QDialog):
     def cliecked_close(self):
 
         self.close()
+
+
+if __name__ == '__main__':
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    window = StepWidget("Rig")
+    window.show()
+    app.exec_()

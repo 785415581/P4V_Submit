@@ -9,6 +9,7 @@
       "after": "",
       "ext": {
         "fbx": "mayaFunctions.MayaImportFBX",
+        "FBX": "unrealFunctions.UnrealImportFBX",
         "ma": "mayaFunctions.MayaImportMa",
         "mb": "mayaFunctions.MayaImportMb",
         "abc": "mayaFunctions.MayaImportABC",
@@ -47,10 +48,12 @@
       "after": "",
       "ext": {
         "fbx": "unrealFunctions.UnrealImportFBX",
+        "FBX": "unrealFunctions.UnrealImportFBX",
         "abc": "",
         "tiff": "",
         "jpg": "unrealFunctions.UnrealImportTex",
-        "png": "unrealFunctions.UnrealImportTex"
+        "png": "unrealFunctions.UnrealImportTex",
+        "PNG": "unrealFunctions.UnrealImportTex"
        }
     },
     "Open":

@@ -3,7 +3,7 @@
 
 cmd_out_decode = "utf-8"
 
-DEBUG = True
+DEBUG = False
 
 UITYPE="UI"
 ASSETTYPE=["Animal", "Building", "Character", "Effect","Environment", "Prop", UITYPE, "Weapon"]
