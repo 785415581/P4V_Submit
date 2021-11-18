@@ -306,13 +306,17 @@ class P4Client(object):
 
     def getFileLabels(self, p4File):
         labels = list()
-        cmd = 'p4 labels {}#1 | sort'.format(p4File)
+        cmd = 'p4 labels {}#1'.format(p4File)
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         res_labels, err = process.communicate()
         for res in res_labels.decode('utf-8').split('\r\n'):
-            label = re.findall(r'([^Label\s]\w+)\s\d', res)
-            if label:
-                labels.append(label[0])
+            pattern = re.compile(r'[^Label](\S)\w+[^\sD]')
+            group = pattern.search(res)
+            if group:
+                label = group.group()
+                label = label.replace(' ', '')
+                if label:
+                    labels.append(label)
         return labels
 
 
@@ -360,7 +364,7 @@ if __name__ == '__main__':
     os.popen("p4 set P4CLIENT={}".format(p4Module.client))
     # p4File = 'D:/Dev/Assets/Assets/Character/Cyber_Leopard/Animations/Cyber_Leopard_Attack_F/111.ma'
     p4File = '//Assets/main/Assets/Character/Cyber_Leopard/Animations/Cyber_Leopard_Attack_F/111.ma'
-    # labels = p4Module.getFileLabels(p4File)
-    p4Module.addFileLabels(p4File, 'ScriptTest')
-    # print(labels)
+    labels = p4Module.getFileLabels(p4File)
+    # p4Module.addFileLabels(p4File, 'ScriptTest')
+    print(labels)
 

@@ -269,35 +269,26 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         return labels
 
     def setLabelsCombineUnrealPath(self, labels):
-
+        '''
+        # 从获取的label中组装出来unreal 的路径。没有在self.configData当中的将会被舍弃。
+        :param labels:
+        :return:
+        '''
+        sorter = []
         for label in labels:
             router = []
-            if label not in self.configData:
-                index = str()
-                for level in range(len(labels)):
-                    if labels[level]:
-                        if level == 0:
-                            index = labels[level]
-                            router.append(index)
-                        else:
-                            index = index + '/' + labels[level]
-                            router.append(index)
-                return max(router)
-            else:
-                for label in labels:
-                    router = []
-                    result = self.find_by_exhaustion(label, self.configData, router)
-                    if result:
-                        index = str()
-                        for level in range(len(result[1])):
-                            if result[1][level]:
-                                if level == 0:
-                                    index = result[1][level]
-                                    router.append(index)
-                                else:
-                                    index = index + '/' + result[1][level]
-                                    router.append(index)
-            return max(router)
+            res = self.getLabelIndex(label, self.configData, router)
+            if res:
+                sorter.append(res[1])
+        if sorter:
+            sorter = max(sorter)
+            uPath = ''
+            for level in range(len(sorter)):
+                if level == 0:
+                    uPath = sorter[level]
+                else:
+                    uPath = uPath + '/' + sorter[level]
+            return uPath
 
     def find_by_exhaustion(self, input_key, current_dict, router):
         '''
@@ -329,13 +320,50 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             color += colorArr[random.randint(0, 14)]
         return "#" + color
 
+    def testFunc(self):
+        with open(os.path.dirname(__file__) + '/FileStructure.json') as fp:
+            data = json.load(fp)
+        labels = ['Resource', 'Facility', 'Building', 'building']
+        sorter = []
+        for label in labels:
+            router = []
+            res = self.getLabelIndex(label, data, router)
+            if res:
+                sorter.append(res[1])
+        if sorter:
+            sorter = max(sorter)
+            print(sorter)
+            uPath = ''
+            for level in range(len(sorter)):
+                if level == 0:
+                    uPath = sorter[level]
+                else:
+                    uPath = uPath + '/' + sorter[level]
+            print(uPath)
+
+    def getLabelIndex(self, input_key, current_dict, router):
+        router = copy.deepcopy(router)
+        for index, key in enumerate(current_dict):
+            val = current_dict.get(key)
+            if input_key == key:
+                router.append(key)
+                return val, router
+            elif isinstance(val, dict):
+                router.append(key)
+                result_tuple = self.find_by_exhaustion(input_key, val, router)
+                if result_tuple:
+                    return result_tuple[0], result_tuple[1]
+                else:
+                    if router:
+                        router = router[0:len(router) - 1]
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = AddLabels()
-    # labels = ['Game', 'Character']
+    window.testFunc()
+    # labels = ['Resource', 'Building', 'Facility', 'building']
+    # window.initUI()
     # unrealPath = window.setLabelsCombineUnrealPath(labels)
     # print(unrealPath)
-    window.initUI()
-    window.show()
-    app.exec_()
+    # window.show()
+    # app.exec_()
