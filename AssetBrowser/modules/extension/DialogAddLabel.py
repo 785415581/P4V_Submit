@@ -165,7 +165,11 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
                 app_utils.add_log("Invalid file format...{}".format(localPath))
                 continue
             labels = self.getLabelsFromLayout()
+            if not labels:
+                labels = self.kwargs.get("labels")
             unrealPath = self.setLabelsCombineUnrealPath(labels)
+            if not labels:
+                unrealPath = None
             self.UnrealObj = self.kwargs.get("obj")
             self.UnrealObj.asset = data.get("asset", "")
             self.UnrealObj.type = data.get("type", "")
@@ -255,6 +259,8 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
     def getLabelsFromLayout(self):
         labels = list()
         labelCount = self.verticalLayout.count()
+        if not labelCount:
+            return None
         for i in range(labelCount, -1, -1):
             label = self.verticalLayout.itemAt(i)
             if label is not None:
