@@ -183,7 +183,7 @@ class TreeWidgetDrop(QtWidgets.QTreeWidget):
         # item.setFlags(item.flags() or QtCore.Qt.ItemIsEditable)
         if item:
             inputDialog = QtWidgets.QInputDialog()
-            text, ok = inputDialog.getText(QtWidgets.QWidget(), 'Folder rename', 'input folder name:')
+            text, ok = inputDialog.getText(self, 'Folder rename', 'input folder name:')
             if ok and text:
                 item.setText(0, text)
                 item.set_half_path()
