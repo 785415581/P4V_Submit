@@ -115,7 +115,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
     def setConfigData(self, index):
         print(index)
 
-    def actionHandler(self):
+    def actionHandler(self, columnView):
         # ToDo: add label
         index = self.columnView.currentIndex()
         container = list()
