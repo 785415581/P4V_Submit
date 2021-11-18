@@ -296,7 +296,7 @@ class P4Client(object):
         return new_change, True
 
     def submitChangelist(self, changeListNum):
-        submit_cmd = "p4 submit -c {0}".format(str(changeListNum))
+        submit_cmd = "p4 submit -c {0} --parallel=0 -f submitunchanged -i".format(str(changeListNum))
         process = subprocess.Popen(submit_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         out, err = process.communicate()
         if err:
