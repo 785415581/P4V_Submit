@@ -215,6 +215,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
 
         for label in labels:
             if label:
+                p4Model.changeLabelOwner(label, p4Model.user)
                 p4Model.addFileLabels(data.get("localPath"), label)
 
     def setColumnItemSelect(self, index):
