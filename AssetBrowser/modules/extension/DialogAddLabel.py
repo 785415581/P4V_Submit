@@ -224,15 +224,16 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         container = self.getAllSelectColumnItem(index, container)
         self.itemLabels = container
         items = self.itemListWidget.selectedItems()
-        for item in items:
-            data = item.data(QtCore.Qt.UserRole)
-            data.update({"labels": container})
-            item.setData(QtCore.Qt.UserRole, data)
-        for label in container:
-            obj = QtWidgets.QLabel()
-            obj.setText(label)
-            obj.setStyleSheet("background-color:%s" % self.randomColor())
-            self.verticalLayout.insertWidget(-1, obj)
+        if items:
+            for item in items:
+                data = item.data(QtCore.Qt.UserRole)
+                data.update({"labels": container})
+                item.setData(QtCore.Qt.UserRole, data)
+            for label in container:
+                obj = QtWidgets.QLabel()
+                obj.setText(label)
+                obj.setStyleSheet("background-color:%s" % self.randomColor())
+                self.verticalLayout.insertWidget(-1, obj)
 
     def __clearLabel(self):
         labelCount = self.verticalLayout.count()
