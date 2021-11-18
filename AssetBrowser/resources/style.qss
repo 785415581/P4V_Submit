@@ -73,6 +73,17 @@
 #open_select_button:hover { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
 #open_select_button:pressed { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
 
+#down_select_button{
+    font: 11pt "Consolas";
+    border-radius: 5px;
+    background-color: #5285a6;
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+#down_select_button:hover { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+#down_select_button:pressed { background-color: #0a82c8; border-style: solid; border-radius: 5px; }
+
+
 
 
 

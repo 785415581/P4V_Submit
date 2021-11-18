@@ -314,10 +314,14 @@ class Ui_MainWindow(QWidget):
         self.open_select_button = QPushButton("Open")
         self.open_select_button.setObjectName("open_select_button")
 
+        self.down_select_button = QPushButton("Down")
+        self.down_select_button.setObjectName("down_select_button")
+
 
         self.import_layout.addWidget(self.import_select_button)
         self.import_layout.addWidget(self.reference_select_button)
         self.import_layout.addWidget(self.open_select_button)
+        self.import_layout.addWidget(self.down_select_button)
 
         self.verticalLayout.addLayout(self.import_layout)
 

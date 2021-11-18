@@ -103,6 +103,8 @@ class Controller(QtCore.QObject):
         self.view.import_select_button.clicked.connect(partial(self.appFunction.btnImportClicked, "import"))
         self.view.reference_select_button.clicked.connect(partial(self.appFunction.btnImportClicked, "reference"))
         self.view.open_select_button.clicked.connect(partial(self.appFunction.btnImportClicked, "open"))
+        self.view.down_select_button.clicked.connect(partial(self.appFunction.btnToolClicked, "down"))
+
         self.view.exportBtn.clicked.connect(partial(self.appFunction.btnExportClicked, "ExportScene"))
         self.view.exportBtn_subassets.clicked.connect(partial(self.appFunction.btnToolClicked, "ExportSubasset"))
         self.view.publishBtn.clicked.connect(partial(self.appFunction.btnExportClicked, "Publish"))

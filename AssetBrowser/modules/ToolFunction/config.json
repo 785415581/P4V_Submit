@@ -22,6 +22,10 @@
     "ExportSubasset":
     {
       "default": "mayaFunctions.mayaExportSubAssets"
+    },
+    "down":
+    {
+      "default": "defaultFunctions.defaultDown"
     }
   },
 
@@ -34,6 +38,10 @@
     "SaveScene":
     {
       "default": "houdiniFunctions.houdiniSave"
+    },
+    "down":
+    {
+      "default": "defaultFunctions.defaultDown"
     }
 
   },
@@ -47,6 +55,10 @@
     },
     "NewScene": {
       "default": "defaultFunctions.defaultNew"
+    },
+    "down":
+    {
+      "default": "defaultFunctions.defaultDown"
     }
 
   }

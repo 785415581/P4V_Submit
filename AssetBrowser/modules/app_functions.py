@@ -544,10 +544,19 @@ class AppFunc():
         servePrePrivate, localPrePrivate = self.getPathPre("private")
         servePrePublish, localPrePublish = self.getPathPre()
 
+        sel_items = self.view.workTree.selectedItems()
+        sel_files = []
+        for item in sel_items:
+            half_path = item.half_path.replace('\\', '/')
+            local_pub_path = localPrePublish + half_path
+            if item.have_rev:
+                sel_files.append("{0}#{1}".format(local_pub_path, str(item.have_rev)))
+            else:
+                sel_files.append(local_pub_path)
         log, res = startTool.start_tool(model, type=current_type, asset=current_asset, step=current_step,
                                         servePrePublish=servePrePublish, localPrePublish=localPrePublish,
                                         localPrePrivate=localPrePrivate,
-                                        p4model=self.p4Model,
+                                        p4model=self.p4Model, selFiles=sel_files,
                                         view=self.view, subAssets=self.subAssetDict,
                                         full_path_dict=self.full_file_dict, half_path_dict=self.half_file_dict)
         if res:

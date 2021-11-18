@@ -11,9 +11,7 @@ def defaultNew(**kwargs):
     return "Open Private Fold:{0}".format(private_fold), True
 
 
-
 def defaultMayaNew(**kwargs):
-
     private_fold = kwargs["localPrePrivate"].replace("/", "\\")
     private_fold = os.path.join(private_fold, "maya")
     if not os.path.exists(private_fold):
@@ -21,13 +19,20 @@ def defaultMayaNew(**kwargs):
     os.system('explorer {0}'.format(private_fold))
     return "Open Private Fold:{0}".format(private_fold), True
 
-def defaultHoudiniNew(**kwargs):
 
+def defaultHoudiniNew(**kwargs):
     private_fold = kwargs["localPrePrivate"].replace("/", "\\")
     private_fold = os.path.join(private_fold, "houdini")
     if not os.path.exists(private_fold):
         os.makedirs(private_fold)
     os.system('explorer {0}'.format(private_fold))
     return "Open Private Fold:{0}".format(private_fold), True
+
+def defaultDown(**kwargs):
+
+    for sel_file in kwargs["selFiles"]:
+        kwargs["p4model"].syncFile(sel_file)
+
+    return "Finish download!", True
 
 
