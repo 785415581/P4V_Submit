@@ -161,10 +161,12 @@ def mayaExportSubAssets(**kwargs):
         subasset_fold = export_fold + "/"+ subasset
         if not os.path.exists(subasset_fold):
             os.makedirs(subasset_fold)
+
         kwargs["asset"] = subasset
         log, result = startExport.start_export(subasset_fold, sub_level=subasset.split("/")[-1], **kwargs)
         app_utils.add_log(log)
         if not result:
+            print(subasset, log)
             os.rmdir(subasset_fold)
 
     for sub in os.listdir(export_fold):
