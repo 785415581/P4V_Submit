@@ -10,16 +10,16 @@ import json
 import copy
 import random
 import traceback
+import importlib
 from PySide2 import QtGui
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 from P4Module.p4_module import P4Client
 import AssetBrowser.modules.app_utils as app_utils
 from AssetBrowser.modules.extension import DialogAddLabel_UI
-from AssetBrowser.modules.ImportFunction import unrealFunctions
-import importlib
+# from AssetBrowser.modules.ImportFunction import unrealFunctions
+# importlib.reload(unrealFunctions)
 
-importlib.reload(unrealFunctions)
 importlib.reload(DialogAddLabel_UI)
 
 
@@ -177,11 +177,11 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             self.p4Model = data.get("p4Model", "")
             if unrealPath:
                 if self.UnrealObj.step:
-                    unrealPath = "/Game/" + unrealPath + "/" + self.UnrealObj.asset + "/" + self.UnrealObj.step
+                    unrealPath = "/Game/" + unrealPath + "/" + self.UnrealObj.asset
                 else:
                     unrealPath = "/Game/" + unrealPath
             else:
-                unrealPath = "/Game/Resource/" + self.UnrealObj.type + "/" + self.UnrealObj.asset+"/" + self.UnrealObj.step
+                unrealPath = "/Game/Resource/" + self.UnrealObj.type + "/" + self.UnrealObj.asset
 
             destination_path = self.UnrealObj.init_destination_path(default=unrealPath)
             if "" in unrealPath.split('/')[1::]:
