@@ -150,7 +150,7 @@ def mayaExportSubAssets(**kwargs):
             subasset_name = kwargs["asset"] + "/" + outline_name
             if subasset_name not in scene_subassets:
                 scene_subassets.append(subasset_name)
-                kwargs["subAssets"][kwargs["type"]].setdefault(kwargs["asset"], []).append(subasset_name)
+                kwargs["subAssets"][kwargs["type"]].setdefault(kwargs["asset"], set()).add(subasset_name)
 
     if not scene_subassets:
             return "Failed to get subassets {0}".format(kwargs["asset"]), False
