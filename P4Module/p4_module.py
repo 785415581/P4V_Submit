@@ -165,6 +165,8 @@ class P4Client(object):
             data_values = res.split(";;")
             if not data_values[2]:
                 continue
+            if data_values[-1] == "delete":
+                continue
             file_dict.setdefault(data_values[0], {})
             for index in range(len(data_keys)):
                 file_dict[data_values[0]][data_keys[index]] = data_values[index]
