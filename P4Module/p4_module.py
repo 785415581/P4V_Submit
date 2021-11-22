@@ -3,6 +3,7 @@ import os
 import subprocess
 import re
 
+
 class P4Client(object):
     def __init__(self):
         self._serverPort = "10.0.201.12:1666"
@@ -32,7 +33,6 @@ class P4Client(object):
     @user.setter
     def user(self, value):
         self._user = value
-
 
     @property
     def password(self):
@@ -67,7 +67,6 @@ class P4Client(object):
             print('p4 set P4PASSWD')
             os.popen('p4 set P4PASSWD={}'.format(self.password))
 
-
     @staticmethod
     def getStreamName():
         cmd = 'p4 -F %Stream% -ztag client -o'
@@ -88,7 +87,6 @@ class P4Client(object):
         if stdout:
             return stdout.decode('windows-1252').split('\r\n')[0]
         return None
-
 
     def initClient(self):
         """
@@ -125,7 +123,6 @@ class P4Client(object):
         out = p.stdout.readlines()[-1].strip()
         self.client = str(out.decode("utf-8"))
 
-
     def getClienInfo(self):
 
         data_keys = ["clientName", "clientRoot", "clientStream", "userName"]
@@ -134,7 +131,7 @@ class P4Client(object):
         cmd = "p4 -F " + filters + " -ztag info"
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         infos, err = process.communicate()
-        file_dict ={}
+        file_dict = {}
         for res in infos.decode('utf-8', "ignore").split('\r\n'):
             if not res:
                 continue
@@ -152,12 +149,12 @@ class P4Client(object):
         data_keys = ["depotFile", "clientFile", "headRev", "headChange", "haveRev", "headAction"]
         format_keys = ["%{0}%".format(data_key) for data_key in data_keys]
         filters = ";;".join(format_keys)
-        cmd_files = "p4 -F "+filters+" -ztag fstat "+rootPath+"..."
+        cmd_files = "p4 -F " + filters + " -ztag fstat " + rootPath + "..."
         process = subprocess.Popen(cmd_files, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         res_files, err = process.communicate()
         # print(res_files)
         dirs_set = set()
-        #print(res_files.decode('utf-8'))
+        # print(res_files.decode('utf-8'))
 
         for res in res_files.decode('utf-8', "ignore").split('\r\n'):
             if not res:
@@ -217,9 +214,8 @@ class P4Client(object):
 
         cmd = u'p4 --field "Description={0}" change -o | p4 change -i'.format(description)
 
-
         if sys.version.startswith("3"):
-            process = subprocess.Popen(cmd.encode(sys.getdefaultencoding()).decode("GB18030"), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            process = subprocess.Popen(cmd.encode(sys.getdefaultencoding()).decode(encoding='UTF-8',errors='strict'), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         else:
             process = subprocess.Popen(cmd.encode("utf-8"), stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE, shell=True)
@@ -259,13 +255,14 @@ class P4Client(object):
                     add_cmd = "p4 add -d -c {0} {1}".format(new_change, local_file)
                     process = subprocess.Popen(add_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                     out, err = process.communicate()
-                    out=out.decode('utf-8', "ignore")
+                    out = out.decode('utf-8', "ignore")
 
                     if err:
                         return err, False
                     if "reopen" in out:
                         reopen_cmd = "p4 reopen -c {0} {1}".format(new_change, local_file)
-                        process = subprocess.Popen(reopen_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                        process = subprocess.Popen(reopen_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                                   shell=True)
                         out, err = process.communicate()
                 else:
                     if data_values[2] and not data_values[4]:
@@ -280,15 +277,14 @@ class P4Client(object):
                     out = out.decode("utf-8", "ignore")
                     if "reopen" in out:
                         reopen_cmd = "p4 reopen -c {0} {1}".format(new_change, local_file)
-                        process = subprocess.Popen(reopen_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                        process = subprocess.Popen(reopen_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                                   shell=True)
                         out, err = process.communicate()
-
 
                     sync_cmd = "p4 sync {0}".format(local_file)
                     print(sync_cmd)
                     process = subprocess.Popen(sync_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                     out, err = process.communicate()
-
 
                     resolve_cmd = "p4 resolve -ay {0}".format(local_file)
                     print(resolve_cmd)
@@ -318,7 +314,6 @@ class P4Client(object):
                 label = group.groups()[0]
                 labels.append(label)
         return labels
-
 
     @staticmethod
     def addFileLabels(p4File, label):
@@ -364,7 +359,8 @@ if __name__ == '__main__':
     os.popen("p4 set P4CLIENT={}".format(p4Module.client))
     # p4File = 'D:/Dev/Assets/Assets/Character/Cyber_Leopard/Animations/Cyber_Leopard_Attack_F/111.ma'
     p4File = '//Assets/main/Assets/Character/Cyber_Leopard/Animations/Cyber_Leopard_Attack_F/111.ma'
-    labels = p4Module.getFileLabels(p4File)
+    # labels = p4Module.getFileLabels(p4File)
     # p4Module.addFileLabels(p4File, 'ScriptTest')
-    print(labels)
-
+    # print(labels)
+    des = '测试中文'
+    p4Module.createNewChangelist(description=des)
