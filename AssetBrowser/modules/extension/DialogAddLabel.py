@@ -196,7 +196,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             options = self.UnrealObj.build_static_mesh_import_options()
             importTask = self.UnrealObj.creatImportTask(localPath, destination_path, destination_name, options)
             self.UnrealObj.execute_import_tasks(importTask)
-            self.feedbackTag(self.p4Model, unrealPath, data)
+            self.feedbackTag(self.p4Model, labels, data)
         self.feedbackConfigData()
 
 
@@ -209,13 +209,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         except IOError:
             traceback.print_exc()
 
-    def feedbackTag(self, p4Model, unrealPath, data):
-        if not unrealPath:
-            return
-        labels = unrealPath.split('/')[1::]
-        labels.remove('Game')
-        if data.get("step", "") in labels: labels.remove(data.get("step", ""))
-        if data.get("asset", "") in labels: labels.remove(data.get("asset", ""))
+    def feedbackTag(self, p4Model, labels, data):
         old_labels = p4Model.getFileLabels(data.get("localPath"))
         for label in old_labels:
             if label:
