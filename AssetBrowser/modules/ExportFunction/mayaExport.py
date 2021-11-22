@@ -101,7 +101,15 @@ class MayaExport():
             skin = mel.eval("findRelatedSkinCluster " + child_level)
             if skin:
                 jntList = pm.skinCluster(skin, q=1, wi=1)
-                pm.parent(jntList[0], w=1)
+                jnt = jntList[0]
+                while True:
+                    p1 = pm.listRelatives(jnt, parent=True, type='joint')
+                    if p1:
+                        jnt = p1[0]
+                    else:
+                        p1 = jnt
+                        break
+                pm.parent(jnt, w=1)
                 break
 
         if not jntList:

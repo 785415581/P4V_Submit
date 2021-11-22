@@ -165,6 +165,8 @@ class P4Client(object):
             data_values = res.split(";;")
             if not data_values[2]:
                 continue
+            if data_values[-1] == "delete":
+                continue
             file_dict.setdefault(data_values[0], {})
             for index in range(len(data_keys)):
                 file_dict[data_values[0]][data_keys[index]] = data_values[index]
@@ -306,17 +308,15 @@ class P4Client(object):
 
     def getFileLabels(self, p4File):
         labels = list()
-        cmd = 'p4 labels {}#1'.format(p4File)
+        cmd = 'p4 labels {}#1 | sort'.format(p4File)
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         res_labels, err = process.communicate()
         for res in res_labels.decode('utf-8').split('\r\n'):
-            pattern = re.compile(r'[^Label](\S)\w+[^\sD]')
-            group = pattern.search(res)
+            pattern = re.compile(r'Label (.+) \d+')
+            group = pattern.match(res)
             if group:
-                label = group.group()
-                label = label.replace(' ', '')
-                if label:
-                    labels.append(label)
+                label = group.groups()[0]
+                labels.append(label)
         return labels
 
 
