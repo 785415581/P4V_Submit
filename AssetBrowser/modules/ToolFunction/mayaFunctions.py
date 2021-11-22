@@ -141,21 +141,23 @@ def mayaExportSubAssets(**kwargs):
     kwargs["view"].submitStepCom.setCurrentIndex(index)
     step_win.destroy()
 
-
+    scene_subassets = []
     if kwargs["type"] not in kwargs["subAssets"]:
         return "Failed to get subassets {0}".format(kwargs["asset"]), False
-    if kwargs["asset"] in kwargs["subAssets"][kwargs["type"]]:
-        subassets = kwargs["subAssets"][kwargs["type"]][kwargs["asset"]]
-    else:
-        if kwargs["step"] == "Mesh":
-            subassets = [kwargs["asset"]+"/" + outline_name for outline_name in cmds.listRelatives("|master|Mesh", children=True)]
-            kwargs["subAssets"][kwargs["type"]][kwargs["asset"]] = set(subassets)
-        else:
+
+    if kwargs["step"] in ["Mesh", "Rig"]:
+        for outline_name in cmds.listRelatives("|master|Mesh", children=True):
+            subasset_name = kwargs["asset"] + "/" + outline_name
+            if subasset_name not in scene_subassets:
+                scene_subassets.append(subasset_name)
+                kwargs["subAssets"][kwargs["type"]].setdefault(kwargs["asset"], []).append(subasset_name)
+
+    if not scene_subassets:
             return "Failed to get subassets {0}".format(kwargs["asset"]), False
 
     export_fold = utils.Utils.createPublishTemp()
 
-    for subasset in subassets:
+    for subasset in scene_subassets:
         subasset_fold = export_fold + "/"+ subasset
         if not os.path.exists(subasset_fold):
             os.makedirs(subasset_fold)
