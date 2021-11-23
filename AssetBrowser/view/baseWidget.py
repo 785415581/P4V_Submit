@@ -1,4 +1,4 @@
-# _*_coding:utf-8 _*_
+# -*- coding: utf-8 -*-
 import os
 import sys
 
@@ -42,7 +42,7 @@ class ListWidgetItem(QtWidgets.QListWidgetItem):
         self.fileBaseName.setText(fileName)
 
     def mouseDoubleClickEvent(self, event):
-        text, ok = QtWidgets.QInputDialog().getText(QtWidgets.QWidget(), '修改Label', '输入文本:')
+        text, ok = QtWidgets.QInputDialog().getText(QtWidgets.QWidget(), u'修改Label', u'输入文本:')
         if ok and text:
             self.fileBaseName.setText(text)
 
@@ -268,7 +268,7 @@ def show_text(function):
             self.vars["listViewModel"].item(0).setCheckState(
                 QtCore.Qt.Checked if l == l_ else QtCore.Qt.Unchecked if l == 0 else QtCore.Qt.PartiallyChecked)
             self.vars["lineEdit"].setText(
-                "(全选)" if l == l_ else "(无选择)" if l == 0 else ";".join((item.text() for item in items)))
+                u"(全选)" if l == l_ else u"(无选择)" if l == 0 else ";".join((item.text() for item in items)))
             self.vars["showTextLock"] = True
         else:
             result = function(self, *args, **kwargs)
@@ -332,7 +332,7 @@ class QComboCheckBox(QtWidgets.QComboBox):
     def clear_items(self):
         # 清空所有子项
         self.vars["listViewModel"].clear()
-        self.add_item("(全选)")
+        self.add_item(u"(全选)")
 
     def find_index(self, index: "int"):
         # 根据索引查找子项
