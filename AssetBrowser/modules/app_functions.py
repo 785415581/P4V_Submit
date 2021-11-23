@@ -107,6 +107,8 @@ class AppFunc():
         self.view.typeComboBox.clear()
         self.view.assetNameComboBox.clear()
         self.view.submitStepCom.clear()
+        self.view.comment_ui.comboBox.select_clear()
+        self.view.comment_ui.lineEdit.clear()
 
         self.p4_file_infos = self.p4Model.getFiles(self.clientStream)
 
@@ -466,7 +468,13 @@ class AppFunc():
                 shutil.rmtree(export_fold)
 
         elif model == "Publish":
-            comment_log = self.view.textEdit.toPlainText()
+            comment_log = self.view.comment_ui.textEdit.toPlainText()
+            notice = None
+            taskID = None
+            if self.view.comment_ui.radioButton.isChecked():
+                notice = self.view.comment_ui.comboBox.vars['lineEdit'].text()
+                taskID = self.view.comment_ui.lineEdit.text()
+
             servePre, localPre = self.getPathPre()
             iter = QtWidgets.QTreeWidgetItemIterator(self.view.listWidget)
             dst_files = []
@@ -484,7 +492,9 @@ class AppFunc():
                 app_utils.add_log("Failed to get publish file,Please Check", error=True)
                 return
 
-            log, result = startPublish.startPublish(dst_files, p4model=self.p4Model, log=comment_log)
+            log, result = startPublish.startPublish(dst_files, p4model=self.p4Model, log=comment_log, notice=notice,
+                                                    taskID=taskID, dst_files=dst_files, assetName=current_asset,
+                                                    assetStep=current_step)
             if result:
                 app_utils.add_log(log)
                 app_utils.add_log(u"成功提交！")

@@ -84,6 +84,9 @@ class Ui_Dialog(object):
         self.verticalLayout_2.setContentsMargins(6, 15, 6, 6)
         self.itemListWidget = QListWidget(self.groupBox_3)
         self.itemListWidget.setObjectName(u"itemListWidget")
+        self.itemListWidget.setStyleSheet(u"background: #36393f;\n"
+"alternate-background-color: #323232;\n"
+"")
         self.itemListWidget.setAlternatingRowColors(True)
         self.itemListWidget.setSelectionMode(QAbstractItemView.MultiSelection)
 
@@ -137,6 +140,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.okBtn = QPushButton(self.frame)
         self.okBtn.setObjectName(u"okBtn")
+        self.okBtn.setEnabled(True)
         self.okBtn.setMinimumSize(QSize(50, 0))
 
         self.horizontalLayout_3.addWidget(self.okBtn)

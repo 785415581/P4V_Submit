@@ -15,9 +15,9 @@ from PySide2 import QtCore
 from PySide2 import QtWidgets
 
 from AssetBrowser.modules.extension import DialogAddLabel
-import importlib
+import imp
 
-importlib.reload(DialogAddLabel)
+imp.reload(DialogAddLabel)
 
 
 def UnrealImportFBX(**kwargs):

@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>icons/display_password.png</file>
+    <file>icons/no_display_password.png</file>
+    <file>icons/file.png</file>
+    <file>icons/open_folder.png</file>
+    <file>icons/close_folder.png</file>
+  </qresource>
+</RCC>

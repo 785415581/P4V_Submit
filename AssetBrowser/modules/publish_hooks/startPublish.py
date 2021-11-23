@@ -15,6 +15,7 @@ def startPublish(item_files, **kwargs):
     if not res:
         return log, res
     log, res = basePublishInstance.submit()
+    basePublishInstance.notice(**kwargs)
     logger = ToolsLogger.get_logger(getpass.getuser(), save_log=True)
     logger.info("Publish Tools run publish function...")
     return log, res

@@ -3,6 +3,7 @@ import ctypes
 import os
 import sys
 sys.path.append("R:\ProjectX\Scripts\Python37\Lib\site-packages")
+sys.path.append("D:\workSpace\Python\Tools\publish")
 import time
 import math
 import getpass
@@ -10,6 +11,7 @@ from functools import partial
 
 from PySide2 import QtCore, QtWidgets, QtGui
 from AssetBrowser.utils.log import ToolsLogger
+# import AssetBrowser.publishInterface as publishInterface
 import AssetBrowser.control.controller as controller
 import AssetBrowser.view.main_UI as main_UI
 import AssetBrowser.view.baseWidget as baseWidget
@@ -17,54 +19,42 @@ import AssetBrowser.modules.app_utils as app_utils
 
 import imp
 
-imp.reload(main_UI)
+# imp.reload(publishInterface)
 imp.reload(controller)
+imp.reload(main_UI)
 imp.reload(baseWidget)
+
 
 widgets = None
 
 
+# from maya import OpenMayaUI as omui
+from functools import partial
+
+from shiboken2 import wrapInstance
+# mayaMainWindowPtr = omui.MQtUtil.mainWindow()
+# mayaMainWindow = wrapInstance(int(mayaMainWindowPtr), QtWidgets.QWidget)
+
+
 class FloatingWindow(QtWidgets.QWidget):
-    def __init__(self, parent=None):
-        super(FloatingWindow, self).__init__(parent)
+    def __init__(self):
+        super(FloatingWindow, self).__init__()
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
         self.updateTime = 0
         self.threadExits = 0
+        self.setObjectName("FloatingWindow")
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.setAttribute(QtCore.Qt.WA_NoSystemBackground, True)
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground, 0)
+        self.setStyleSheet("#FloatingWindow{background:rgba(50, 50, 50,0)}")
+        self.setToolTip('1233333')
         self.cycleTimer = QtCore.QTimer()
         self.cycleTimer.timeout.connect(self.updateFloatWindow)
         self.cycleTimer.start(1)
         self.mainWindow = MainWindow(self)
-        self.mainWindow.show()
+        # self.setGeometry(mayaMainWindow.x() + 200, mayaMainWindow.y() + 10, 100, 100)
         self.setGeometry(200, 100, 100, 100)
-        self.setToolTip("Esc close this window\nDouble click open publish Window")
-        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.showHandle)
 
-
-    def showHandle(self, pos):
-        contextMenu = QtWidgets.QMenu()
-        contextMenu.setStyleSheet('''
-        QMenu {
-                background-color: "#242424";
-                color: "#D5D5D5";
-                border-radius: 2px;
-                border: 1px solid #36393f;
-                }
-    
-        QMenu::indicator {
-                background-color: "#242424";
-                }
-        QMenu::item:selected {
-                background-color: "#36393f";
-                }
-        ''')
-        contextMenu.setObjectName("contextMenu")
-        actionNew = QtWidgets.QAction('Close...')
-        contextMenu.addAction(actionNew)
-        actionNew.triggered.connect(self.close)
-        contextMenu.exec_(QtGui.QCursor().pos())
+        self.show()
 
     def updateFloatWindow(self):
         self.updateTime = (self.updateTime + 0.01) % 314
@@ -88,16 +78,15 @@ class FloatingWindow(QtWidgets.QWidget):
     def paintEvent(self, event):
         po = QtGui.QPainter(self)
         po.setRenderHint(QtGui.QPainter.Antialiasing)
-        po.setBrush(QtGui.QBrush(QtGui.QColor(10, 130, 200)))  # background color
+        po.setBrush(QtGui.QBrush(QtGui.QColor(10, 130, 200)))
         toppen = QtGui.QPen()
         toppen.setWidth(3)
-        toppen.setColor(QtGui.QColor(220, 220, 220))  # Outside the circle
+        toppen.setColor(QtGui.QColor(220, 220, 220))
         po.setPen(toppen)
-        po.drawEllipse(QtCore.QRect(2, 2, 55, 55))  # Outside the circle size
-        # 0a82c8
-        po.setPen(QtGui.QColor(255, 255, 200))  # byte dance
+        po.drawEllipse(QtCore.QRect(2, 2, 55, 55))
+
+        po.setPen(QtGui.QColor(255, 255, 200))
         for i in range(10):
-            # print(self.updateTime)
             po.drawLine(QtCore.QPoint(i * 5 + 7, 30 + math.sin((i + self.updateTime * 5) / 10) * 10),
                         QtCore.QPoint(i * 5 + 7, 30 + math.sin(((i + 1) + self.updateTime * 7) / 10) * 10))
 
@@ -123,7 +112,6 @@ class FloatingWindow(QtWidgets.QWidget):
 
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Escape:
-            self.mainWindow.close()
             self.close()
 
 
@@ -160,14 +148,13 @@ class FloatingWindowEnterThread(QtCore.QThread):
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None, *args):
         super(MainWindow, self).__init__(parent)
-        # super(MainWindow, self).__init__(parent,QtCore.Qt.Window | QtCore.Qt.FramelessWindowHint )
         logger = ToolsLogger.get_logger(getpass.getuser(), save_log=True)
         logger.info("Publish Tools start...")
         self.setWindowTitle(u'Publish for P4V中文')
         self.ui = main_UI.Ui_MainWindow()
         self.ui.setupUi(self)
-        self.initStyle()
 
+        self.initStyle()
         global widgets
         widgets = self.ui
         self.control = controller.Controller()
@@ -193,13 +180,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def initStyle(self):
-        stylePath = "{}/{}".format(os.path.dirname(__file__), 'resources/style.qss')
+        stylePath = r"D:\workSpace\Python\Tools\publish\AssetBrowser\resources\style.qss"
         fp = open(stylePath, 'r')
         style = fp.read()
         self.setStyleSheet(style)
 
         window_pale = QtGui.QPalette()
-        window_pale.setColor(QtGui.QPalette.Background, QtGui.QColor(54, 57, 63))
+        window_pale.setBrush(self.backgroundRole(), QtGui.QBrush(QtGui.QPixmap(r'D:\workSpace\Python\Tools\publish\AssetBrowser\resources/background.png')))
         self.setPalette(window_pale)
 
 
@@ -261,16 +248,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
 if __name__ == '__main__':
 
-    # app = QtWidgets.QApplication(sys.argv)
-    # app.setWindowIcon(QtGui.QIcon(os.path.join(os.path.dirname(__file__), 'icon.ico')))
+
     # window = MainWindow()
     # window.show()
-    # app.exec_()
     app = QtWidgets.QApplication(sys.argv)
     for o in QtWidgets.QApplication.topLevelWidgets():
         if o.objectName() == "FloatingWindow":
             o.deleteLater()
-    FloatingBall = MainWindow()
-    FloatingBall.setObjectName("FloatingWindow")
-    FloatingBall.show()
+    lightingTopBall = FloatingWindow()
     app.exec_()

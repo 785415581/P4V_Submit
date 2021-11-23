@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import getpass
+from AssetBrowser.utils import sendMsgWX
+
 
 class BasePublish(object):
 
@@ -32,4 +34,5 @@ class BasePublish(object):
 
         return "Sucess: finish submit changelist,{0}".format(str(self._changelist)), True
 
-
+    def notice(self, **kwargs):
+        sendMsgWX.send_msg(**kwargs)

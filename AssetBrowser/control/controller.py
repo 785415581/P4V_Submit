@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import json
 from PySide2 import QtCore, QtGui, QtWidgets
 
 import AssetBrowser.modules.app_functions as app_functions
@@ -63,9 +64,13 @@ class Controller(QtCore.QObject):
         self.view.workTree.clear()
         self.view.workTree.setColumnCount(3)
         self.view.workTree.setHeaderLabels(["Files", "LocalVersion", "ServerVersion"])
-
         self.view.workTree.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
 
+        noticeConfig = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'noticeConfig.json')
+        with open(noticeConfig, 'r', encoding='utf-8') as fp:
+            data = json.load(fp)
+        self.view.comment_ui.comboBox.add_items(data.keys())
+        self.view.comment_ui.comboBox.select_clear()
         #self.view.listWidget.tree.clear()
         self.view.assets_file_list.clear()
         self.view.currentPathCombox.clear()

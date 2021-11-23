@@ -268,3 +268,25 @@ QSplitter::handle:horizontal {
 QSplitter::handle:vertical {
     background-color: #242424;
 }
+
+QInputDialog {
+    background-color: #36393f;
+}
+
+QPushButton {
+    font: 10pt "Consolas";
+    border-radius: 5px;
+    background-color: #5285a6;
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+
+QRadioButton {
+    font: 10pt "Consolas";
+    color: rgb(202, 202, 202);
+}
+
+QLineEdit {
+    font: 10pt "Consolas";
+    color: rgb(202, 202, 202);
+}

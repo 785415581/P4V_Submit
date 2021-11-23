@@ -1,25 +1,22 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-Author: 785415581@qq.com
-Date: 2021/10/13 16:06
-"""
-
-from PySide2 import QtWidgets
-from PySide2 import QtUiTools
+import sys
 from PySide2 import QtCore
-import MyWidget
+from PySide2.QtWidgets import *
 
 
-class MainWindow(QtCore.QObject):
-
+class TreeWidget(QTreeWidget):
     def __init__(self):
-        super().__init__()
-        self.ui = QtUiTools.QUiLoader().load('./mainwindow.ui')
+        super(TreeWidget, self).__init__()
 
-        self.ui.file_path.deleteLater()  # 删除原有的路径框
-        self.ui.file_path = MyWidget.MyQLine()  # 新建自己的替换原有的
-        self.ui.file_path.setPlaceholderText('浏览或拖拽SRT字幕文件到这里')
-        self.ui.horizontalLayout_2.addWidget(self.ui.file_path)
-        self.ui.horizontalLayout_2.addWidget(self.ui.file)
+        self.setColumnCount(2)  # 共2列
+        self.setHeaderLabels(['Key', 'Value'])
+        root = QTreeWidgetItem(self)
+        root.setText(0, '姓名')
+        root.setText(1, 'XerCis')
+        root.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsEditable)  # 设为可编辑
 
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    win = TreeWidget()
+    win.show()
+    sys.exit(app.exec_())

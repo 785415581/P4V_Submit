@@ -12,7 +12,7 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-from AssetBrowser import resources_rc
+from AssetBrowser.view.commentView_UI import CommentUI
 import AssetBrowser.view.baseWidget as baseWidget
 
 
@@ -362,10 +362,10 @@ class Ui_MainWindow(QWidget):
         self.verticalLayout_4 = QVBoxLayout(self.groupBox_5)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.verticalLayout_4.setContentsMargins(6, 15, 6, 6)
-        self.textEdit = QTextEdit(self.groupBox_5)
-        self.textEdit.setObjectName(u"textEdit")
+        self.comment_ui = CommentUI(self.groupBox_5)
+        self.comment_ui.setObjectName(u"comment_ui")
 
-        self.verticalLayout_4.addWidget(self.textEdit)
+        self.verticalLayout_4.addWidget(self.comment_ui)
 
         self.splitter_2.addWidget(self.groupBox_5)
 
