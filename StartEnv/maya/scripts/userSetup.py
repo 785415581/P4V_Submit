@@ -33,6 +33,14 @@ def createLevel(*args):
     import Tools.maya.createHierarchy as createHierarchy
     createHierarchy.createHierarchy(asset=True)
 
+
+def createSubGroup(*args):
+    import Tools.maya.createHierarchy as createHierarchy
+    import Tools.maya.createSubGroup as createSubGroup
+    createHierarchy.createHierarchy(asset=True)
+    createSubGroup.createSubGroups()
+
+
 def addJGMenu():
 
     if cmds.menu('AuroraTools', exists=1):
@@ -40,5 +48,6 @@ def addJGMenu():
     showMyMenu = cmds.menu("AuroraTools", parent="MayaWindow", to=1, aob=1, label=u"AuroraTools")
     cmds.menuItem(parent=showMyMenu, label='Publish', command=open_window)
     cmds.menuItem(parent=showMyMenu, label='CreateHierarchy', command=createLevel)
+    cmds.menuItem(parent=showMyMenu, label='CreateSubGroup', command=createSubGroup)
 
 cmds.evalDeferred(addJGMenu)
