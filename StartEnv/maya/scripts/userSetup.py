@@ -34,7 +34,7 @@ def createLevel(*args):
     createHierarchy.createHierarchy(asset=True)
 
 
-def createSubGroup():
+def createSubGroup(*args):
     import Tools.maya.createHierarchy as createHierarchy
     import Tools.maya.createSubGroup as createSubGroup
     createHierarchy.createHierarchy(asset=True)
