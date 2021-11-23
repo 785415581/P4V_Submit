@@ -17,6 +17,7 @@ from PySide2 import QtWidgets
 from P4Module.p4_module import P4Client
 import AssetBrowser.modules.app_utils as app_utils
 from AssetBrowser.modules.extension import DialogAddLabel_UI
+
 # from AssetBrowser.modules.ImportFunction import unrealFunctions
 # importlib.reload(unrealFunctions)
 
@@ -93,11 +94,14 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             self.verticalLayout.insertWidget(-1, obj)
 
     def addFileItem(self, itemInfo):
+        itemList = list()
         for filePath, info in itemInfo.items():
             item = QtWidgets.QListWidgetItem()
             item.setText(os.path.basename(filePath))
             item.setData(QtCore.Qt.UserRole, info)
             self.itemListWidget.addItem(item)
+            itemList.append(item)
+        self.setDisplayLabel(itemList[0])
 
     def setData(self, data, parentItem):
         for group, value in data.items():
@@ -156,6 +160,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         return configData
 
     def setImportOption(self):
+        self.close()
         for index in range(self.itemListWidget.count()):
             item = self.itemListWidget.item(index)
             data = item.data(QtCore.Qt.UserRole)
@@ -175,11 +180,11 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             self.UnrealObj.type = data.get("type", "")
             self.UnrealObj.step = data.get("step", "")
             self.p4Model = data.get("p4Model", "")
+            if '/' in self.UnrealObj.asset:
+                self.UnrealObj.asset = self.UnrealObj.asset.split('/')[-1]
+
             if unrealPath:
-                if self.UnrealObj.step:
-                    unrealPath = "/Game/" + unrealPath + "/" + self.UnrealObj.asset
-                else:
-                    unrealPath = "/Game/" + unrealPath
+                unrealPath = "/Game/" + unrealPath + "/" + self.UnrealObj.asset
             else:
                 unrealPath = "/Game/Resource/" + self.UnrealObj.type + "/" + self.UnrealObj.asset
 
@@ -191,9 +196,9 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             options = self.UnrealObj.build_static_mesh_import_options()
             importTask = self.UnrealObj.creatImportTask(localPath, destination_path, destination_name, options)
             self.UnrealObj.execute_import_tasks(importTask)
-            self.feedbackTag(self.p4Model, unrealPath, data)
+            self.feedbackTag(self.p4Model, labels, data)
         self.feedbackConfigData()
-        self.close()
+
 
     def feedbackConfigData(self):
 
@@ -204,13 +209,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         except IOError:
             traceback.print_exc()
 
-    def feedbackTag(self, p4Model, unrealPath, data):
-        if not unrealPath:
-            return
-        labels = unrealPath.split('/')[1::]
-        labels.remove('Game')
-        labels.remove(data.get("step", ""))
-        labels.remove(data.get("asset", ""))
+    def feedbackTag(self, p4Model, labels, data):
         old_labels = p4Model.getFileLabels(data.get("localPath"))
         for label in old_labels:
             if label:
@@ -227,9 +226,10 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         container = list()
         container = self.getAllSelectColumnItem(index, container)
         self.itemLabels = container
-        items = self.itemListWidget.selectedItems()
-        if items:
-            for item in items:
+        itemCount = self.itemListWidget.count()
+        if itemCount:
+            for index in range(itemCount):
+                item = self.itemListWidget.item(index)
                 data = item.data(QtCore.Qt.UserRole)
                 data.update({"labels": container})
                 item.setData(QtCore.Qt.UserRole, data)
@@ -357,13 +357,14 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
                     if router:
                         router = router[0:len(router) - 1]
 
+
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = AddLabels()
     window.testFunc()
-    # labels = ['Resource', 'Building', 'Facility', 'building']
-    # window.initUI()
+    labels = ['Resource', 'Building', 'Facility', 'building']
+    window.initUI()
     # unrealPath = window.setLabelsCombineUnrealPath(labels)
     # print(unrealPath)
-    # window.show()
-    # app.exec_()
+    window.show()
+    app.exec_()
