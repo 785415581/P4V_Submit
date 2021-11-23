@@ -20,6 +20,7 @@ def send_msg(**kwargs):
     dst_files = kwargs.get('dst_files', '')
     assetName = kwargs.get('assetName', '')
     assetStep = kwargs.get('assetStep', '')
+    p4model = kwargs.get("p4model", "")
     fils = ''
     for file in dst_files:
         fils = fils + '\n' + os.path.basename(file)
@@ -32,7 +33,7 @@ def send_msg(**kwargs):
                    ">任务 ID ：[ID{id}](https://www.tapd.cn/61223525/prong/stories/view/116122352500{id})".format(
                             assetName=assetName,
                             assetStep=assetStep,
-                            userName=getpass.getuser(),
+                            userName=p4model.user.capitalize(),
                             fileName=fils,
                             time=now_time,
                             noticeMember=notice,
