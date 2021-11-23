@@ -1,4 +1,4 @@
-# _*_coding:utf-8 _*_
+# -*- coding: utf-8 -*-
 import os
 import sys
 
