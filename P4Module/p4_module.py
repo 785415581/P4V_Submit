@@ -351,7 +351,6 @@ class P4Client(object):
     def changeLabelOwner(self, label, owner):
 
         try:
-            self.cleanLabelView(label)
             cmd = 'p4 label -o {label} | {sedPath} "s/^Owner:.*$/Owner:  {owner}/" | p4 label -i'.format(
                 label=label, sedPath=r'R:\ProjectX\Scripts\Plugin\exe\Git\usr\bin\sed.exe', owner=owner
             )

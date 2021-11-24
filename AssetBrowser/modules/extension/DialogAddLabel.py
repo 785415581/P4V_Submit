@@ -212,14 +212,13 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
     def feedbackTag(self, p4Model, labels, data):
         old_labels = p4Model.getFileLabels(data.get("localPath"))
         for label in old_labels:
-            if label:
-                p4Model.changeLabelOwner(label, p4Model.user)
-                p4Model.deleteFileLabels(data.get("localPath"), label)
+            p4Model.changeLabelOwner(label, p4Model.user)
+            p4Model.deleteFileLabels(data.get("localPath"), label)
 
         for label in labels:
-            if label:
-                p4Model.changeLabelOwner(label, p4Model.user)
-                p4Model.addFileLabels(data.get("localPath"), label)
+            p4Model.changeLabelOwner(label, p4Model.user)
+            p4Model.addFileLabels(data.get("localPath"), label)
+            p4Model.cleanLabelView(label)
 
     def setColumnItemSelect(self, index):
         self.__clearLabel()
