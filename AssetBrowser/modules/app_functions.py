@@ -505,13 +505,17 @@ class AppFunc():
 
             self.view.listWidget.clear()
 
-        elif model=="PublishSubasset":
+        elif model == "PublishSubasset":
             current_type, current_asset, current_step = self.getAssetStep()
             if not current_type or not current_asset or not current_step:
                 app_utils.add_log(u"检查type,asset, type", error=True)
                 return
-
-            comment_log = self.view.textEdit.toPlainText()
+            notice = None
+            taskID = None
+            if self.view.comment_ui.radioButton.isChecked():
+                notice = self.view.comment_ui.comboBox.vars['lineEdit'].text()
+                taskID = self.view.comment_ui.lineEdit.text()
+            comment_log = self.view.comment_ui.textEdit.toPlainText()
             servePre, localPre = self.getPathPre()
             iter = QtWidgets.QTreeWidgetItemIterator(self.view.listWidget)
             dst_files = []
@@ -534,7 +538,9 @@ class AppFunc():
             if not dst_files:
                 app_utils.add_log("Failed to get publish file,Please Check", error=True)
                 return
-            log, result = startPublish.startPublish(dst_files, p4model=self.p4Model, log=comment_log)
+            log, result = startPublish.startPublish(dst_files, p4model=self.p4Model, log=comment_log, notice=notice,
+                                                    taskID=taskID, dst_files=dst_files, assetName=current_asset,
+                                                    assetStep=current_step)
             if result:
                 app_utils.add_log(log)
                 app_utils.add_log(u"成功提交！")
