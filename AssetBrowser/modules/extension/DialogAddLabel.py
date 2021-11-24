@@ -186,8 +186,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             if unrealPath:
                 unrealPath = "/Game/" + unrealPath + "/" + self.UnrealObj.asset
             else:
-                unrealPath = "/Game/Resource/" + self.UnrealObj.type + "/" + self.UnrealObj.asset
-
+                unrealPath = "/Game/" + self.UnrealObj.type + "/" + self.UnrealObj.asset
             destination_path = self.UnrealObj.init_destination_path(default=unrealPath)
             if "" in unrealPath.split('/')[1::]:
                 QtWidgets.QMessageBox.warning(self, "Waring", "Invalid path", QtWidgets.QMessageBox.Ok)
@@ -273,44 +272,31 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         :param labels:
         :return:
         '''
-        sorter = []
-        for label in labels:
-            router = []
-            res = self.getLabelIndex(label, self.configData, router)
-            if res:
-                sorter.append(res[1])
-        if sorter:
-            sorter = max(sorter)
-            uPath = ''
-            for level in range(len(sorter)):
-                if level == 0:
-                    uPath = sorter[level]
-                else:
-                    uPath = uPath + '/' + sorter[level]
-            return uPath
 
-    def find_by_exhaustion(self, input_key, current_dict, router):
-        '''
-        :param input_key:  the key you given
-        :param current_dict: the dict you have to scan
-        :param router: record your route to reach here
-        :return:
-        '''
+        res = self.getLabelIndex(self.configData, labels)
+        res.reverse()
+        temp_res = []
+        for i in res:
+            if i not in temp_res:
+                temp_res.append(i)
+        temp_res.reverse()
+        uPath = ''
+        for level in range(len(temp_res)):
+            if level == 0:
+                uPath = temp_res[level]
+            else:
+                uPath = uPath + '/' + temp_res[level]
+        return uPath
 
-        router = copy.deepcopy(router)
-        for index, key in enumerate(current_dict):
-            val = current_dict.get(key)
-            if input_key == key:
-                router.append(key)
-                return val, router
-            elif isinstance(val, dict):
-                router.append(key)
-                result_tuple = self.find_by_exhaustion(input_key, val, router)
-                if result_tuple:
-                    return result_tuple[0], result_tuple[1]
-                else:
-                    if router:
-                        router = router[0:len(router) - 1]
+    def getLabelIndex(self, data, labels, res=[]):
+        for key, val in data.items():
+            sycLabels = copy.deepcopy(labels)
+            for sycLabel in sycLabels:
+                if sycLabel in key:
+                    res.append(sycLabel)
+                    sycLabels.remove(sycLabel)
+            self.getLabelIndex(val, sycLabels)
+        return res
 
     def randomColor(self):
         colorArr = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
@@ -319,51 +305,13 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             color += colorArr[random.randint(0, 14)]
         return "#" + color
 
-    def testFunc(self):
-        with open(os.path.dirname(__file__) + '/FileStructure.json') as fp:
-            data = json.load(fp)
-        labels = ['Resource', 'Facility', 'Building', 'building']
-        sorter = []
-        for label in labels:
-            router = []
-            res = self.getLabelIndex(label, data, router)
-            if res:
-                sorter.append(res[1])
-        if sorter:
-            sorter = max(sorter)
-            print(sorter)
-            uPath = ''
-            for level in range(len(sorter)):
-                if level == 0:
-                    uPath = sorter[level]
-                else:
-                    uPath = uPath + '/' + sorter[level]
-            print(uPath)
-
-    def getLabelIndex(self, input_key, current_dict, router):
-        router = copy.deepcopy(router)
-        for index, key in enumerate(current_dict):
-            val = current_dict.get(key)
-            if input_key == key:
-                router.append(key)
-                return val, router
-            elif isinstance(val, dict):
-                router.append(key)
-                result_tuple = self.find_by_exhaustion(input_key, val, router)
-                if result_tuple:
-                    return result_tuple[0], result_tuple[1]
-                else:
-                    if router:
-                        router = router[0:len(router) - 1]
-
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = AddLabels()
-    window.testFunc()
-    labels = ['Resource', 'Building', 'Facility', 'building']
+    labels = ['Parts', 'Door', 'Building']
     window.initUI()
-    # unrealPath = window.setLabelsCombineUnrealPath(labels)
-    # print(unrealPath)
-    window.show()
-    app.exec_()
+    unrealPath = window.setLabelsCombineUnrealPath(labels)
+    print(unrealPath)
+    # window.show()
+    # app.exec_()
