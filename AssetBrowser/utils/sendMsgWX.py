@@ -18,6 +18,7 @@ now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 def send_msg(**kwargs):
     notice = kwargs.get('notice', '')
     taskId = kwargs.get('taskID', '')
+    taskId = taskId.replace('ID', '')
     dst_files = kwargs.get('dst_files', '')
     assetName = kwargs.get('assetName', '')
     assetStep = kwargs.get('assetStep', '')
