@@ -195,6 +195,7 @@ class Ui_MainWindow(QWidget):
         self.horizontalLayout_5.addWidget(self.label_4)
 
         self.typeComboBox = QComboBox(self.groupBox_3)
+        self.typeComboBox.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         self.typeComboBox.setObjectName(u"typeComboBox")
         self.typeComboBox.setEnabled(False)
         self.typeComboBox.setMinimumSize(QSize(150, 0))
@@ -210,6 +211,7 @@ class Ui_MainWindow(QWidget):
         self.horizontalLayout_5.addWidget(self.label_5)
 
         self.assetNameComboBox = QComboBox(self.groupBox_3)
+        self.assetNameComboBox.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         self.assetNameComboBox.setObjectName(u"assetNameComboBox")
         self.assetNameComboBox.setEnabled(False)
         self.assetNameComboBox.setMinimumSize(QSize(150, 0))
@@ -220,28 +222,34 @@ class Ui_MainWindow(QWidget):
 
         self.horizontalLayout_5.addWidget(self.assetNameComboBox)
 
-        self.horizontalLayout_6 = QHBoxLayout()
-        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        # self.horizontalLayout_6 = QHBoxLayout()
+        # self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
         self.label_6 = QLabel(self.groupBox_3)
         self.label_6.setObjectName(u"label_6")
         self.label_6.setFont(font1)
         self.label_6.setStyleSheet(u"")
 
-        self.horizontalLayout_6.addWidget(self.label_6)
+        self.horizontalLayout_5.addWidget(self.label_6)
 
         self.submitStepCom = QComboBox(self.groupBox_3)
+        self.submitStepCom.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         self.submitStepCom.setObjectName(u"submitStepCom")
         self.submitStepCom.setMinimumSize(QSize(150, 0))
         self.submitStepCom.setEditable(True)
 
-        self.horizontalLayout_6.addWidget(self.submitStepCom)
+        self.horizontalLayout_5.addWidget(self.submitStepCom)
+        self.horizontalLayout_5.setStretch(0, 1)
+        self.horizontalLayout_5.setStretch(1, 2)
+        self.horizontalLayout_5.setStretch(2, 1)
+        self.horizontalLayout_5.setStretch(3, 6)
+        self.horizontalLayout_5.setStretch(4, 1)
+        self.horizontalLayout_5.setStretch(5, 2)
+
+        # self.horizontalLayout_5.addLayout(self.horizontalLayout_6)
 
 
-        self.horizontalLayout_5.addLayout(self.horizontalLayout_6)
-
-
-        self.horizontalSpacer = QSpacerItem(368, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
+        self.horizontalSpacer = QSpacerItem(100, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        #
         self.horizontalLayout_5.addItem(self.horizontalSpacer)
 
 
