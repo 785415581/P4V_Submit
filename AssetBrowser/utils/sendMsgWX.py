@@ -31,7 +31,7 @@ def send_msg(**kwargs):
                    ">提交人   : <font color=\"comment\">{userName}</font>\n" \
                    ">提交时间 : <font color=\"comment\">{time}</font>\n" \
                    ">下游人员 : <font color=#ff3c20>{noticeMember}</font>\n" \
-                   ">任务 ID ：[{id}](https://www.tapd.cn/61223525/prong/stories/view/116122352500{id})".format(
+                   ">任务 ID ：[{id}](https://www.tapd.cn/61223525/prong/tasks/view/116122352500{id})".format(
                             assetName=assetName,
                             assetStep=assetStep,
                             userName=p4model.user.capitalize(),
