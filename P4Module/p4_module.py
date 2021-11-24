@@ -327,12 +327,16 @@ class P4Client(object):
         p = subprocess.check_call(cmd, shell=True)
 
     def changeLabelOwner(self, label, owner):
-
-        cmd = 'p4 label -o {label} | {sedPath} "s/^Owner:.*$/Owner:  {owner}/" | p4 label -i'.format(
-            label=label, sedPath=r'R:\ProjectX\Scripts\Plugin\exe\Git\usr\bin\sed.exe', owner=owner
-        )
-        print("cmd = {}".format(cmd))
-        process = subprocess.check_call(cmd, shell=True)
+        try:
+            cmd = 'p4 label -o {label} | {sedPath} "s/^Owner:.*$/Owner:  {owner}/" | p4 label -i'.format(
+                label=label, sedPath=r'R:\ProjectX\Scripts\Plugin\exe\Git\usr\bin\sed.exe', owner=owner
+            )
+            subprocess.check_call(cmd, shell=True)
+        except EnvironmentError:
+            cmd = 'p4 label -o {label} | {sedPath} "s/^Owner:.*$/Owner:  {owner}/" | p4 label -i'.format(
+                label=label, sedPath=r'R:\ProjectX\Scripts\Plugin\exe\Git\usr\bin\sed.exe', owner=owner
+            )
+            print(cmd)
 
     def syncFile(self, p4File, version=None):
         cmd = 'p4 sync -f "{}"'.format(p4File)
