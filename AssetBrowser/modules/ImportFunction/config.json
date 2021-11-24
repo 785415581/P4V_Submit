@@ -53,7 +53,9 @@
         "tiff": "",
         "jpg": "unrealFunctions.UnrealImportTex",
         "png": "unrealFunctions.UnrealImportTex",
-        "PNG": "unrealFunctions.UnrealImportTex"
+        "PNG": "unrealFunctions.UnrealImportTex",
+        "tga": "unrealFunctions.UnrealImportTex",
+        "TGA": "unrealFunctions.UnrealImportTex"
        }
     },
     "Open":
