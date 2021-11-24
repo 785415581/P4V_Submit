@@ -2,7 +2,7 @@
 import os
 import getpass
 from AssetBrowser.utils import sendMsgWX
-
+from AssetBrowser.modules.global_setting import DEBUG
 
 class BasePublish(object):
 
@@ -35,4 +35,6 @@ class BasePublish(object):
         return "Sucess: finish submit changelist,{0}".format(str(self._changelist)), True
 
     def notice(self, **kwargs):
-        sendMsgWX.send_msg(**kwargs)
+        if not DEBUG:
+            if kwargs.get('isNotice', ''):
+                sendMsgWX.send_msg(**kwargs)

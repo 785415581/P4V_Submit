@@ -471,7 +471,8 @@ class AppFunc():
             comment_log = self.view.comment_ui.textEdit.toPlainText()
             notice = None
             taskID = None
-            if self.view.comment_ui.radioButton.isChecked():
+            isNotice = self.view.comment_ui.radioButton.isChecked()
+            if isNotice:
                 notice = self.view.comment_ui.comboBox.vars['lineEdit'].text()
                 taskID = self.view.comment_ui.lineEdit.text()
 
@@ -494,7 +495,7 @@ class AppFunc():
 
             log, result = startPublish.startPublish(dst_files, p4model=self.p4Model, log=comment_log, notice=notice,
                                                     taskID=taskID, dst_files=dst_files, assetName=current_asset,
-                                                    assetStep=current_step)
+                                                    assetStep=current_step, isNotice=isNotice)
             if result:
                 app_utils.add_log(log)
                 app_utils.add_log(u"成功提交！")
@@ -512,6 +513,7 @@ class AppFunc():
                 return
             notice = None
             taskID = None
+            isNotice = self.view.comment_ui.radioButton.isChecked()
             if self.view.comment_ui.radioButton.isChecked():
                 notice = self.view.comment_ui.comboBox.vars['lineEdit'].text()
                 taskID = self.view.comment_ui.lineEdit.text()
@@ -540,7 +542,7 @@ class AppFunc():
                 return
             log, result = startPublish.startPublish(dst_files, p4model=self.p4Model, log=comment_log, notice=notice,
                                                     taskID=taskID, dst_files=dst_files, assetName=current_asset,
-                                                    assetStep=current_step)
+                                                    assetStep=current_step, isNotice=isNotice)
             if result:
                 app_utils.add_log(log)
                 app_utils.add_log(u"成功提交！")
