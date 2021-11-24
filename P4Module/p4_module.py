@@ -326,8 +326,32 @@ class P4Client(object):
         cmd = 'p4 tag -d -l {label} {fileName}#1'.format(label=label, fileName=p4File)
         p = subprocess.check_call(cmd, shell=True)
 
+    def cleanLabelView(self, label):
+        import tempfile
+        workspace_setting = os.path.join(tempfile.gettempdir(), 'workspace_setting.txt')
+        check_label_setting = 'p4 label -o {label} >{ws}'.format(label=label, ws=workspace_setting)
+        subprocess.check_call(check_label_setting, shell=True)
+        res = []
+        with open(workspace_setting, 'r') as fp:
+            line = fp.readline()
+            while line:
+                regx_line = re.findall(r'//.*', line)
+                if regx_line:
+                    if not re.findall(r'//Assets.*', line):
+                        line = re.sub(r'//.*', '', line)
+                res.append(line)
+                line = fp.readline()
+        with open(workspace_setting, 'w+') as fp:
+            for line in res:
+                fp.write(line)
+            fp.close()
+        save_label_setting = 'p4 label -i <{ws}'.format(ws=workspace_setting)
+        subprocess.check_call(save_label_setting, shell=True)
+
     def changeLabelOwner(self, label, owner):
+
         try:
+            self.cleanLabelView(label)
             cmd = 'p4 label -o {label} | {sedPath} "s/^Owner:.*$/Owner:  {owner}/" | p4 label -i'.format(
                 label=label, sedPath=r'R:\ProjectX\Scripts\Plugin\exe\Git\usr\bin\sed.exe', owner=owner
             )
@@ -366,5 +390,5 @@ if __name__ == '__main__':
     # labels = p4Module.getFileLabels(p4File)
     # p4Module.addFileLabels(p4File, 'ScriptTest')
     # print(labels)
-    des = '测试中文'
-    p4Module.createNewChangelist(description=des)
+    # des = '测试中文'
+    p4Module.cleanLabelView("TATest")
