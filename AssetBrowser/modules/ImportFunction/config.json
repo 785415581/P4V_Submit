@@ -14,7 +14,8 @@
         "mb": "mayaFunctions.MayaImportMb",
         "abc": "mayaFunctions.MayaImportABC",
         "tiff": "mayaFunctions.MayaImportImage",
-        "png": "mayaFunctions.MayaImportImage"
+        "png": "mayaFunctions.MayaImportImage",
+        "tga": "mayaFunctions.MayaImportImage"
        }
     },
     "reference":
@@ -54,9 +55,8 @@
         "jpg": "unrealFunctions.UnrealImportTex",
         "png": "unrealFunctions.UnrealImportTex",
         "PNG": "unrealFunctions.UnrealImportTex",
-        "tga": "unrealFunctions.UnrealImportTex",
-        "TGA": "unrealFunctions.UnrealImportTex"
-       }
+        "tga": "unrealFunctions.UnrealImportTex"
+      }
     },
     "Open":
     {
