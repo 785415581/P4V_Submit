@@ -309,9 +309,31 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = AddLabels()
-    labels = ['Parts', 'Door', 'Building']
+    labels = ['Parts',  'Building', 'Door']
     window.initUI()
     unrealPath = window.setLabelsCombineUnrealPath(labels)
     print(unrealPath)
     # window.show()
     # app.exec_()
+
+    data_dict = {}
+
+
+    # def find(setting_data, parent_dict):
+    #     for keys, values in setting_data.items():
+    #         has_key = False
+    #         for label in labels:
+    #             if label in keys:
+    #                 has_key = True
+    #                 parent_dict.setdefault(label, {})
+    #                 find(values, parent_dict[label])
+    #         if not has_key and parent_dict:
+    #             print(keys)
+    #             print(parent_dict)
+    #             print(11111111111)
+    #             return
+    #
+    #
+    # find(setting_data, data_dict)
+    #
+    # print(data_dict)
