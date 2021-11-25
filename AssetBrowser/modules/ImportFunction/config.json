@@ -9,7 +9,7 @@
       "after": "",
       "ext": {
         "fbx": "mayaFunctions.MayaImportFBX",
-        "FBX": "unrealFunctions.MayaImportFBX",
+        "FBX": "mayaFunctions.MayaImportFBX",
         "ma": "mayaFunctions.MayaImportMa",
         "mb": "mayaFunctions.MayaImportMb",
         "abc": "mayaFunctions.MayaImportABC",
