@@ -31,7 +31,7 @@ def creatTask():
 
 
 def updateTask():
-    payload = {'workspace_id': '50616902', 'id': '1150616902001054432', 'status': 'open'}
+    payload = {'workspace_id': '50616902', 'id': '1150616902001054432', 'status': 'done'}
     r = requests.post("https://api.tapd.cn/tasks", data=payload, auth=(api_user, api_password))
     print(r.text)
 
