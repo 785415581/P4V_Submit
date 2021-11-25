@@ -68,8 +68,6 @@ def get_env():
         return "Maya"
     if "HOUDIN" in module_path:
         return "Houdini"
-    if global_setting.DEBUG:
-        return "Unreal"
     return None
 
 
