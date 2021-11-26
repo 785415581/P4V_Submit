@@ -19,6 +19,14 @@ def send_msg(**kwargs):
     notice = kwargs.get('notice', '')
     taskId = kwargs.get('taskID', '')
     taskId = taskId.replace('ID', '')
+    taskStatus = kwargs.get('taskStatus', '')
+    status = ""
+    if taskStatus == u'未开始':
+        status = '<font color=#8dc572>未开始</font>'
+    elif taskStatus == '进行中':
+        status = '<font color=#1d80f5>未开始</font>'
+    elif taskStatus == '已完成':
+        status = '<font color=#8b95a7>未开始</font>'
     dst_files = kwargs.get('dst_files', '')
     assetName = kwargs.get('assetName', '')
     assetStep = kwargs.get('assetStep', '')
@@ -32,14 +40,16 @@ def send_msg(**kwargs):
                    ">提交人   : <font color=\"comment\">{userName}</font>\n" \
                    ">提交时间 : <font color=\"comment\">{time}</font>\n" \
                    ">下游人员 : <font color=#ff3c20>{noticeMember}</font>\n" \
-                   ">任务 ID ：[{id}](https://www.tapd.cn/61223525/prong/tasks/view/116122352500{id})".format(
+                   ">任务 ID ：[{id}](https://www.tapd.cn/61223525/prong/tasks/view/116122352500{id})\n" \
+                   ">任务状态 ：{status}".format(
                             assetName=assetName,
                             assetStep=assetStep,
                             userName=p4model.user.capitalize(),
                             fileName=fils,
                             time=now_time,
                             noticeMember=notice,
-                            id=taskId
+                            id=taskId,
+                            status=status
                         )
 
 
