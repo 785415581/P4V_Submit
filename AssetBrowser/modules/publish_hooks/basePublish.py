@@ -38,4 +38,4 @@ class BasePublish(object):
         if not DEBUG:
             if kwargs.get('isNotice', ''):
                 sendMsgWX.send_msg(**kwargs)
-                sendMsgWX.updateTAPDTaskStatus(**kwargs)
+                # sendMsgWX.updateTAPDTaskStatus(**kwargs)
