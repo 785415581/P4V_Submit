@@ -10,6 +10,7 @@ import getpass
 
 import requests, json
 import datetime
+import traceback
 from AssetBrowser.utils.log import ToolsLogger
 wx_bot = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=d828bfd1-3f07-498e-aaed-e3d2bcf3a94e"
 now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -75,7 +76,11 @@ def send_msg(**kwargs):
     )
 
     requests.packages.urllib3.disable_warnings()
-    requests.post(wx_bot, data_markdown, auth=('Content-Type', 'application/json'), verify=False)
+    try:
+        requests.post(wx_bot, data_markdown, auth=('Content-Type', 'application/json'), verify=False)
+    except ConnectionError as e:
+        error = traceback.print_exc()
+        ToolsLogger.get_logger(error, save_log=True)
     # requests.post(wx_bot, data_text, auth=('Content-Type', 'application/json'), verify=False)
 
 
