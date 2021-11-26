@@ -12,6 +12,7 @@ if pyLib not in sys.path:
 
 from PySide2 import QtCore, QtWidgets, QtGui
 from AssetBrowser.utils.log import ToolsLogger
+from AssetBrowser.modules.global_setting import VERSION
 import AssetBrowser.control.controller as controller
 import AssetBrowser.view.main_UI as main_UI
 import AssetBrowser.view.baseWidget as baseWidget
@@ -192,7 +193,9 @@ class MainWindow(QtWidgets.QMainWindow):
         widgets.assets_file_list.setSelectionMode(QtWidgets.QAbstractItemView.ContiguousSelection)
         widgets.passwordLn.installEventFilter(self)
         # widgets.assetNameComboBox.installEventFilter(self)
-
+        self.statusBar = QtWidgets.QStatusBar()
+        self.statusBar.showMessage(VERSION)
+        self.setStatusBar(self.statusBar)
 
     def initStyle(self):
         stylePath = "{}/{}".format(os.path.dirname(__file__), 'resources/style.qss')

@@ -290,3 +290,11 @@ QLineEdit {
     font: 10pt "Consolas";
     color: rgb(202, 202, 202);
 }
+
+QMessageBox {
+    background-color: #36393f;
+}
+
+QStatusBar {
+    color: 1px solid rgb(117, 118, 118);
+}
