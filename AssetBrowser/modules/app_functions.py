@@ -100,7 +100,7 @@ class AppFunc():
     def p4Model(self, value):
         self._p4Model = value
 
-    def initWindow(self):
+    def initWindow(self, default=None):
         self.view.typeComboBox.blockSignals(True)
         # self.view.assetNameComboBox.blockSignals(True)
         # self.view.currentPathCombox.setCurrentText(self.clientStream)
@@ -125,7 +125,16 @@ class AppFunc():
         current_type = self.view.typeComboBox.currentText()
         if current_type in self.data_dict:
             self.view.assetNameComboBox.addItems(list(self.data_dict[current_type].keys()))
+        a = QtWidgets.QComboBox()
+
+        if default:
+            self.view.typeComboBox.setCurrentText(default.get('current_type'))
+            self.view.assetNameComboBox.setCurrentText(default.get('current_asset'))
+            self.view.submitStepCom.setCurrentText(default.get('current_step'))
+            self.view.comment_ui.lineEdit.setText(default.get('taskID'))
+            self.view.comment_ui.textEdit.setText(default.get('comment_log'))
         self.view.typeComboBox.blockSignals(False)
+        self.setTreeWidget()
 
     def changeType(self, index):
         print("change type")
@@ -501,7 +510,14 @@ class AppFunc():
             if result:
                 app_utils.add_log(log)
                 app_utils.add_log(u"成功提交！")
-                self.initWindow()
+                before_submit_info = {}
+                before_submit_info['current_type'] = current_type
+                before_submit_info['current_asset'] = current_asset
+                before_submit_info['current_step'] = current_step
+                before_submit_info['taskID'] = taskID
+                before_submit_info['comment_log'] = comment_log
+                self.initWindow(default=before_submit_info)
+                tips = QtWidgets.QMessageBox.information(self.view, "Tips", "Complete Submit...", QtWidgets.QMessageBox.Ok)
 
             else:
                 app_utils.add_log(log, error=True)
@@ -550,7 +566,14 @@ class AppFunc():
             if result:
                 app_utils.add_log(log)
                 app_utils.add_log(u"成功提交！")
-                self.initWindow()
+                before_submit_info = {}
+                before_submit_info['current_type'] = current_type
+                before_submit_info['current_asset'] = current_asset
+                before_submit_info['current_step'] = current_step
+                before_submit_info['taskID'] = taskID
+                before_submit_info['comment_log'] = comment_log
+                self.initWindow(default=before_submit_info)
+                tips = QtWidgets.QMessageBox.information(self.view, "Tips", "Complete Submit...", QtWidgets.QMessageBox.Ok)
 
             else:
                 app_utils.add_log(log, error=True)
