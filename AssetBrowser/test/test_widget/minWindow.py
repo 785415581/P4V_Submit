@@ -2,8 +2,6 @@
 import ctypes
 import os
 import sys
-sys.path.append("R:\ProjectX\Scripts\Python37\Lib\site-packages")
-sys.path.append("D:\workSpace\Python\Tools\publish")
 import time
 import math
 import getpass
