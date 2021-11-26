@@ -2,11 +2,13 @@
 import ctypes
 import os
 import sys
-sys.path.append("R:\ProjectX\Scripts\Python37\Lib\site-packages")
 import time
 import math
 import getpass
 from functools import partial
+pyLib = r"R:\ProjectX\Scripts\Python37\Lib\site-packages"
+if pyLib not in sys.path:
+    sys.path.append(pyLib)
 
 from PySide2 import QtCore, QtWidgets, QtGui
 from AssetBrowser.utils.log import ToolsLogger

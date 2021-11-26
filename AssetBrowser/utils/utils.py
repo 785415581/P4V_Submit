@@ -1,7 +1,4 @@
 # _*_coding:utf-8 _*_
-import sys
-sys.path.append("R:/ProjectX/Scripts/Python37/Lib/site-packages")
-
 import os
 import re
 
