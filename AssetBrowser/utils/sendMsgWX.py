@@ -24,9 +24,9 @@ def send_msg(**kwargs):
     if taskStatus == u'未开始':
         status = '<font color=#8dc572>未开始</font>'
     elif taskStatus == '进行中':
-        status = '<font color=#1d80f5>未开始</font>'
+        status = '<font color=#1d80f5>进行中</font>'
     elif taskStatus == '已完成':
-        status = '<font color=#8b95a7>未开始</font>'
+        status = '<font color=#8b95a7>已完成</font>'
     dst_files = kwargs.get('dst_files', '')
     assetName = kwargs.get('assetName', '')
     assetStep = kwargs.get('assetStep', '')
@@ -99,7 +99,9 @@ def updateTAPDTaskStatus(**kwargs):
 
 
 if __name__ == '__main__':
-    send_msg(assetName="TATest", assetStep="Rig", notice='刘雅旭;程缓缓;秦家鑫', taskID='1053143', dst_files=['SM_Football.fbx', 'SM_Football.fbx', 'SM_Football.fbx'])
+    updateTAPDTaskStatus(taskID="1054299", taskStatus=u"进行中")
+
+    # send_msg(assetName="TATest", assetStep="Rig", notice='刘雅旭;程缓缓;秦家鑫', taskID='1053143', dst_files=['SM_Football.fbx', 'SM_Football.fbx', 'SM_Football.fbx'])
     # noticeConfig = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'noticeConfig.json')
     # import base64
     # import pickle
@@ -107,3 +109,17 @@ if __name__ == '__main__':
     #     data = json.load(fp)
     # bytejson=pickle.dumps(data)
     # print(bytejson)
+
+    # from urllib import request
+    # url = "https://www.tapd.cn/61223525/prong/{taskType}/view/116122352500{id}".format(taskType="stories", id='1053913')
+    # print(url)
+    # "https://www.tapd.cn/61223525/prong/stories/view/1161223525001053913"
+    # "https://www.tapd.cn/61223525/prong/tasks/view/1161223525001051242"
+    # from urllib import request
+    #
+    # with request.urlopen(url) as file:
+    #     print(file.status)
+    #     print(file.reason)
+    # res = requests.get(url)
+    # from pprint import pprint
+    # pprint(res.text)
