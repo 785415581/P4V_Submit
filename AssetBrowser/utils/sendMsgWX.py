@@ -10,7 +10,7 @@ import getpass
 
 import requests, json
 import datetime
-
+from AssetBrowser.utils.log import ToolsLogger
 wx_bot = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=d828bfd1-3f07-498e-aaed-e3d2bcf3a94e"
 now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -67,6 +67,25 @@ def send_msg(**kwargs):
     requests.packages.urllib3.disable_warnings()
     requests.post(wx_bot, data_markdown, auth=('Content-Type', 'application/json'), verify=False)
     # requests.post(wx_bot, data_text, auth=('Content-Type', 'application/json'), verify=False)
+
+
+def updateTAPDTaskStatus(**kwargs):
+    taskID = kwargs.get('taskID', '')
+    taskStatus = kwargs.get('taskStatus', '')
+    statusDic = {u"未开始": "open", u"进行中": "progressing", u"已完成": "done"}
+    status = statusDic.get(taskStatus, '')
+    if not taskID:
+        return
+    if not status:
+        return
+    api_user = 'gNxpkwrr'
+    api_password = '86EE396F-6733-051C-3BA9-1243A2E8AA36'
+    payload = {'workspace_id': '61223525', 'id': '116122352500{}'.format(taskID), 'status': status}
+    try:
+        r = requests.post("https://api.tapd.cn/tasks", data=payload, auth=(api_user, api_password))
+        print(r.text)
+    except ConnectionResetError as e:
+        ToolsLogger.get_logger(e, save_log=True)
 
 
 if __name__ == '__main__':
