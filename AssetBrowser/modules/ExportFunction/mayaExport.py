@@ -120,7 +120,8 @@ class MayaExport():
         pm.select(clear=True)
         pm.select(export_level)
         pm.select(jntList, add=True)
-
+        # set group save in .ma file
+        cmds.select("Sets", add=1, ne=1)
         anils = [0, 'false', 0, 24]
 
         cmds.FBXProperty('Export|IncludeGrp|Animation', '-v', anils[0])

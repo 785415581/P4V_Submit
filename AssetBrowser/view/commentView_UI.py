@@ -50,14 +50,12 @@ class CommentUI(QWidget):
         self.horizontalLayout.addWidget(self.radioButton)
 
         self.comboBox = QComboCheckBox()
-
-        # self.comboBox.add_items(["秦家鑫", '王若男', '王元昊', '刘雅旭'])
         self.comboBox.setObjectName(u"comboBox")
 
         self.horizontalLayout.addWidget(self.comboBox)
 
         self.horizontalLayout.setStretch(0, 1)
-        self.horizontalLayout.setStretch(1, 3)
+        self.horizontalLayout.setStretch(1, 7)
 
         self.verticalLayout.addLayout(self.horizontalLayout)
 
@@ -74,8 +72,20 @@ class CommentUI(QWidget):
 
         self.horizontalLayout_2.addWidget(self.lineEdit)
 
+        self.label_status = QLabel(self.frame)
+        self.label_status.setText("任务状态")
+        self.label_status.setObjectName(u"label")
+        self.comboBox_status = QComboBox(self.frame)
+        self.comboBox_status.setObjectName(u"comboBox_status")
+        self.comboBox_status.addItem(u"未开始")
+        self.comboBox_status.addItem(u"进行中")
+        self.comboBox_status.addItem(u"完成")
+        self.horizontalLayout_2.addWidget(self.label_status)
+        self.horizontalLayout_2.addWidget(self.comboBox_status)
         self.horizontalLayout_2.setStretch(0, 1)
         self.horizontalLayout_2.setStretch(1, 3)
+        self.horizontalLayout_2.setStretch(2, 1)
+        self.horizontalLayout_2.setStretch(3, 3)
 
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
@@ -93,7 +103,7 @@ if __name__ == '__main__':
     import json
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon(os.path.join(os.path.dirname(__file__), 'icon.ico')))
-    noticeConfig = os.path.join(os.path.dirname(__file__), 'noticeConfig.json')
+    noticeConfig = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'noticeConfig.json')
     with open(noticeConfig, 'r', encoding='utf-8') as fp:
         data = json.load(fp)
     window = CommentUI()

@@ -289,6 +289,7 @@ class Ui_MainWindow(QWidget):
         checkBox_layout = QHBoxLayout()
         self.extend = QCheckBox(u"展开")
         self.show_history = QCheckBox(u"显示history")
+        self.show_history.setChecked(True)
         checkBox_layout.addWidget(self.extend)
         checkBox_layout.addWidget(self.show_history)
 

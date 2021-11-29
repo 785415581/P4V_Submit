@@ -3,7 +3,7 @@ ToolLib = r"R:/ProjectX/Scripts/Python/tools/publish"
 import maya.cmds as cmds
 
 if ToolLib not in sys.path:
-    sys.path.append(ToolLib)
+    sys.path.insert(0, ToolLib)
 
 
 def maya_main_window():

@@ -1,6 +1,7 @@
 import sys
 import imp
-sys.path.append("R:/ProjectX/Scripts/Python/tools/publish")
+if not sys.path.__contains__("R:/ProjectX/Scripts/Python/tools/publish"):
+    sys.path.insert(0, "R:/ProjectX/Scripts/Python/tools/publish")
 from PySide2 import QtWidgets, QtGui
 import AssetBrowser.main as main
 
