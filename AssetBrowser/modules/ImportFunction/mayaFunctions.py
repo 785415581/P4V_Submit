@@ -3,9 +3,9 @@ import pymel.core as pm
 import os
 
 
-def createHierarchy(asset=False, shot=False):
+def createHierarchy(asset=False, shot=False, model="base"):
     from Tools.maya.createHierarchy import createHierarchy
-    createHierarchy(asset, shot)
+    createHierarchy(asset, shot, model)
 
 
 def mayaImport(sel_file_list, type):
@@ -64,7 +64,7 @@ def mayaReference(sel_file, file_type, namespace, **kwargs):
     refe_return = cmds.file(sel_file, r=True, type=file_type, ignoreVersion=True, gl=True, mergeNamespacesOnClash=False,
               namespace=namespace, returnNewNodes=True)
     if model:
-        createHierarchy(shot=True)
+        createHierarchy(shot=True, model=model)
         for create_node in refe_return:
             if create_node.endswith(":master"):
                 asset_master_node = pm.PyNode(create_node)
