@@ -20,12 +20,8 @@
     "Animation": {
       "function": "mayaDefaultExport.ani_export",
       "files": {
-        "XXX_Idle.ma": "|ani|Idle",
-        "XXX_Idle.fbx": "|ani|Idle",
-        "XXX_Walk.ma": "|ani|Walk",
-        "XXX_Walk.fbx": "|ani|Walk",
-        "XXX_Run.ma": "|ani|Run",
-        "XXX_Run.fbx": "|ani|Run"
+        "XXX_model.ma": "|ani|model",
+        "XXX_model.fbx": "|ani|model"
       }
     }
 

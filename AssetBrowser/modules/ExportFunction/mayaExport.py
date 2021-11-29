@@ -68,9 +68,6 @@ class MayaExport():
         if export_file.endswith(".fbx"):
             cmds.FBXProperty('Export|IncludeGrp|Animation', '-v', 0)
             mel.eval("FBXExportSmoothingGroups -v 1")
-        # baseWidget.LogPlainText().add_log(export_level, e=True)
-        # baseWidget.LogPlainText().add_log(file_type, e=True)
-        # baseWidget.LogPlainText().add_log("33333333333333", e=True)
 
         #todo waiting to judge if fbx export need change
         cmds.file(export_file, force=True, typ=file_type, pr=True, es=True)
@@ -98,7 +95,11 @@ class MayaExport():
 
         jntList = []
         for child_level in cmds.listRelatives(export_level, allDescendents=True):
-            skin = mel.eval("findRelatedSkinCluster " + child_level)
+            try:
+                skin = mel.eval("findRelatedSkinCluster " + child_level)
+            except:
+                continue
+
             if skin:
                 jntList = pm.skinCluster(skin, q=1, wi=1)
                 jnt = jntList[0]
@@ -162,14 +163,19 @@ class MayaExport():
             self.result = True
             return
         for child_level in child_nodes:
-            skin = mel.eval("findRelatedSkinCluster " + child_level)
+            try:
+
+                skin = mel.eval("findRelatedSkinCluster " + child_level)
+            except:
+                continue
+
             if skin:
                 jntList = pm.skinCluster(skin, q=1, wi=1)
                 if not jntList:
                     self.log = "Failed {0} to find jnt"
                     self.result = False
                     return
-                pm.parent(jntList[0], w=1)
+                # pm.parent(jntList[0], w=1)
                 break
 
         if not jntList:
@@ -190,7 +196,7 @@ class MayaExport():
         mel.eval("FBXExportSmoothingGroups -v 1")
 
         pm.select(clear=True)
-        pm.select(export_level)
+        # pm.select(export_level)
         pm.select(jntList, add=True)
 
         cmds.file(export_file, force=True, options='v=0', type=file_type, pr=True, es=True)
