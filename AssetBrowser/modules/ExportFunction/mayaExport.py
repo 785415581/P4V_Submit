@@ -119,7 +119,8 @@ class MayaExport():
             return
         pm.select(clear=True)
         pm.select(export_level)
-        pm.select(jntList, add=True)
+        pm.select(jnt, add=True)
+
         # set group save in .ma file
         cmds.select("Sets", add=1, ne=1)
         anils = [0, 'false', 0, 24]
@@ -132,6 +133,7 @@ class MayaExport():
         mel.eval('FBXExportBakeResampleAnimation  -v false')
         mel.eval('FBXExportAnimationOnly  -v false ')
         mel.eval("FBXExportSmoothingGroups -v 1")
+
 
         cmds.file(export_file, force=True, options='v=0', type=file_type, pr=True, es=True)
         pm.select(clear=True)
