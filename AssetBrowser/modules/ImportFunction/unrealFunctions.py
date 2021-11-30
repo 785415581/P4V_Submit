@@ -123,38 +123,25 @@ class FBXUnrealObj(UnrealObj):
         """
         options = unreal.FbxImportUI()
 
-        # options.set_editor_property('import_mesh', True)
-        # options.set_editor_property("import_animations", True)
-        # options.set_editor_property('import_materials', False)
-        # options.set_editor_property('import_as_skeletal', False)  # 是否当作骨骼物体来导入
-        # options.set_editor_property("import_textures", False)
-        # options.set_editor_property("import_rigid_mesh", False)
-        # options.set_editor_property("create_physics_asset", False)
-
-        # options.static_mesh_import_data.set_editor_property('import_translation', unreal.Vector(0.0, 0.0, 0.0))
-        # options.static_mesh_import_data.set_editor_property('import_rotation', unreal.Rotator(0, 0, 0))
-        # options.static_mesh_import_data.set_editor_property('import_uniform_scale', 10.0)
-        #
-        # options.static_mesh_import_data.set_editor_property('combine_meshes', True)
-        # options.static_mesh_import_data.set_editor_property('generate_lightmap_u_vs', True)
-        # options.static_mesh_import_data.set_editor_property('auto_generate_collision', True)
+        if self.step == 'Rig':
+            options.set_editor_property('mesh_type_to_import', unreal.FBXImportType.FBXIT_SKELETAL_MESH)
+            options.set_editor_property("skeleton", None)
+            options.set_editor_property("import_animations", False)
+        elif self.step == 'Animation':
+            options.set_editor_property('mesh_type_to_import', unreal.FBXImportType.FBXIT_ANIMATION)
+            options.set_editor_property("skeleton", None)
+            options.set_editor_property("import_animations", True)
+        elif self.step == 'Mesh':
+            options.set_editor_property('mesh_type_to_import', unreal.FBXImportType.FBXIT_STATIC_MESH)
+            options.set_editor_property("skeleton", None)
+            options.set_editor_property("import_animations", False)
 
         return options
 
     def creatImportTask(self, filePath, destination_path, destination_name, options=None):
-        """
-            :param destination_name:
-            :param filename: 导入的文件的信息  g: kwargs
-            :param destination_path: 导出后置产要放在什么位置 eg: '/GAME/Texture'
-            :param options: 导入置产属性，     静态属性可由函数build_static_mesh_import_options获得，
-                                        骨骼属性可由build_skeletal_mesh_import_options获得
-            :return: Task 返回一个导入任务
-        """
         taskList = list()
-
         importTask = unreal.AssetImportTask()
         importTask.set_editor_property("automated", False)
-        # importTask.set_editor_property('destination_name', destination_name)
         importTask.set_editor_property('destination_path', destination_path)
         importTask.set_editor_property('filename', filePath)
         importTask.set_editor_property('replace_existing', True)
@@ -165,11 +152,6 @@ class FBXUnrealObj(UnrealObj):
         return taskList
 
     def execute_import_tasks(self, tasks):
-        """
-        执行导入任务
-        :param tasks: array 任务池
-        :return: True
-        """
         asset_tools = unreal.AssetToolsHelpers.get_asset_tools()  # 创建一个资产工具
         asset_tools.import_asset_tasks(tasks)  # 导入资产
 
@@ -189,6 +171,8 @@ class TexUnrealObj(UnrealObj):
         return "TX_{}".format(self.step.upper())
 
     def build_static_mesh_import_options(self):
+        options = unreal.FbxImportUI()
+        options.set_editor_property("import_textures", True)
         return None
 
     def creatImportTask(self, filePath, destination_path, destination_name, options=None):
@@ -197,7 +181,6 @@ class TexUnrealObj(UnrealObj):
         importTask.set_editor_property('filename', filePath)
         importTask.set_editor_property("automated", True)
         importTask.set_editor_property('destination_path', destination_path)
-        # importTask.set_editor_property('destination_name', destination_name)
         importTask.set_editor_property('replace_existing_settings', True)
         importTask.set_editor_property('replace_existing', True)
         importTask.set_editor_property('options', options)
