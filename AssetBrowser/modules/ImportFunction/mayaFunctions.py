@@ -60,7 +60,8 @@ def mayaReference(sel_file, file_type, namespace, **kwargs):
         modelWin.exec_()
         model = modelWin.select_model
         modelWin.destroy()
-
+        if not model:
+            return
     refe_return = cmds.file(sel_file, r=True, type=file_type, ignoreVersion=True, gl=True, mergeNamespacesOnClash=False,
               namespace=namespace, returnNewNodes=True)
     if model:
