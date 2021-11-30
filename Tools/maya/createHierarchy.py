@@ -16,15 +16,15 @@ def createTransform(work_level):
                 trans_node = pm.createNode("transform", n=compents[index], p=pm.PyNode("|".join(compents[:index])))
 
 
-def createHierarchy(asset=False, shot=False):
+def createHierarchy(asset=False, shot=False, model="base"):
     if asset:
         hierarchy_type = "asset"
     if shot:
         hierarchy_type = "shot"
     for step, values in MAYALEVEL.items():
-
         if (values["type"] != hierarchy_type):
             continue
 
         for work_level in values["work"]:
+            work_level = work_level.replace("|model", "|" + model)
             createTransform(work_level)

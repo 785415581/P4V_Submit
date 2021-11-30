@@ -26,8 +26,8 @@ MAYALEVEL = {
     },
 
     ANISTEP: {
-        "work": ["|ani|Idle", "|ani|Walk", "|ani|Run"],
-        "publish": ["|ani|Idle", "|ani|Walk", "|ani|Run"],
+        "work": ["|ani|model"],
+        "publish": ["|ani|model"],
         "type": "shot"
     }
 }
