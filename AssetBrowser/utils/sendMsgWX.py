@@ -18,6 +18,7 @@ now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 def send_msg(**kwargs):
     notice = kwargs.get('notice', '')
+    des = kwargs.get('log', '')
     taskId = kwargs.get('taskID', '')
     taskId = taskId.replace('ID', '')
     taskStatus = kwargs.get('taskStatus', '')
@@ -40,14 +41,16 @@ def send_msg(**kwargs):
                    ">文件名称 : <font color=\"comment\">{fileName}</font>\n" \
                    ">提交人   : <font color=\"comment\">{userName}</font>\n" \
                    ">提交时间 : <font color=\"comment\">{time}</font>\n" \
+                   ">提交描述 : <font color=#ff3c20>{des}</font>\n" \
                    ">下游人员 : <font color=#ff3c20>{noticeMember}</font>\n" \
                    ">任务 ID ：[{id}](https://www.tapd.cn/61223525/prong/tasks/view/116122352500{id})\n" \
                    ">任务状态 ：{status}".format(
                             assetName=assetName,
                             assetStep=assetStep,
-                            userName=p4model.user.capitalize(),
+                            userName=p4model.capitalize(),
                             fileName=fils,
                             time=now_time,
+                            des=des,
                             noticeMember=notice,
                             id=taskId,
                             status=status
@@ -76,8 +79,9 @@ def send_msg(**kwargs):
     )
 
     requests.packages.urllib3.disable_warnings()
+    proxies = {"http": None, "https": None}
     try:
-        requests.post(wx_bot, data_markdown, auth=('Content-Type', 'application/json'), verify=False)
+        requests.post(wx_bot, data_markdown, auth=('Content-Type', 'application/json'), verify=False, proxies=proxies)
     except ConnectionError as e:
         error = traceback.print_exc()
         ToolsLogger.get_logger(error, save_log=True)
@@ -104,9 +108,9 @@ def updateTAPDTaskStatus(**kwargs):
 
 
 if __name__ == '__main__':
-    updateTAPDTaskStatus(taskID="1054299", taskStatus=u"进行中")
+    # updateTAPDTaskStatus(taskID="1054299", taskStatus=u"进行中")
 
-    # send_msg(assetName="TATest", assetStep="Rig", notice='刘雅旭;程缓缓;秦家鑫', taskID='1053143', dst_files=['SM_Football.fbx', 'SM_Football.fbx', 'SM_Football.fbx'])
+    send_msg(assetName="TATest", assetStep="Rig", notice='刘雅旭;程缓缓;秦家鑫', taskID='1053143', dst_files=['SM_Football.fbx', 'SM_Football.fbx', 'SM_Football.fbx'])
     # noticeConfig = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'noticeConfig.json')
     # import base64
     # import pickle
