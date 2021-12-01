@@ -47,7 +47,7 @@ def send_msg(**kwargs):
                    ">任务状态 ：{status}".format(
                             assetName=assetName,
                             assetStep=assetStep,
-                            userName=p4model.capitalize(),
+                            userName=p4model.user.capitalize(),
                             fileName=fils,
                             time=now_time,
                             des=des,
