@@ -184,7 +184,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
                 self.UnrealObj.asset = self.UnrealObj.asset.split('/')[-1]
 
             if unrealPath:
-                unrealPath = "/Game/" + unrealPath + "/" + self.UnrealObj.asset
+                unrealPath = "/Game/" + unrealPath
             else:
                 unrealPath = "/Game/" + self.UnrealObj.type + "/" + self.UnrealObj.asset
             destination_path = self.UnrealObj.init_destination_path(default=unrealPath)
