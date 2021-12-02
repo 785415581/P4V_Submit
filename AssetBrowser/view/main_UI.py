@@ -304,7 +304,7 @@ class Ui_MainWindow(QWidget):
         self.workTree.setHeaderItem(__qtreewidgetitem)
         self.workTree.setObjectName(u"workTree")
         self.workTree.setAlternatingRowColors(True)
-
+        self.workTree.setItemDelegate(baseWidget.NoFocusDelegate())
         p = QPalette()
         p.setColor(QPalette.AlternateBase, QColor(50, 50, 50))
         self.workTree.setPalette(p)
@@ -460,6 +460,7 @@ class Ui_MainWindow(QWidget):
         self.history_list.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.history_list.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.history_list.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.history_list.setItemDelegate(baseWidget.NoFocusDelegate())
         # self.history_list.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
         # self.history_list.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
@@ -482,11 +483,11 @@ class Ui_MainWindow(QWidget):
         self.verticalLayout_7.addWidget(self.splitter)
 
 
-        #########add log lineedit
+        # add log lineedit
         # import AssetBrowser.modules.app_utils as app_utils
         # app_utils.ParentView().view = self.centralwidget
 
-        #这里的reload不要删，实现maya里重载单例log,
+        # 这里的reload不要删，实现maya里重载单例log,
         import AssetBrowser.view.singleton as singleton
         import imp
         imp.reload(singleton)

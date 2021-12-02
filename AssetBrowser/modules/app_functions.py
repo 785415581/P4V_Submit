@@ -124,7 +124,6 @@ class AppFunc():
         current_type = self.view.typeComboBox.currentText()
         if current_type in self.data_dict:
             self.view.assetNameComboBox.addItems(list(self.data_dict[current_type].keys()))
-        a = QtWidgets.QComboBox()
 
         if default:
             self.view.typeComboBox.setCurrentText(default.get('current_type'))
@@ -132,6 +131,10 @@ class AppFunc():
             self.view.submitStepCom.setCurrentText(default.get('current_step'))
             self.view.comment_ui.lineEdit.setText(default.get('taskID'))
             self.view.comment_ui.textEdit.setText(default.get('comment_log'))
+            if default.get('dst_files'):
+                version_list = self.p4Model.getVersions(default.get('dst_files')[-1])
+                self.view.history_list.model().setData(list(version_list))
+
         self.view.typeComboBox.blockSignals(False)
         self.setTreeWidget()
 
@@ -516,6 +519,7 @@ class AppFunc():
                 before_submit_info['current_step'] = current_step
                 before_submit_info['taskID'] = taskID
                 before_submit_info['comment_log'] = comment_log
+                before_submit_info['dst_files'] = dst_files
                 self.initWindow(default=before_submit_info)
                 tips = QtWidgets.QMessageBox.information(self.view, "Tips", "Complete Submit...", QtWidgets.QMessageBox.Ok)
 
@@ -572,6 +576,7 @@ class AppFunc():
                 before_submit_info['current_step'] = current_step
                 before_submit_info['taskID'] = taskID
                 before_submit_info['comment_log'] = comment_log
+                before_submit_info['dst_files'] = dst_files
                 self.initWindow(default=before_submit_info)
                 tips = QtWidgets.QMessageBox.information(self.view, "Tips", "Complete Submit...", QtWidgets.QMessageBox.Ok)
 

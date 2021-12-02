@@ -472,7 +472,11 @@ class QComboCheckBox(QtWidgets.QComboBox):
             super().hidePopup()
 
 
-
+class NoFocusDelegate(QtWidgets.QStyledItemDelegate):
+    def paint(self, QPainter, QStyleOptionViewItem, QModelIndex):
+        if QStyleOptionViewItem.state & QtWidgets.QStyle.State_HasFocus:
+            QStyleOptionViewItem.state = QStyleOptionViewItem.state ^ QtWidgets.QStyle.State_HasFocus
+        QtWidgets.QStyledItemDelegate.paint(self, QPainter, QStyleOptionViewItem, QModelIndex)
 
 
 
