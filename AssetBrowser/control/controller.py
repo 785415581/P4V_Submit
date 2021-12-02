@@ -7,11 +7,13 @@ import AssetBrowser.modules.app_functions as app_functions
 import P4Module.p4_module as p4_module
 import AssetBrowser.utils.utils as utils
 from AssetBrowser.modules import global_setting
+from AssetBrowser.utils import versionControl
 
 import imp
 imp.reload(app_functions)
 imp.reload(p4_module)
 imp.reload(utils)
+imp.reload(versionControl)
 
 from functools import partial
 
@@ -66,7 +68,7 @@ class Controller(QtCore.QObject):
         self.view.workTree.setHeaderLabels(["Files", "LocalVersion", "ServerVersion"])
         self.view.workTree.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
 
-        noticeConfig = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'noticeConfig.json')
+        noticeConfig = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'conf/noticeConfig.json')
         with open(noticeConfig, 'r', encoding='utf-8') as fp:
             data = json.load(fp)
         self.view.comment_ui.comboBox.add_items(data.keys())
@@ -76,6 +78,7 @@ class Controller(QtCore.QObject):
         self.view.currentPathCombox.clear()
         self.view.typeComboBox.setEnabled(True)
         self.view.assetNameComboBox.setEnabled(True)
+        versionControl.set_application_version()
 
     def initUI(self):
         self.p4Model.user = self.view.userLn.currentText()

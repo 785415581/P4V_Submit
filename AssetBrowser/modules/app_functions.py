@@ -11,14 +11,12 @@ import AssetBrowser.modules.global_setting as global_setting
 import AssetBrowser.utils.Leaf as Leaf
 import AssetBrowser.utils.utils as utils
 import AssetBrowser.utils.moveFile as moveFile
-
 import AssetBrowser.modules.ImportFunction.startImport as startImport
 import AssetBrowser.modules.ExportFunction.startExport as startExport
 import AssetBrowser.modules.ToolFunction.startTool as startTool
-
 import AssetBrowser.modules.publish_hooks.startPublish as startPublish
-
 import AssetBrowser.view.baseWidget as baseWidget
+from AssetBrowser.utils import versionControl
 
 import imp
 imp.reload(app_utils)
@@ -31,6 +29,7 @@ imp.reload(startExport)
 imp.reload(moveFile)
 imp.reload(startPublish)
 imp.reload(baseWidget)
+imp.reload(versionControl)
 import tempfile
 import shutil
 from functools import partial
@@ -449,6 +448,7 @@ class AppFunc():
         return "", True
 
     def btnExportClicked(self, model):
+        versionControl.check_application_version('submit', self.view)
         current_type, current_asset, current_step = self.getAssetStep()
         if not current_type or not current_asset or not current_step:
             app_utils.add_log(u"检查type,asset, type", error=True)
