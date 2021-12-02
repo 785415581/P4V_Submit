@@ -384,7 +384,7 @@ class AppFunc():
         background-color: rgba(0, 0, 0, 0);
         background-position: center;
         background-repeat: no-repeat;
-        background-image: url(:/icons/icons/display_password.png);}""")
+        background-image: url(R:/ProjectX/Scripts/Python/tools/publish/AssetBrowser/resources/icons/display_password.png);}""")
         self.view.passwordLn.setEchoMode(QtWidgets.QLineEdit.Normal)
 
     def hidePassword(self):
@@ -393,7 +393,7 @@ class AppFunc():
         background-color: rgba(0, 0, 0, 0);
         background-position: center;
         background-repeat: no-repeat;
-        background-image: url(:/icons/icons/no_display_password.png);}""")
+        background-image: url(R:/ProjectX/Scripts/Python/tools/publish/AssetBrowser/resources/icons/no_display_password.png);}""")
         self.view.passwordLn.setEchoMode(QtWidgets.QLineEdit.Password)
 
     def btnImportClicked(self, model):

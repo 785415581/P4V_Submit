@@ -4,7 +4,7 @@
 Author: 785415581@qq.com
 Date: 2021/11/10 17:58
 """
-
+import os
 import sys
 import imp
 import ctypes
@@ -19,7 +19,7 @@ imp.reload(main)
 def mainFunc():
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
-        app.setWindowIcon(QtGui.QIcon("icon.png"))
+        app.setWindowIcon(QtGui.QIcon(r"R:\ProjectX\Scripts\Python\tools\publish\AssetBrowser/resources/icons/icon.ico"))
     global window
 
     window = main.MainWindow()
