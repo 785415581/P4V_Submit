@@ -26,11 +26,15 @@ def rig_export(export_file, export_level, **kwargs):
     me.scene_check()
     if not me.result:
         return me.log, me.result
-    if "sub_level" in kwargs:
+    if "repalce_level" in kwargs:
+        export_level = kwargs["repalce_level"]
+
+    elif "sub_level" in kwargs:
         if "|" not in kwargs["sub_level"]:
             export_level = export_level + "|" + kwargs["sub_level"]
         else:
             export_level = export_level + kwargs["sub_level"]
+
     me.export_rig(export_file, export_level)
 
     return me.log, me.result

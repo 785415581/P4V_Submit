@@ -1,4 +1,5 @@
 import maya.cmds as cmds
+import pymel.core as pm
 import os
 import imp
 import AssetBrowser.modules.app_utils as app_utils
@@ -114,13 +115,14 @@ def mayaImportSubAssets(**kwargs):
         log, create_nodes_yield = startImport.start_import("import", fileInfo=fileInfo, ext=fileExt)
 
         for create_nodes in create_nodes_yield:
-            for create_node in create_nodes:
-                sub_level = "|master|" + kwargs["step"] + "|" + subasset.split("/")[-1]
-                if not pm.objExists(sub_level):
-                    trans_node = pm.createNode("transform", n=subasset.split("/")[-1],
-                                               p="|master|" + kwargs["step"])
-                if "|master" in create_node and len(create_node.split("|")) < 5 and create_node != sub_level:
-                    pm.parent(pm.PyNode(create_node), trans_node)
+            pass
+            # for create_node in create_nodes:
+            #     sub_level = "|master|" + kwargs["step"] + "|" + subasset.split("/")[-1]
+            #     if not pm.objExists(sub_level):
+            #         trans_node = pm.createNode("transform", n=subasset.split("/")[-1],
+            #                                    p="|master|" + kwargs["step"])
+            #     if "|master" in create_node and len(create_node.split("|")) < 5 and create_node != sub_level:
+            #         pm.parent(pm.PyNode(create_node), trans_node)
 
     return "", True
 
@@ -146,11 +148,17 @@ def mayaExportSubAssets(**kwargs):
         return "Failed to get subassets {0}".format(kwargs["asset"]), False
 
     if kwargs["step"] in ["Mesh", "Rig"]:
-        for outline_name in cmds.listRelatives("|master|Mesh", children=True):
-            subasset_name = kwargs["asset"] + "/" + outline_name
-            if subasset_name not in scene_subassets:
-                scene_subassets.append(subasset_name)
-                kwargs["subAssets"][kwargs["type"]].setdefault(kwargs["asset"], set()).add(subasset_name)
+        transforms = []
+        for outline_name in pm.listRelatives("|master|Mesh", children=True, ad=True, type="mesh"):
+            transform_node = outline_name.parent(0)
+            if transform_node.fullPath() in transforms:
+                continue
+
+            subasset_name = kwargs["asset"] + "/" + transform_node.name()
+
+            scene_subassets.append(subasset_name)
+            transforms.append(transform_node.fullPath())
+            kwargs["subAssets"][kwargs["type"]].setdefault(kwargs["asset"], set()).add(subasset_name)
 
     if not scene_subassets:
             return "Failed to get subassets {0}".format(kwargs["asset"]), False
@@ -163,7 +171,7 @@ def mayaExportSubAssets(**kwargs):
             os.makedirs(subasset_fold)
 
         kwargs["asset"] = subasset
-        log, result = startExport.start_export(subasset_fold, sub_level=subasset.split("/")[-1], **kwargs)
+        log, result = startExport.start_export(subasset_fold, repalce_level=transforms[scene_subassets.index(subasset)], **kwargs)
         app_utils.add_log(log)
         if not result:
             print(subasset, log)
