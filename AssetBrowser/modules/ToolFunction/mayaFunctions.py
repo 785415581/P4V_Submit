@@ -153,8 +153,9 @@ def mayaExportSubAssets(**kwargs):
             transform_node = outline_name.parent(0)
             if transform_node.fullPath() in transforms:
                 continue
-
-            subasset_name = kwargs["asset"] + "/" + transform_node.name()
+            node_name = transform_node.name()
+            node_name = node_name.split("|")[-1]
+            subasset_name = kwargs["asset"] + "/" + node_name
 
             scene_subassets.append(subasset_name)
             transforms.append(transform_node.fullPath())
