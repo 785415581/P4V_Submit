@@ -147,7 +147,7 @@ def mayaExportSubAssets(**kwargs):
     if kwargs["type"] not in kwargs["subAssets"]:
         return "Failed to get subassets {0}".format(kwargs["asset"]), False
 
-    if kwargs["step"] in ["Mesh", "Rig"]:
+    if kwargs["step"] in ["Mesh", "Rig", "StaticMesh"]:
         transforms = []
         for outline_name in pm.listRelatives("|master|Mesh", children=True, ad=True, type="mesh"):
             transform_node = outline_name.parent(0)

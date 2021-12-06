@@ -10,6 +10,13 @@
         "SM_XXX.fbx": "|master|Mesh"
       }
     },
+    "StaticMesh": {
+      "function": "mayaDefaultExport.default_export",
+      "files": {
+        "SM_XXX.ma": "|master|Mesh",
+        "SM_XXX.fbx": "|master|Mesh"
+      }
+    },
     "Rig": {
       "function": "mayaDefaultExport.rig_export",
       "files": {
