@@ -251,7 +251,7 @@ class P4Client(object):
                     continue
                 data_values = res.split(";;")
 
-                if not data_values[0] or not data_values[2]:
+                if not data_values[0] or not data_values[2] or (data_values[-1] == "delete"):
                     add_cmd = "p4 add -d -c {0} {1}".format(new_change, local_file)
                     process = subprocess.Popen(add_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                     out, err = process.communicate()
