@@ -36,7 +36,7 @@ def mayaSave(**kwargs):
         os.makedirs(private_fold)
     if kwargs["step"] == ANISTEP:
         for i in cmds.listRelatives("|ani", children=True):
-            file_pre = "{0}_{1}_{2}_v".format(kwargs["asset"].replace("/", "_"), kwargs["step"], i)
+            file_pre = "{0}_{1}_v".format(kwargs["asset"].replace("/", "_"), i)
             break
     else:
         file_pre = "{0}_{1}_v".format(kwargs["asset"].replace("/", "_"), kwargs["step"])
