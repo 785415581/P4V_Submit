@@ -4,11 +4,12 @@ import os
 import imp
 import AssetBrowser.modules.app_utils as app_utils
 imp.reload(app_utils)
+from AssetBrowser.modules.global_setting import ANISTEP
 
 
 def mayaNew(**kwargs):
     from Tools.maya.createHierarchy import createHierarchy
-    from AssetBrowser.modules.global_setting import ANISTEP
+
 
     private_fold = kwargs["localPreWork"]
     private_fold = os.path.join(private_fold, "maya")
@@ -33,8 +34,12 @@ def mayaSave(**kwargs):
     private_fold = os.path.join(kwargs["localPrePrivate"], "maya")
     if not os.path.exists(private_fold):
         os.makedirs(private_fold)
-
-    file_pre = "{0}_{1}_v".format(kwargs["asset"].replace("/", "_"), kwargs["step"])
+    if kwargs["step"] == ANISTEP:
+        for i in cmds.listRelatives("|ani", children=True):
+            file_pre = "{0}_{1}_{2}_v".format(kwargs["asset"].replace("/", "_"), kwargs["step"], i)
+            break
+    else:
+        file_pre = "{0}_{1}_v".format(kwargs["asset"].replace("/", "_"), kwargs["step"])
     file_name = file_pre + "*.ma"
     work_file_path = os.path.join(private_fold, file_name)
     version_list = glob.glob(work_file_path)
