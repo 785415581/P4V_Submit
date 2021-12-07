@@ -32,6 +32,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         self._select_file = None
         self._kwargs = None
         self._configData = None
+        self.jsonPathList = list()
         self.setupUi(self)
         self.columnView = self.levelColumnView
         # self.columnView.enterEvent = self.enter_event
@@ -135,10 +136,6 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             item.parent().appendRow(subItem)
             container.append(text)
             self.configData = self.feedbackConfig(container, self.configData)
-            # from pprint import pprint
-            # pprint(configData)
-        # print(item.parent(), item.parent().text())
-        # print(columnView.currentIndex().parent().row())
 
     def getChildIndex(self, container, configData):
         lens = None
@@ -165,7 +162,6 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             item = self.itemListWidget.item(index)
             data = item.data(QtCore.Qt.UserRole)
             localPath = data.get("localPath", "")
-            severPath = data.get("serverPath", "")
             if localPath.split('.')[-1] != self.kwargs.get('ext'):
                 app_utils.add_log("Invalid file format...{}".format(localPath))
                 continue
@@ -184,7 +180,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
                 self.UnrealObj.asset = self.UnrealObj.asset.split('/')[-1]
 
             if unrealPath:
-                unrealPath = "/Game/" + unrealPath
+                unrealPath = "/Game" + unrealPath
             else:
                 unrealPath = "/Game/" + self.UnrealObj.type + "/" + self.UnrealObj.asset
             destination_path = self.UnrealObj.init_destination_path(default=unrealPath)
@@ -267,36 +263,21 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         return labels
 
     def setLabelsCombineUnrealPath(self, labels):
-        '''
-        # 从获取的label中组装出来unreal 的路径。没有在self.configData当中的将会被舍弃。
-        :param labels:
-        :return:
-        '''
+        self.resJsonPath(self.configData, path='')
+        if self.jsonPathList:
+            for jsonPath in self.jsonPathList:
+                if set(jsonPath.strip('/').split('/')) == set(labels):
+                    self.jsonPathList = list()
+                    return jsonPath
 
-        res = self.getLabelIndex(self.configData, labels)
-        res.reverse()
-        temp_res = []
-        for i in res:
-            if i not in temp_res:
-                temp_res.append(i)
-        temp_res.reverse()
-        uPath = ''
-        for level in range(len(temp_res)):
-            if level == 0:
-                uPath = temp_res[level]
+    def resJsonPath(self, pathJson, path=''):
+        for key, value in pathJson.items():
+            if value:
+                cycPath = path + '/' + key
+                self.resJsonPath(value, cycPath)
             else:
-                uPath = uPath + '/' + temp_res[level]
-        return uPath
-
-    def getLabelIndex(self, data, labels, res=[]):
-        for key, val in data.items():
-            sycLabels = copy.deepcopy(labels)
-            for sycLabel in sycLabels:
-                if sycLabel in key:
-                    res.append(sycLabel)
-                    sycLabels.remove(sycLabel)
-            self.getLabelIndex(val, sycLabels)
-        return res
+                realPath = path + "/"+key
+                self.jsonPathList.append(realPath)
 
     def randomColor(self):
         colorArr = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
@@ -309,31 +290,9 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = AddLabels()
-    labels = ['Parts',  'Building', 'Door']
+    labels = ['Character',  'Male', 'Gloves', 'Texture']
     window.initUI()
     unrealPath = window.setLabelsCombineUnrealPath(labels)
     print(unrealPath)
     # window.show()
     # app.exec_()
-
-    data_dict = {}
-
-
-    # def find(setting_data, parent_dict):
-    #     for keys, values in setting_data.items():
-    #         has_key = False
-    #         for label in labels:
-    #             if label in keys:
-    #                 has_key = True
-    #                 parent_dict.setdefault(label, {})
-    #                 find(values, parent_dict[label])
-    #         if not has_key and parent_dict:
-    #             print(keys)
-    #             print(parent_dict)
-    #             print(11111111111)
-    #             return
-    #
-    #
-    # find(setting_data, data_dict)
-    #
-    # print(data_dict)
