@@ -274,6 +274,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         for key, value in pathJson.items():
             if value:
                 cycPath = path + '/' + key
+                self.jsonPathList.append(cycPath)
                 self.resJsonPath(value, cycPath)
             else:
                 realPath = path + "/"+key
@@ -290,7 +291,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = AddLabels()
-    labels = ['Character',  'Male', 'Gloves', 'Texture']
+    labels = ['Character',  'Male', 'Bottom']
     window.initUI()
     unrealPath = window.setLabelsCombineUnrealPath(labels)
     print(unrealPath)
