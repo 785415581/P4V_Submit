@@ -580,8 +580,9 @@ class AppFunc():
                 before_submit_info['dst_files'] = dst_files
                 self.initWindow(default=before_submit_info)
                 for dst_file in dst_files:
-                    logger = ToolsLogger.get_logger("submit file: ->" + str(dst_file), save_log=True)
-                    logger.info("Publish Tools start...")
+                    import getpass
+                    logger = ToolsLogger.get_logger(getpass.getuser(), save_log=True)
+                    logger.info("submit file: ->" + str(dst_file))
                 QtWidgets.QMessageBox.information(self.view, "Tips", "Complete Submit...", QtWidgets.QMessageBox.Ok)
 
             else:
