@@ -11,6 +11,7 @@ import AssetBrowser.modules.global_setting as global_setting
 import AssetBrowser.utils.Leaf as Leaf
 import AssetBrowser.utils.utils as utils
 import AssetBrowser.utils.moveFile as moveFile
+from AssetBrowser.utils.log import ToolsLogger
 import AssetBrowser.modules.ImportFunction.startImport as startImport
 import AssetBrowser.modules.ExportFunction.startExport as startExport
 import AssetBrowser.modules.ToolFunction.startTool as startTool
@@ -578,7 +579,10 @@ class AppFunc():
                 before_submit_info['comment_log'] = comment_log
                 before_submit_info['dst_files'] = dst_files
                 self.initWindow(default=before_submit_info)
-                tips = QtWidgets.QMessageBox.information(self.view, "Tips", "Complete Submit...", QtWidgets.QMessageBox.Ok)
+                for dst_file in dst_files:
+                    logger = ToolsLogger.get_logger("submit file: ->" + str(dst_file), save_log=True)
+                    logger.info("Publish Tools start...")
+                QtWidgets.QMessageBox.information(self.view, "Tips", "Complete Submit...", QtWidgets.QMessageBox.Ok)
 
             else:
                 app_utils.add_log(log, error=True)
