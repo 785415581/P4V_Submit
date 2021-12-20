@@ -17,11 +17,10 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(747, 653)
+        Dialog.resize(790, 611)
         Dialog.setStyleSheet(u"background-color: #36393f;")
         self.verticalLayout_4 = QVBoxLayout(Dialog)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.frame = QFrame(Dialog)
         self.frame.setObjectName(u"frame")
         self.frame.setStyleSheet(u"\n"
@@ -76,7 +75,35 @@ class Ui_Dialog(object):
         self.frame.setFrameShadow(QFrame.Raised)
         self.verticalLayout_3 = QVBoxLayout(self.frame)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.groupBox_4 = QGroupBox(self.frame)
+        self.groupBox_4.setObjectName(u"groupBox_4")
+        self.horizontalLayout_5 = QHBoxLayout(self.groupBox_4)
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.radioButton = QRadioButton(self.groupBox_4)
+        self.radioButton.setObjectName(u"radioButton")
+
+        self.horizontalLayout_5.addWidget(self.radioButton)
+
+        self.lineEdit = QLineEdit(self.groupBox_4)
+        self.lineEdit.setObjectName(u"lineEdit")
+        self.lineEdit.setMaximumSize(QSize(70, 16777215))
+        self.lineEdit.setStyleSheet(u"")
+
+        self.horizontalLayout_5.addWidget(self.lineEdit)
+
+        self.getFiles = QPushButton(self.groupBox_4)
+        self.getFiles.setObjectName(u"getFiles")
+        self.getFiles.setMinimumSize(QSize(50, 0))
+
+        self.horizontalLayout_5.addWidget(self.getFiles)
+
+        self.horizontalSpacer_3 = QSpacerItem(442, 8, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_5.addItem(self.horizontalSpacer_3)
+
+
+        self.verticalLayout_3.addWidget(self.groupBox_4)
+
         self.groupBox_3 = QGroupBox(self.frame)
         self.groupBox_3.setObjectName(u"groupBox_3")
         self.verticalLayout_2 = QVBoxLayout(self.groupBox_3)
@@ -168,6 +195,9 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Select Label", None))
+        self.groupBox_4.setTitle(QCoreApplication.translate("Dialog", u"From P4 Get Files", None))
+        self.radioButton.setText(QCoreApplication.translate("Dialog", u"\u6309\u7167ChangeList\u53f7\u5bfc\u5165:", None))
+        self.getFiles.setText(QCoreApplication.translate("Dialog", u"Get", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("Dialog", u"Items", None))
         self.groupBox.setTitle(QCoreApplication.translate("Dialog", u"Level", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("Dialog", u"Label", None))

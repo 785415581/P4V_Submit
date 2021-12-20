@@ -77,11 +77,29 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         self.columnView.setModel(model)
 
     def initSignal(self):
+        self.getFiles.clicked.connect(self.getP4Files)
         self.itemListWidget.itemClicked.connect(self.setDisplayLabel)
         self.columnView.clicked.connect(self.setColumnItemSelect)
         self.columnView.doubleClicked.connect(self.setConfigData)
         self.okBtn.clicked.connect(self.setImportOption)
         self.cancelBtn.clicked.connect(self.close)
+
+    def getP4Files(self):
+        p4Model = self.kwargs.get('p4Model')
+        changeList = int(self.lineEdit.text())
+        fileLists = p4Model.getFilesFromChangeList(changeList)
+        for fil in fileLists:
+            fileInfo = {}
+            p4Model.syncFile(fil)
+            localFile = fil.replace('//Assets/main', "D:/Dev")
+            labels = p4Model.getFileLabels(fil)
+            fileInfo['localPath'] = localFile
+            fileInfo['labels'] = labels
+            item = QtWidgets.QListWidgetItem()
+            item.setText(os.path.basename(localFile))
+            item.setData(QtCore.Qt.UserRole, fileInfo)
+            item.setCheckState(QtCore.Qt.Checked)
+            self.itemListWidget.addItem(item)
 
     def setDisplayLabel(self, item):
         self.__clearLabel()
@@ -100,6 +118,7 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             item = QtWidgets.QListWidgetItem()
             item.setText(os.path.basename(filePath))
             item.setData(QtCore.Qt.UserRole, info)
+            item.setCheckState(QtCore.Qt.Checked)
             self.itemListWidget.addItem(item)
             itemList.append(item)
         self.setDisplayLabel(itemList[0])
@@ -160,6 +179,8 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         self.close()
         for index in range(self.itemListWidget.count()):
             item = self.itemListWidget.item(index)
+            if item.checkState() == QtCore.Qt.Unchecked:
+                continue
             data = item.data(QtCore.Qt.UserRole)
             localPath = data.get("localPath", "")
             if localPath.split('.')[-1] != self.kwargs.get('ext'):
@@ -294,6 +315,6 @@ if __name__ == '__main__':
     labels = ['Character',  'Male', 'Bottom']
     window.initUI()
     unrealPath = window.setLabelsCombineUnrealPath(labels)
-    print(unrealPath)
-    # window.show()
-    # app.exec_()
+    # print(unrealPath)
+    window.show()
+    app.exec_()

@@ -171,6 +171,21 @@ class P4Client(object):
             #     continue
         return file_dict
 
+    def getFilesFromChangeList(self, changeList):
+        fileLists = []
+        cmd = "p4 files @={changeList}".format(changeList=changeList)
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        res_files, err = process.communicate()
+        for res in res_files.decode('utf-8', "ignore").split('\r\n'):
+            if not res or "delete" in res:
+                continue
+            res = re.sub(r'#\d.*[)]', "", res)
+            # labels = self.getFileLabels(res)
+            # print(labels)
+            fileLists.append(res)
+
+        return fileLists
+
     def getVersions(self, full_path):
         version_list = []
 
@@ -390,4 +405,7 @@ if __name__ == '__main__':
     # p4Module.addFileLabels(p4File, 'ScriptTest')
     # print(labels)
     # des = '测试中文'
-    p4Module.cleanLabelView("TATest")
+    info = p4Module.getClienInfo()
+    print(info)
+    fileLists = p4Module.getFilesFromChangeList(20725)
+    print(fileLists)
