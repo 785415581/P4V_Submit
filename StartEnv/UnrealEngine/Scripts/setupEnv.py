@@ -19,15 +19,27 @@ def main():
 
     my_menu = main_menu.add_sub_menu("[My.Menu](http://My.Menu)", "Python", "My Menu", "AuroraTools")
 
-    for name in ["Open AuroraTools"]:
-        menuEntry = unreal.ToolMenuEntry(
-            name=name,
-            type=unreal.MultiBlockType.MENU_ENTRY,
-        )
-        menuEntry.set_label(name)
-        commandType = unreal.ToolMenuStringCommandType.PYTHON
-        menuEntry.set_string_command(commandType, "", 'from StartEnv.UnrealEngine.Scripts import buildEnv\nimport imp\nimp.reload(buildEnv)\nbuildEnv.mainFunc()')
-        my_menu.add_menu_entry("Items", menuEntry)
+    # for name in ["Open AuroraTools", "Open AuroraTools"]:
+    menuEntry = unreal.ToolMenuEntry(
+        name="Open AuroraTools",
+        type=unreal.MultiBlockType.MENU_ENTRY,
+    )
+    menuEntry.set_label("Open AuroraTools")
+    commandType = unreal.ToolMenuStringCommandType.PYTHON
+    menuEntry.set_string_command(commandType, "", 'from StartEnv.UnrealEngine.Scripts import buildEnv\nimport imp\nimp.reload(buildEnv)\nbuildEnv.mainFunc()')
+    my_menu.add_menu_entry("Items", menuEntry)
+
+
+
+    menuEntry = unreal.ToolMenuEntry(
+        name="Tools Box",
+        type=unreal.MultiBlockType.MENU_ENTRY,
+    )
+    menuEntry.set_label("Tools Box")
+    commandType = unreal.ToolMenuStringCommandType.PYTHON
+    menuEntry.set_string_command(commandType, "",
+                                 'from StartEnv.UnrealEngine.Scripts import buildEnv\nimport imp\nimp.reload(buildEnv)\nbuildEnv.Tools()')
+    my_menu.add_menu_entry("Items", menuEntry)
 
     menus.refresh_all_widgets()
 
