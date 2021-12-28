@@ -436,7 +436,7 @@ class AppFunc():
                 fileInfo[local_pub_path]['step'] = current_step
                 fileInfo[local_pub_path]['labels'] = fileLabel
                 fileInfo[local_pub_path]['ext'] = local_pub_path.split('.')[-1]
-                # fileInfo[local_pub_path]['p4Model'] = self.p4Model
+                fileInfo[local_pub_path]['p4Model'] = self.p4Model
                 fileExt.append(local_pub_path.split('.')[-1])
         fileExt = fileExt[0]
         # start import
