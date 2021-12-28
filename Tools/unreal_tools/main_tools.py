@@ -7,7 +7,7 @@ Date: 2021/12/28 15:44
 import os
 import sys
 import re
-package = 'D:/toolset/SubstanceDesigner/Tools/combineGraph/widget'
+package = 'R:/ProjectX/Scripts/Python/tools/toolset/SubstanceDesigner/Tools/combineGraph/widget'
 if package not in sys.path:
     sys.path.insert(0, package)
 
