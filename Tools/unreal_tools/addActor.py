@@ -174,10 +174,7 @@ class AddActor(QtWidgets.QWidget):
             filePath = self.tableWidget.item(i, 3).text()
             if headRev != haveRev:
                 cmd = 'p4 sync -f %s#head' % filePath
-                print(cmd)
                 stdout = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True)
-                print(stdout.decode('windows-1252'))
-                print('sync file %s')
                 headRev, haveRev = self.getReversion(filePath)
                 self.tableWidget.item(i, 1).setText(headRev)
                 self.tableWidget.item(i, 2).setText(haveRev)
@@ -223,6 +220,6 @@ if __name__ == "__main__":
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     global window
-    window = MainWindow()
+    window = AddActor()
     window.show()
     # app.exec_()

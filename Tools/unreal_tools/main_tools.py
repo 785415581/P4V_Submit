@@ -57,13 +57,17 @@ class View(QtWidgets.QMainWindow):
 
     def showTool(self, item):
         ToolInfo = item.itemData()
-        function = ToolInfo.get("function")
-        if not QtWidgets.QApplication.instance():
-            app = QtWidgets.QApplication(sys.argv)
-        global window
-        window = function()
-        window.setWindowTitle('子页面')
-        window.show()
+        if ToolInfo.get("type") == "window":
+            function = ToolInfo.get("function")
+            if not QtWidgets.QApplication.instance():
+                app = QtWidgets.QApplication(sys.argv)
+            global window
+            window = function()
+            window.setWindowTitle(ToolInfo.get("name"))
+            window.show()
+        elif ToolInfo.get("type") == "run":
+            function = ToolInfo.get("function")
+            function()
 
     def getLibraryPreview(self, LibraryPath):
         res = dict()
