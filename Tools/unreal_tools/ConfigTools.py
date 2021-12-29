@@ -27,7 +27,7 @@ Tools = {
     },
     "Help": {
         "type": "run",
-        "name": "Help",
+        "name": u"使用文档",
         "function": utils.openHelp,
         "icon": os.path.join(os.path.dirname(__file__), "icons/help.png")
     }
