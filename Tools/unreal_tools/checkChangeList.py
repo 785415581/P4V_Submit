@@ -167,11 +167,15 @@ class CheckChange(QtWidgets.QWidget):
         self.setLayout(self.vlayMain)
 
     def focusActor(self, index):
-        command = "CAMERA ALIGN"
+        command = "CAMERA ALIGN ACTIVEVIEWPORTONLY"
         # TODO: 多个部件combine之后找不到，选中的actor返回的是一个array
         if index.column() == 0 and index.data() is not None:
-            command += ' NAME=' + index.data()
-            unreal.XPTAEToolsBPLibrary.execute_console_command(command)
+            all_actors = unreal.EditorLevelLibrary.get_all_level_actors()
+            for actor in all_actors:
+                label = actor.get_actor_label()
+                if label == index.data():
+                    unreal.EditorLevelLibrary.set_selected_level_actors([actor])
+                    unreal.XPTAEToolsBPLibrary.execute_console_command(command)
 
     def get_p4_files(self):
         self.initP4()
@@ -196,8 +200,6 @@ class CheckChange(QtWidgets.QWidget):
     def get_res(self, res):
         for key, value in res.items():
             actorName, className = unreal.XPTAEToolsBPLibrary.get_actor_name_from_partition_actor_asset_path_name(key)
-            print("actorName = {}".format(actorName))
-            print("className = {}".format(className))
             path = self.project_dir + value[0].replace('/Game', '/Content') + '.uasset'
             rowCount = self.tableWidget.rowCount()
             self.tableWidget.insertRow(rowCount)
