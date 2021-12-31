@@ -131,9 +131,12 @@ class CheckChange(QtWidgets.QWidget):
         self._file_list = {}
         contentPath = unreal.Paths()
         self.project_dir = contentPath.project_dir()
-        self.label = QtWidgets.QLabel()
+        self.changeNumberLabel = QtWidgets.QLabel()
         self.lineEdit = QtWidgets.QLineEdit()
         self.checkBtn = QtWidgets.QPushButton()
+        self.changePathLabel = QtWidgets.QLabel()
+        self.changePathEdit = QtWidgets.QLineEdit()
+        self.changePathCheckBtn = QtWidgets.QPushButton()
         self.tableWidget = QtWidgets.QTableWidget()
         self.hlay = QtWidgets.QHBoxLayout()
         self.vlayMain = QtWidgets.QVBoxLayout()
@@ -143,8 +146,11 @@ class CheckChange(QtWidgets.QWidget):
         self.initSignal()
 
     def initUI(self):
-        self.label.setText(u'输入change list号：')
+        self.changeNumberLabel.setText(u'输入change list号：')
         self.checkBtn.setText("Check")
+        self.changePathLabel.setText("路径")
+        self.changePathCheckBtn.setText("Check")
+
         self.tableWidget.horizontalHeader().setSortIndicatorShown(True)
         self.tableWidget.horizontalHeader().setSortIndicator(0, QtCore.Qt.SortOrder.AscendingOrder)
         self.tableWidget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
@@ -153,22 +159,46 @@ class CheckChange(QtWidgets.QWidget):
 
     def initSignal(self):
         self.checkBtn.clicked.connect(self.get_p4_files)
+        self.changePathCheckBtn.clicked.connect(self.getActorFromPath)
         self.tableWidget.clicked.connect(self.focusActor)
         self.tableWidget.horizontalHeader().sectionClicked.connect(self.sortTableByCol)
 
     def layoutWidget(self):
-        self.hlay.addWidget(self.label)
+        self.hlay.addWidget(self.changeNumberLabel)
         self.hlay.addWidget(self.lineEdit)
         self.hlay.addWidget(self.checkBtn)
 
+        self.hlay1 = QtWidgets.QHBoxLayout()
+        self.hlay1.addWidget(self.changePathLabel)
+        self.hlay1.addWidget(self.changePathEdit)
+        self.hlay1.addWidget(self.changePathCheckBtn)
+
         self.vlayMain.addLayout(self.hlay)
+        self.vlayMain.addLayout(self.hlay1)
         self.vlayMain.addWidget(self.tableWidget)
         self.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.vlayMain)
 
+    def getActorFromPath(self):
+        self._clearTableWidget()
+        path = self.changePathEdit.text()
+        local_suf = path.split('ProjectX/Content')
+
+        if local_suf:
+            local_suf = "/Game" + local_suf[-1].replace(".uasset", "")
+            actorName, className = unreal.XPTAEToolsBPLibrary.get_actor_name_from_partition_actor_asset_path_name(local_suf)
+            rowCount = self.tableWidget.rowCount()
+            self.tableWidget.insertRow(rowCount)
+            self.tableWidget.setItem(rowCount, 0, QtWidgets.QTableWidgetItem(str(actorName)))
+            self.tableWidget.setItem(rowCount, 2, QtWidgets.QTableWidgetItem(local_suf))
+
+    def _clearTableWidget(self):
+        count = self.tableWidget.rowCount()
+        for i in range(count):
+            self.tableWidget.removeRow(i)
+
     def focusActor(self, index):
         command = "CAMERA ALIGN ACTIVEVIEWPORTONLY"
-        # TODO: 多个部件combine之后找不到，选中的actor返回的是一个array
         if index.column() == 0 and index.data() is not None:
             all_actors = unreal.EditorLevelLibrary.get_all_level_actors()
             for actor in all_actors:
@@ -198,6 +228,7 @@ class CheckChange(QtWidgets.QWidget):
         self.get_res(self._file_list)
 
     def get_res(self, res):
+        self._clearTableWidget()
         for key, value in res.items():
             actorName, className = unreal.XPTAEToolsBPLibrary.get_actor_name_from_partition_actor_asset_path_name(key)
             path = self.project_dir + value[0].replace('/Game', '/Content') + '.uasset'
