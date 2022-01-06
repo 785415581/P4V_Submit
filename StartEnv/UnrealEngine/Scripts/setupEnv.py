@@ -6,11 +6,6 @@ Date: 2021/11/10 16:29
 """
 import sys
 import unreal
-ToolsLib = r'R:\ProjectX\Scripts\Python\tools\publish'
-site_package = r'R:\ProjectX\Scripts\Python37\Lib\site-packages'
-for libPath in [ToolsLib, site_package]:
-    if libPath not in sys.path:
-        sys.path.append(libPath)
 
 
 def main():
@@ -45,4 +40,12 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    import os
+
+    ToolsLib = r'R:\ProjectX\Scripts\Python\tools\publish'
+    site_package = r'R:\ProjectX\Scripts\Python37\Lib\site-packages'
+    if os.path.isdir(ToolsLib):
+        for libPath in [ToolsLib, site_package]:
+            if libPath not in sys.path:
+                sys.path.append(libPath)
+        main()
