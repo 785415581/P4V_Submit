@@ -9,7 +9,7 @@ UITYPE="UI"
 ASSETTYPE=["Animal", "Building", "Character", "Effect","Environment", "Prop", UITYPE, "Weapon"]
 ANISTEP = "Animation"
 TEXTURESTEP = "Texture"
-STEP = [ANISTEP, "Mesh", "StaticMesh", "Rig", TEXTURESTEP, "PCG", "Concept", "Icon"]
+STEP = [ANISTEP, "Mesh", "StaticMesh","Collision", "Rig", TEXTURESTEP, "PCG", "Concept", "Icon"]
 ANIMODEL = ["Idle", "Walk", "Run"]
 
 MAYALEVEL = {
@@ -26,6 +26,11 @@ MAYALEVEL = {
     },
 
     "StaticMesh": {
+        "work": ["|master|Mesh"],
+        "publish": ["|master"],
+        "type": "asset"
+    },
+    "Collision": {
         "work": ["|master|Mesh"],
         "publish": ["|master"],
         "type": "asset"
