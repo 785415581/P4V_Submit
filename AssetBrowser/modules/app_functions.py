@@ -11,6 +11,7 @@ import AssetBrowser.modules.global_setting as global_setting
 import AssetBrowser.utils.Leaf as Leaf
 import AssetBrowser.utils.utils as utils
 import AssetBrowser.utils.moveFile as moveFile
+from AssetBrowser.utils.log import ToolsLogger
 import AssetBrowser.modules.ImportFunction.startImport as startImport
 import AssetBrowser.modules.ExportFunction.startExport as startExport
 import AssetBrowser.modules.ToolFunction.startTool as startTool
@@ -439,7 +440,7 @@ class AppFunc():
                 fileExt.append(local_pub_path.split('.')[-1])
         fileExt = fileExt[0]
         # start import
-        log, result = startImport.start_import(model, fileInfo=fileInfo, ext=fileExt)
+        log, result = startImport.start_import(model, fileInfo=fileInfo, ext=fileExt, p4Model=self.p4Model)
         if result:
             if isinstance(result, Iterable):
                 for res in result:
@@ -578,7 +579,11 @@ class AppFunc():
                 before_submit_info['comment_log'] = comment_log
                 before_submit_info['dst_files'] = dst_files
                 self.initWindow(default=before_submit_info)
-                tips = QtWidgets.QMessageBox.information(self.view, "Tips", "Complete Submit...", QtWidgets.QMessageBox.Ok)
+                for dst_file in dst_files:
+                    import getpass
+                    logger = ToolsLogger.get_logger(getpass.getuser(), save_log=True)
+                    logger.info("submit file: ->" + str(dst_file))
+                QtWidgets.QMessageBox.information(self.view, "Tips", "Complete Submit...", QtWidgets.QMessageBox.Ok)
 
             else:
                 app_utils.add_log(log, error=True)

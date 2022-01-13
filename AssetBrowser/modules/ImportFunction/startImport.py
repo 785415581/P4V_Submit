@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os
+import sys
 import imp
 import importlib
 import getpass
@@ -61,12 +62,12 @@ def read_config():
 
 
 def get_env():
-    module_path = os.__file__
-    if "Engine\\Binaries\\ThirdParty" in module_path:
+    dcc = os.path.basename(sys.executable)
+    if dcc == "UnrealEditor.exe":
         return "Unreal"
-    if "Maya" in module_path:
+    elif dcc == "maya.exe":
         return "Maya"
-    if "HOUDIN" in module_path:
+    elif dcc == "houdini.exe":
         return "Houdini"
     return None
 
