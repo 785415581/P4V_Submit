@@ -15,7 +15,8 @@
       "files": {
         "SM_XXX.ma": "|master|Mesh",
         "SM_XXX.fbx": "|master|Mesh"
-      },
+      }
+    },
     "Collision": {
       "function": "mayaDefaultExport.default_export",
       "files": {
