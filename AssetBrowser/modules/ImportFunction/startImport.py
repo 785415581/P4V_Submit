@@ -62,12 +62,12 @@ def read_config():
 
 
 def get_env():
-    dcc = os.path.basename(sys.executable)
-    if dcc == "UnrealEditor.exe":
+    module_path = os.__file__
+    if "Engine\\Binaries\\ThirdParty" in module_path:
         return "Unreal"
-    elif dcc == "maya.exe":
+    if "Maya" in module_path:
         return "Maya"
-    elif dcc == "houdini.exe":
+    if "HOUDIN" in module_path:
         return "Houdini"
     return None
 
