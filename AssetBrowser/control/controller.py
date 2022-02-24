@@ -87,7 +87,7 @@ class Controller(QtCore.QObject):
 
     def initSignal(self):
         self.view.workTree.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-
+        self.view.workTree.customContextMenuRequested.connect(self.appFunction.showRightTreeHandle)
 
         self.view.assets_file_list.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.view.passwordBtn.pressed.connect(self.appFunction.showPassword)

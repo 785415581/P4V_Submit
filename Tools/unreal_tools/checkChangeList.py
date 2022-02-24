@@ -210,7 +210,7 @@ class CheckChange(QtWidgets.QWidget):
     def get_p4_files(self):
         self.initP4()
         change_list = self.lineEdit.text()
-        cmd = 'p4 files //ProjectX/Dev_Env/... @{changelist},{changelist}'.format(changelist=int(change_list))
+        cmd = 'p4 files //ProjectX/dev_art/... @{changelist},{changelist}'.format(changelist=int(change_list))
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         res_files, err = process.communicate()
         for res in res_files.decode('utf-8', "ignore").split('\r\n'):

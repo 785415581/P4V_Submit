@@ -88,18 +88,21 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
         p4Model = self.kwargs.get('p4Model')
         changeList = int(self.lineEdit.text())
         fileLists = p4Model.getFilesFromChangeList(changeList)
+        if fileLists:
+            self.itemListWidget.clear()
         for fil in fileLists:
-            fileInfo = {}
-            p4Model.syncFile(fil)
-            localFile = fil.replace('//Assets/main', "D:/Dev")
-            labels = p4Model.getFileLabels(fil)
-            fileInfo['localPath'] = localFile
-            fileInfo['labels'] = labels
-            item = QtWidgets.QListWidgetItem()
-            item.setText(os.path.basename(localFile))
-            item.setData(QtCore.Qt.UserRole, fileInfo)
-            item.setCheckState(QtCore.Qt.Checked)
-            self.itemListWidget.addItem(item)
+            if fil.endswith(".fbx"):
+                fileInfo = {}
+                p4Model.syncFile(fil)
+                localFile = fil.replace('//Assets/main', "D:/Dev/Assets")
+                labels = p4Model.getFileLabels(fil)
+                fileInfo['localPath'] = localFile
+                fileInfo['labels'] = labels
+                item = QtWidgets.QListWidgetItem()
+                item.setText(os.path.basename(localFile))
+                item.setData(QtCore.Qt.UserRole, fileInfo)
+                item.setCheckState(QtCore.Qt.Checked)
+                self.itemListWidget.addItem(item)
 
     def setDisplayLabel(self, item):
         self.__clearLabel()
@@ -215,7 +218,6 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             self.feedbackTag(self.p4Model, labels, data)
         self.feedbackConfigData()
 
-
     def feedbackConfigData(self):
 
         try:
@@ -226,6 +228,8 @@ class AddLabels(QtWidgets.QDialog, DialogAddLabel_UI.Ui_Dialog):
             traceback.print_exc()
 
     def feedbackTag(self, p4Model, labels, data):
+        if not p4Model:
+            p4Model = P4Client()
         old_labels = p4Model.getFileLabels(data.get("localPath"))
         for label in old_labels:
             p4Model.changeLabelOwner(label, p4Model.user)

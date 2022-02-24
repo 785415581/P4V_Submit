@@ -27,6 +27,8 @@ def down_to_ws(source_path, dst_path, have_rev, p4model):
 
 
 def copy_to_ws(source_path, dst_path):
+    if source_path == dst_path:
+        return 
     if not os.path.exists(os.path.dirname(dst_path)):
         os.makedirs(os.path.dirname(dst_path))
     if os.path.isdir(source_path):

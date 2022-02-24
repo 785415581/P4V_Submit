@@ -341,6 +341,10 @@ class P4Client(object):
         cmd = 'p4 tag -d -l {label} {fileName}#1'.format(label=label, fileName=p4File)
         p = subprocess.check_call(cmd, shell=True)
 
+    def deleteFileFromP4(self, p4file):
+        print(p4File)
+
+
     def cleanLabelView(self, label):
         import tempfile
         workspace_setting = os.path.join(tempfile.gettempdir(), 'workspace_setting.txt')

@@ -185,10 +185,24 @@ class AppFunc():
         self.view.userLn.setCurrentIndex(0)
         self.view.passwordLn.setText(first_password)
 
+    def showRightTreeHandle(self, pos):
+        contextMenuTree = QtWidgets.QMenu()
+        current_item = self.view.workTree.itemAt(pos)
+        actionNew = QtWidgets.QAction('delete p4 file')
+        contextMenuTree.addAction(actionNew)
+        actionNew.triggered.connect(partial(self.deleteFile, current_item))
+        contextMenuTree.exec_(QtGui.QCursor().pos())
+
+    def deleteFile(self, item):
+        if item:
+            print(item)
+            print(item.source_path)
+            # print(item.filePath)
+            # print(item.half_path)
+            # print(item.have_rev)
+
     def showWorkTreeHandle(self, pos):
         contextMenuTree = QtWidgets.QMenu()
-        # actionC.setDisabled(True)
-        print("run")
         current_item = self.view.listWidget.itemAt(pos)
         actionNew = None
         actionDel = None

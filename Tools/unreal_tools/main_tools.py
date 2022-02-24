@@ -12,13 +12,14 @@ if package not in sys.path:
     sys.path.insert(0, package)
 
 from PySide2 import QtWidgets
-from PySide2 import QtCore
 from PySide2 import QtGui
 from Tools.unreal_tools import ConfigTools
 from referenceWidget.studiolibraryWidget.item import Item
 from referenceWidget.studiolibraryWidget.itemswidget import ItemsWidget
 import imp
 imp.reload(ConfigTools)
+from Tools.unreal_tools import checkChangeList
+imp.reload(checkChangeList)
 
 
 class View(QtWidgets.QMainWindow):
@@ -56,6 +57,11 @@ class View(QtWidgets.QMainWindow):
             self._itemsWidget.addItem(item)
 
     def showTool(self, item):
+        import imp
+        imp.reload(ConfigTools)
+        self._itemsWidget.clear()
+        self.loadPreview()
+
         ToolInfo = item.itemData()
         if ToolInfo.get("type") == "window":
             function = ToolInfo.get("function")
@@ -68,18 +74,6 @@ class View(QtWidgets.QMainWindow):
         elif ToolInfo.get("type") == "run":
             function = ToolInfo.get("function")
             function()
-
-    def getLibraryPreview(self, LibraryPath):
-        res = dict()
-        for folder in os.listdir(LibraryPath):
-            textureFolder = os.path.join(LibraryPath, folder)
-            if os.path.isdir(textureFolder):
-                for files in os.listdir(textureFolder):
-                    previewRegx = '\w+_Preview.png'
-                    previewName = re.findall(previewRegx, files)
-                    if previewName:
-                        res[folder] = os.path.join(textureFolder, previewName[0]).replace('\\', '/')
-        return res
 
 
 if __name__ == '__main__':
