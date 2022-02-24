@@ -175,17 +175,24 @@ class MayaExport():
 
             if skin:
                 jntList = pm.skinCluster(skin, q=1, wi=1)
-                if not jntList:
-                    self.log = "Failed {0} to find jnt"
-                    self.result = False
-                    return
-                # pm.parent(jntList[0], w=1)
+                jnt = jntList[0]
+                while True:
+                    p1 = pm.listRelatives(jnt, parent=True, type='joint')
+                    if p1:
+                        jnt = p1[0]
+                    else:
+                        p1 = jnt
+                        break
+                pm.parent(jnt, w=1)
+
+
                 break
 
         if not jntList:
             self.log = "No joint found"
             self.result = False
             return
+
         start = cmds.playbackOptions(q=True, min=True)
         end = cmds.playbackOptions(q=True, max=True)
         anils = [1, 'true', start, end]
@@ -201,7 +208,7 @@ class MayaExport():
 
         pm.select(clear=True)
         # pm.select(export_level)
-        pm.select(jntList, add=True)
+        pm.select(jnt, add=True)
 
         cmds.file(export_file, force=True, options='v=0', type=file_type, pr=True, es=True)
         pm.select(clear=True)
