@@ -183,13 +183,14 @@ class CheckChange(QtWidgets.QWidget):
         self._clearTableWidget()
         path = self.changePathEdit.text()
         if 'ProjectX/Content' in path:
-            local_suf = path.split('ProjectX/Content')
+            local_suf = path.split('ProjectX/Content')[-1]
         elif "/Content" in path:
-            local_suf = path.split('/Content')
+            local_suf = path.split('/Content')[-1]
         else:
-            local_suf = (path, "")
+            local_suf = path
         if local_suf:
-            local_suf = "/Game" + local_suf[-1].replace(".uasset", "")
+            local_suf = "/Game" + local_suf.replace(".uasset", "")
+            local_suf = local_suf.replace("\\", '/')
             actorName, className = unreal.XPTAEToolsBPLibrary.get_actor_name_from_partition_actor_asset_path_name(local_suf)
             rowCount = self.tableWidget.rowCount()
             self.tableWidget.insertRow(rowCount)
@@ -214,7 +215,11 @@ class CheckChange(QtWidgets.QWidget):
     def get_p4_files(self):
         self.initP4()
         change_list = self.lineEdit.text()
-        cmd = 'p4 files //ProjectX/dev_art/... @{changelist},{changelist}'.format(changelist=int(change_list))
+        streamRoot_cmd = "p4 -F %clientStream% -ztag info"
+        process = subprocess.Popen(streamRoot_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        streamRoot, err = process.communicate()
+        streamRoot = streamRoot.decode('utf-8', "ignore").split('\r\n')[0]
+        cmd = 'p4 files {streamRoot}/ @{changelist},{changelist}'.format(streamRoot=streamRoot, changelist=int(change_list))
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         res_files, err = process.communicate()
         for res in res_files.decode('utf-8', "ignore").split('\r\n'):
@@ -224,7 +229,7 @@ class CheckChange(QtWidgets.QWidget):
                 suf = res.split('.uasset')[0]
                 action = res.split('.uasset')[-1]
                 action = re.findall(r'#\d+ - (.*) change', action)
-                local_suf = suf.split('ProjectX/Content')
+                local_suf = suf.split('/Content')
                 if local_suf:
                     local_suf = "/Game" + local_suf[-1]
                     self._file_list[local_suf] = (local_suf, action[0])
@@ -235,7 +240,11 @@ class CheckChange(QtWidgets.QWidget):
         self._clearTableWidget()
         for key, value in res.items():
             actorName, className = unreal.XPTAEToolsBPLibrary.get_actor_name_from_partition_actor_asset_path_name(key)
-            path = self.project_dir + value[0].replace('/Game', '/Content') + '.uasset'
+            clientRoot_cmd = "p4 -F %clientRoot% -ztag info"
+            process = subprocess.Popen(clientRoot_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            clientRoot, err = process.communicate()
+            clientRoot = clientRoot.decode('utf-8', "ignore").split('\r\n')[0]
+            path = clientRoot + value[0].replace('/Game', '/Content') + '.uasset'
             rowCount = self.tableWidget.rowCount()
             self.tableWidget.insertRow(rowCount)
             if key:
@@ -257,6 +266,11 @@ class CheckChange(QtWidgets.QWidget):
 
     def initP4(self):
         contentP4Info = unreal.XPTAEToolsBPLibrary.get_p4_info()
+        # contentP4Info = {
+        #     "Server": "10.0.201.12:1666",
+        #     "UserName": "qinjiaxin",
+        #     "WorkSpace": "qinjiaxin_01YXHY1235_Cyberpunk"
+        # }
         os.popen('p4 set P4PORT={}'.format(contentP4Info.get('Server')))
         os.popen('p4 set P4USER={}'.format(contentP4Info.get('UserName')))
         os.popen('p4 set P4CLIENT={}'.format(contentP4Info.get('WorkSpace')))
