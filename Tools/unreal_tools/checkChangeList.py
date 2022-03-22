@@ -182,8 +182,12 @@ class CheckChange(QtWidgets.QWidget):
     def getActorFromPath(self):
         self._clearTableWidget()
         path = self.changePathEdit.text()
-        local_suf = path.split('ProjectX/Content')
-
+        if 'ProjectX/Content' in path:
+            local_suf = path.split('ProjectX/Content')
+        elif "/Content" in path:
+            local_suf = path.split('/Content')
+        else:
+            local_suf = (path, "")
         if local_suf:
             local_suf = "/Game" + local_suf[-1].replace(".uasset", "")
             actorName, className = unreal.XPTAEToolsBPLibrary.get_actor_name_from_partition_actor_asset_path_name(local_suf)
