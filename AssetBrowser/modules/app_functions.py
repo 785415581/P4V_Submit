@@ -154,8 +154,6 @@ class AppFunc():
             return
 
         self.view.assetNameComboBox.addItems(list(self.data_dict[currentType].keys()))
-
-
         self.setTreeWidget()
 
     def changeAsset(self, index):
@@ -188,18 +186,19 @@ class AppFunc():
     def showRightTreeHandle(self, pos):
         contextMenuTree = QtWidgets.QMenu()
         current_item = self.view.workTree.itemAt(pos)
-        actionNew = QtWidgets.QAction('delete p4 file')
+        actionNew = QtWidgets.QAction('Get Latest')
         contextMenuTree.addAction(actionNew)
-        actionNew.triggered.connect(partial(self.deleteFile, current_item))
+        actionNew.triggered.connect(self.getLatestFile)
         contextMenuTree.exec_(QtGui.QCursor().pos())
 
-    def deleteFile(self, item):
-        if item:
-            print(item)
-            print(item.source_path)
-            # print(item.filePath)
-            # print(item.half_path)
-            # print(item.have_rev)
+    def getLatestFile(self):
+        items = self.view.workTree.selectedItems()
+
+        if items:
+            for item in items:
+                self.p4Model.syncFile(item.source_path, "head")
+
+                app_utils.add_log(item.source_path, error=False)
 
     def showWorkTreeHandle(self, pos):
         contextMenuTree = QtWidgets.QMenu()
@@ -281,8 +280,6 @@ class AppFunc():
             else:
                 item.parentItem.takeChild(self.view.listWidget.currentIndex().row())
 
-
-
     def setTreeWidget(self):
         self.view.workTree.clear()
         current_type, current_asset, current_step = self.getAssetStep()
@@ -325,7 +322,7 @@ class AppFunc():
                 else:
                     parent = self.view.workTree
 
-                if (current_path not in level_items):
+                if current_path not in level_items:
                     item = baseWidget.PathTreeItem(current_path, source_model="server", parent=parent)
                     level_items[current_path] = item
                     levels[matrix_index] = item
