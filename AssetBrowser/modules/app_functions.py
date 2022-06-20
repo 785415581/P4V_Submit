@@ -198,6 +198,7 @@ class AppFunc():
             for item in items:
                 self.p4Model.syncFile(item.source_path, "head")
 
+
                 app_utils.add_log(item.source_path, error=False)
 
     def showWorkTreeHandle(self, pos):
