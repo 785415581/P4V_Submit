@@ -197,9 +197,17 @@ class AppFunc():
         if items:
             for item in items:
                 self.p4Model.syncFile(item.source_path, "head")
-
-
-                app_utils.add_log(item.source_path, error=False)
+                labelWidget = self.view.workTree.itemWidget(item, 2)
+                serverVersion = labelWidget.text()
+                if item.source_path in self.p4_file_infos:
+                    self.p4Model.syncFile(item.source_path, version=str(serverVersion))
+                    self.p4_file_infos[item.source_path]["haveRev"] = str(serverVersion)
+                    item.have_rev = str(serverVersion)
+                label = QtWidgets.QLabel(serverVersion)
+                label.setAlignment(QtCore.Qt.AlignCenter)
+                self.view.workTree.setItemWidget(item, 1, label)
+                msg = str(item.source_path) + "   get latest."
+                app_utils.add_log(msg, error=False)
 
     def showWorkTreeHandle(self, pos):
         contextMenuTree = QtWidgets.QMenu()
