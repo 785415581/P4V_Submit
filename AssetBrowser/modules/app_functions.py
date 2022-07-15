@@ -153,7 +153,13 @@ class AppFunc():
         if currentType not in self.data_dict:
             return
 
-        self.view.assetNameComboBox.addItems(list(self.data_dict[currentType].keys()))
+        assetsItems = list(self.data_dict[currentType].keys())
+        for item in assetsItems:
+            if "Hero/History" in item:
+                continue
+            self.view.assetNameComboBox.addItem(item)
+
+        # self.view.assetNameComboBox.addItems(list(self.data_dict[currentType].keys()))
         self.setTreeWidget()
 
     def changeAsset(self, index):
