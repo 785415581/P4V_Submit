@@ -46,9 +46,10 @@ def send_msg(**kwargs):
     for file in dst_files:
         fils = fils + '\n' + os.path.basename(file)
 
-    markdown_msg = "# {assetStep}艺术家 {userName} 提交了资产 <font color=#1766c4>{assetName}</font>\n" \
+    markdown_msg = "# {userName} 提交了资产 <font color=#1766c4>{assetName}</font>\n" \
                    ">文件名称 : <font color=\"comment\">{fileName}</font>\n" \
                    ">提交人   : <font color=\"comment\">{userName}</font>\n" \
+                   ">提交环节 : <font color=\"comment\">{assetStep}</font>\n" \
                    ">提交时间 : <font color=\"comment\">{time}</font>\n" \
                    ">提交描述 : <font color=#ff3c20>{des}</font>\n" \
                    ">下游人员 : <font color=#ff3c20>{noticeMember}</font>\n" \
