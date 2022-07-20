@@ -15,9 +15,15 @@ from AssetBrowser.utils.log import ToolsLogger
 wx_bot = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=d828bfd1-3f07-498e-aaed-e3d2bcf3a94e"
 now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
+cwx_user = {"Chengyanfeng": "陈岩峰", "Duyunlong": "杜云龙", "Liuzhilei": "刘志磊", "Lixin": "李鑫", "Lvyan": "吕妍",
+            "Minjie": "闵杰", "Peiyangyang": "裴阳阳", "Shenchuan": "申川", "Tengzhenyi": "滕哥", "Wangyuanhao": "王元昊",
+            "Xuezherong": "薛哲荣", "Yanyubin": "严育斌"}
+
 
 def send_msg(**kwargs):
     notice = kwargs.get('notice', '')
+    if notice == "(无选择)":
+        notice = ""
     des = kwargs.get('log', '')
     taskId = kwargs.get('taskID', '')
     taskId = taskId.replace('ID', '')
@@ -33,6 +39,9 @@ def send_msg(**kwargs):
     assetName = kwargs.get('assetName', '')
     assetStep = kwargs.get('assetStep', '')
     p4model = kwargs.get("p4model", "")
+    userName = cwx_user.get(p4model.user.capitalize(), "")
+    if not userName:
+        userName = p4model.user.capitalize()
     fils = ''
     for file in dst_files:
         fils = fils + '\n' + os.path.basename(file)
@@ -47,7 +56,7 @@ def send_msg(**kwargs):
                    ">任务状态 ：{status}".format(
                             assetName=assetName,
                             assetStep=assetStep,
-                            userName=p4model.user.capitalize(),
+                            userName=userName,
                             fileName=fils,
                             time=now_time,
                             des=des,
