@@ -17,7 +17,7 @@ now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 cwx_user = {"Chengyanfeng": "陈岩峰", "Duyunlong": "杜云龙", "Liuzhilei": "刘志磊", "Lixin": "李鑫", "Lvyan": "吕妍",
             "Minjie": "闵杰", "Peiyangyang": "裴阳阳", "Shenchuan": "申川", "Tengzhenyi": "滕哥", "Wangyuanhao": "王元昊",
-            "Xuezherong": "薛哲荣", "Yanyubin": "严育斌"}
+            "Xuezherong": "薛哲荣", "Yanyubin": "严育斌", "Zhangxinlong": "张鑫龙"}
 
 
 def send_msg(**kwargs):
