@@ -1,6 +1,6 @@
 
 
-VERSION = "v1.01.301"
+VERSION = "v1.2.0"
 cmd_out_decode = "utf-8"
 
 DEBUG = False
