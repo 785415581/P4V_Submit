@@ -426,6 +426,41 @@ class AppFunc():
         background-image: url(R:/ProjectX/Scripts/Python/tools/publish/AssetBrowser/resources/icons/no_display_password.png);}""")
         self.view.passwordLn.setEchoMode(QtWidgets.QLineEdit.Password)
 
+    def showParent(self, item):
+        if item:
+            parentItem = item.parent()
+            if parentItem:
+                parentItem.setHidden(False)
+                self.showParent(parentItem)
+
+    def showSon(self, item):
+        itemChildCount = item.childCount()
+        for i in range(itemChildCount):
+            item.child(i).setHidden(False)
+            self.showSon(item.child(i))
+
+    def searchItem(self, item, text):
+        if item:
+            for i in range(item.childCount()):
+                childItem = item.child(i)
+                if childItem:
+                    if text in childItem.text(0):
+                        childItem.setHidden(False)
+                        childItem.setExpanded(True)
+                        self.showSon(childItem)
+                        self.showParent(childItem)
+                    else:
+                        childItem.setHidden(True)
+                        self.searchItem(childItem, text)
+
+    def searchWorkTreeItem(self, input):
+        for i in range(self.view.workTree.topLevelItemCount()):
+            if input in self.view.workTree.topLevelItem(i).text(0):
+                self.view.workTree.topLevelItem(i).setHidden(False)
+            else:
+                self.view.workTree.topLevelItem(i).setHidden(True)
+            self.searchItem(self.view.workTree.topLevelItem(i), input)
+
     def btnImportClicked(self, model):
         print("{0} btn pressed".format(model))
         from collections import Iterable

@@ -93,6 +93,8 @@ class Controller(QtCore.QObject):
         self.view.passwordBtn.pressed.connect(self.appFunction.showPassword)
         self.view.passwordBtn.released.connect(self.appFunction.hidePassword)
 
+        self.view.searchFile.textChanged.connect(self.appFunction.searchWorkTreeItem)
+
         self.view.listWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.view.listWidget.customContextMenuRequested.connect(self.appFunction.showWorkTreeHandle)
 
