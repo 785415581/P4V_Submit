@@ -455,7 +455,7 @@ class AppFunc():
 
     def searchWorkTreeItem(self, input):
         for i in range(self.view.workTree.topLevelItemCount()):
-            if input in self.view.workTree.topLevelItem(i).text(0):
+            if input.lower() in self.view.workTree.topLevelItem(i).text(0).lower():
                 self.view.workTree.topLevelItem(i).setHidden(False)
             else:
                 self.view.workTree.topLevelItem(i).setHidden(True)
