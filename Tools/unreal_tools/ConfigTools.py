@@ -8,21 +8,28 @@ import os
 import imp
 from Tools.unreal_tools import addActor
 from Tools.unreal_tools import checkChangeList
+from Tools.unreal_tools import GetActorBounding
 from Tools.unreal_tools import utils
 imp.reload(addActor)
 imp.reload(checkChangeList)
 
 Tools = {
-    "AddActor": {
-        "type": "window",
-        "name": "Add P4",
-        "function": addActor.AddActor,
-        "icon": os.path.join(os.path.dirname(__file__), "icons/getActor.png")
-    },
+    # "AddActor": {
+    #     "type": "window",
+    #     "name": "Add P4",
+    #     "function": addActor.AddActor,
+    #     "icon": os.path.join(os.path.dirname(__file__), "icons/getActor.png")
+    # },
     "CheckChange": {
         "type": "window",
         "name": "Get Actor",
         "function": checkChangeList.CheckChange,
+        "icon": os.path.join(os.path.dirname(__file__), "icons/target.png")
+    },
+    "ActorMainWindow": {
+        "type": "window",
+        "name": "Actor bounding box size",
+        "function": GetActorBounding.ActorMainWindow,
         "icon": os.path.join(os.path.dirname(__file__), "icons/target.png")
     },
     "Help": {
