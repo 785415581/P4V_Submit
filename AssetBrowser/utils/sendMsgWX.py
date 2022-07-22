@@ -39,7 +39,7 @@ def send_msg(**kwargs):
     assetName = kwargs.get('assetName', '')
     assetStep = kwargs.get('assetStep', '')
     p4model = kwargs.get("p4model", "")
-    userName = cwx_user.get(p4model.user.capitalize(), "")
+    userName = cwx_user.get(p4model.user.capitalize().rstrip(), "")
     if not userName:
         userName = p4model.user.capitalize()
     fils = ''
