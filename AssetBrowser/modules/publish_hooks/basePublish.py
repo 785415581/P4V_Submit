@@ -4,6 +4,7 @@ import getpass
 from AssetBrowser.utils import sendMsgWX
 from AssetBrowser.modules.global_setting import DEBUG
 
+
 class BasePublish(object):
 
     def __init__(self):
@@ -38,4 +39,10 @@ class BasePublish(object):
         if not DEBUG:
             if kwargs.get('isNotice', ''):
                 sendMsgWX.send_msg(**kwargs)
-                sendMsgWX.updateTAPDTaskStatus(**kwargs)
+                # sendMsgWX.updateTAPDTaskStatus(**kwargs)
+
+
+class AnimationPublish(BasePublish):
+
+    def submit(self):
+        pass
