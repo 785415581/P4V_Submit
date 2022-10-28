@@ -40,6 +40,10 @@ def createSubGroup(*args):
     createHierarchy.createHierarchy(asset=True)
     createSubGroup.createSubGroups()
 
+def BatchExport(*args):
+    import Tools.maya.BatchExporter as BE
+    BE.CreationWindow()
+
 
 def addJGMenu():
 
@@ -49,5 +53,6 @@ def addJGMenu():
     cmds.menuItem(parent=showMyMenu, label='Publish', command=open_window)
     cmds.menuItem(parent=showMyMenu, label='CreateHierarchy', command=createLevel)
     cmds.menuItem(parent=showMyMenu, label='CreateSubGroup', command=createSubGroup)
+    cmds.menuItem(parent=showMyMenu, label='BatchExport', command=createSubGroup)
 
 cmds.evalDeferred(addJGMenu)
