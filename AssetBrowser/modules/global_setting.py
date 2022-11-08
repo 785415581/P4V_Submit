@@ -6,10 +6,10 @@ cmd_out_decode = "utf-8"
 DEBUG = False
 
 UITYPE="UI"
-ASSETTYPE=["Animal", "Building", "Character", "Effect","Environment", "Prop", UITYPE, "Weapon"]
+ASSETTYPE=["Animal", "Building", "Character", "Effect", "Environment", "MechanicalBeast", "Prop", UITYPE, "Weapon"]
 ANISTEP = "Animation"
 TEXTURESTEP = "Texture"
-STEP = [ANISTEP, "Mesh", "StaticMesh","Collision", "Rig", TEXTURESTEP, "PCG", "Concept", "Icon"]
+STEP = [ANISTEP, "Mesh", "StaticMesh", "Collision", "Rig", TEXTURESTEP, "PCG", "Concept", "Icon"]
 ANIMODEL = ["Idle", "Walk", "Run"]
 
 MAYALEVEL = {
