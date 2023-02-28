@@ -14,13 +14,21 @@ class MayaExport():
         self.log = ""
         self.result = ""
         self.publish_step = step
-
-        #self.scene_check(step)
+        self.cleanSceneUnknownNode()
+        # self.scene_check()
 
     def scene_check(self):
         self.check_hierarchy()
         self.log = u"Success:场景检查通过"
         self.result = True
+
+    def cleanSceneUnknownNode(self):
+        unknownNodes = cmds.ls(type="unknown")
+        unknownNodes += cmds.ls(type="unknownDag")
+        for item in unknownNodes:
+            if cmds.objExists(item):
+                cmds.lockNode(item, lock=False)
+                cmds.delete(item)
 
     def unit_check(self):
         liner = cmds.currentUnit(query=True, linear=True)
