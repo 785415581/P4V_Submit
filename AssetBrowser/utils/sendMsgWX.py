@@ -77,17 +77,6 @@ def send_msg(**kwargs):
         }
     )
 
-    data_text = json.dumps(
-        {
-            "msgtype": "text",
-            "text": {
-                "content": "",
-                # "mentioned_list": ["wangqing", "@all"],
-                # "mentioned_mobile_list": mentioned_list
-            }
-        }
-    )
-
     requests.packages.urllib3.disable_warnings()
     proxies = {"http": None, "https": None}
     try:
@@ -96,6 +85,26 @@ def send_msg(**kwargs):
         error = traceback.print_exc()
         ToolsLogger.get_logger(error, save_log=True)
     # requests.post(wx_bot, data_text, auth=('Content-Type', 'application/json'), verify=False)
+
+    # -----feishu notice
+    webhook = "https://open.feishu.cn/open-apis/bot/v2/hook/7d7e48e6-420e-498c-b63e-5284c8e1094e"
+
+    payload_message = {
+        "msg_type": "post",
+        "content": {
+            "text": markdown_msg
+        }
+    }
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    requests.packages.urllib3.disable_warnings()
+    proxies = {'http': None, 'https': None}
+    response = requests.request("POST", webhook, headers=headers, data=json.dumps(payload_message), verify=False, proxies=proxies)
+    print(response)
+
+
+
 
 
 def updateTAPDTaskStatus(**kwargs):
