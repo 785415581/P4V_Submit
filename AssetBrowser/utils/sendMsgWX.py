@@ -78,13 +78,13 @@ def send_msg(**kwargs):
         }
     )
 
-    requests.packages.urllib3.disable_warnings()
-    proxies = {"http": None, "https": None}
-    try:
-        requests.post(wx_bot, data_markdown, auth=('Content-Type', 'application/json'), verify=False, proxies=proxies)
-    except ConnectionError as e:
-        error = traceback.print_exc()
-        ToolsLogger.get_logger(error, save_log=True)
+    # requests.packages.urllib3.disable_warnings()
+    # proxies = {"http": None, "https": None}
+    # try:
+    #     requests.post(wx_bot, data_markdown, auth=('Content-Type', 'application/json'), verify=False, proxies=proxies)
+    # except ConnectionError as e:
+    #     error = traceback.print_exc()
+    #     ToolsLogger.get_logger(error, save_log=True)
     # requests.post(wx_bot, data_text, auth=('Content-Type', 'application/json'), verify=False)
 
     # -----feishu notice
