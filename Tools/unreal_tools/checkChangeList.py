@@ -191,11 +191,11 @@ class CheckChange(QtWidgets.QWidget):
         if local_suf:
             local_suf = "/Game" + local_suf.replace(".uasset", "")
             local_suf = local_suf.replace("\\", '/')
-            actorName, className = unreal.XPTAEToolsBPLibrary.get_actor_name_from_partition_actor_asset_path_name(local_suf)
-            rowCount = self.tableWidget.rowCount()
-            self.tableWidget.insertRow(rowCount)
-            self.tableWidget.setItem(rowCount, 0, QtWidgets.QTableWidgetItem(str(actorName)))
-            self.tableWidget.setItem(rowCount, 2, QtWidgets.QTableWidgetItem(local_suf))
+            # actorName, className = unreal.XPTAEToolsBPLibrary.get_actor_name_from_partition_actor_asset_path_name(local_suf)
+            # rowCount = self.tableWidget.rowCount()
+            # self.tableWidget.insertRow(rowCount)
+            # self.tableWidget.setItem(rowCount, 0, QtWidgets.QTableWidgetItem(str(actorName)))
+            # self.tableWidget.setItem(rowCount, 2, QtWidgets.QTableWidgetItem(local_suf))
 
     def _clearTableWidget(self):
         count = self.tableWidget.rowCount()
@@ -210,7 +210,7 @@ class CheckChange(QtWidgets.QWidget):
                 label = actor.get_actor_label()
                 if label == index.data():
                     unreal.EditorLevelLibrary.set_selected_level_actors([actor])
-                    unreal.XPTAEToolsBPLibrary.execute_console_command(command)
+                    # unreal.XPTAEToolsBPLibrary.execute_console_command(command)
 
     def get_p4_files(self):
         self.initP4()
@@ -238,23 +238,23 @@ class CheckChange(QtWidgets.QWidget):
 
     def get_res(self, res):
         self._clearTableWidget()
-        for key, value in res.items():
-            actorName, className = unreal.XPTAEToolsBPLibrary.get_actor_name_from_partition_actor_asset_path_name(key)
-            clientRoot_cmd = "p4 -F %clientRoot% -ztag info"
-            process = subprocess.Popen(clientRoot_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            clientRoot, err = process.communicate()
-            clientRoot = clientRoot.decode('utf-8', "ignore").split('\r\n')[0]
-            path = clientRoot + value[0].replace('/Game', '/Content') + '.uasset'
-            rowCount = self.tableWidget.rowCount()
-            self.tableWidget.insertRow(rowCount)
-            if key:
-                self.tableWidget.setItem(rowCount, 0, QtWidgets.QTableWidgetItem(str(actorName)))
-                self.tableWidget.setItem(rowCount, 1, QtWidgets.QTableWidgetItem(value[1]))
-                self.tableWidget.setItem(rowCount, 2, QtWidgets.QTableWidgetItem(path))
-            else:
-                self.tableWidget.setItem(rowCount, 0, QtWidgets.QTableWidgetItem(u"未查询出Actor(或已删除)"))
-                self.tableWidget.setItem(rowCount, 1, QtWidgets.QTableWidgetItem(value[1]))
-                self.tableWidget.setItem(rowCount, 2, QtWidgets.QTableWidgetItem(path))
+        # for key, value in res.items():
+        #     actorName, className = unreal.XPTAEToolsBPLibrary.get_actor_name_from_partition_actor_asset_path_name(key)
+        #     clientRoot_cmd = "p4 -F %clientRoot% -ztag info"
+        #     process = subprocess.Popen(clientRoot_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        #     clientRoot, err = process.communicate()
+        #     clientRoot = clientRoot.decode('utf-8', "ignore").split('\r\n')[0]
+        #     path = clientRoot + value[0].replace('/Game', '/Content') + '.uasset'
+        #     rowCount = self.tableWidget.rowCount()
+        #     self.tableWidget.insertRow(rowCount)
+        #     if key:
+        #         self.tableWidget.setItem(rowCount, 0, QtWidgets.QTableWidgetItem(str(actorName)))
+        #         self.tableWidget.setItem(rowCount, 1, QtWidgets.QTableWidgetItem(value[1]))
+        #         self.tableWidget.setItem(rowCount, 2, QtWidgets.QTableWidgetItem(path))
+        #     else:
+        #         self.tableWidget.setItem(rowCount, 0, QtWidgets.QTableWidgetItem(u"未查询出Actor(或已删除)"))
+        #         self.tableWidget.setItem(rowCount, 1, QtWidgets.QTableWidgetItem(value[1]))
+        #         self.tableWidget.setItem(rowCount, 2, QtWidgets.QTableWidgetItem(path))
 
     def sortTableByCol(self, col):
         if self.sortUpDown:
@@ -265,15 +265,16 @@ class CheckChange(QtWidgets.QWidget):
             self.sortUpDown = True
 
     def initP4(self):
-        contentP4Info = unreal.XPTAEToolsBPLibrary.get_p4_info()
+        pass
+        # contentP4Info = unreal.XPTAEToolsBPLibrary.get_p4_info()
         # contentP4Info = {
         #     "Server": "10.0.201.12:1666",
         #     "UserName": "qinjiaxin",
         #     "WorkSpace": "qinjiaxin_01YXHY1235_Cyberpunk"
         # }
-        os.popen('p4 set P4PORT={}'.format(contentP4Info.get('Server')))
-        os.popen('p4 set P4USER={}'.format(contentP4Info.get('UserName')))
-        os.popen('p4 set P4CLIENT={}'.format(contentP4Info.get('WorkSpace')))
+        # os.popen('p4 set P4PORT={}'.format(contentP4Info.get('Server')))
+        # os.popen('p4 set P4USER={}'.format(contentP4Info.get('UserName')))
+        # os.popen('p4 set P4CLIENT={}'.format(contentP4Info.get('WorkSpace')))
 
 
 if __name__ == "__main__":
