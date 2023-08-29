@@ -23,7 +23,7 @@ except ImportError:
     pass
 
 # actor_info = unreal.XPTAEToolsBPLibrary.get_select_partition_actor_asset_name()
-p4_info = unreal.XPTAEToolsBPLibrary.get_p4_info()
+# p4_info = unreal.XPTAEToolsBPLibrary.get_p4_info()
 
 
 class AddActor(QtWidgets.QWidget):
@@ -121,8 +121,9 @@ class AddActor(QtWidgets.QWidget):
         palette = QtGui.QPalette()
         palette.setColor(QtGui.QPalette.ButtonText, QtGui.QColor(255, 255, 255))
 
-        self.contentP4Info = dict(p4_info)
+        # self.contentP4Info = dict(p4_info)
         # self.contentActorInfo = dict(actor_info)
+        self.contentP4Info = {}
         self.contentActorInfo = {}
         contentPath = unreal.Paths()
         self.project_dir = contentPath.project_dir()
