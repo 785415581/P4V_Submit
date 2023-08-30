@@ -38,12 +38,12 @@ Tools = {
         "type": "window",
         "name": "get asset",
         "function": GetAsset.MainWindow,
-        "icon": os.path.join(os.path.dirname(__file__), "icons/search.png")
+        "icon": os.path.join(os.path.dirname(__file__), "icons/getActor.png")
     },
 
     "BP_SortAsset": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "BP_SortAsset",
         "args": "/Game/Debug/Utilities/BP_SortAsset.BP_SortAsset",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
@@ -51,7 +51,7 @@ Tools = {
 
     "BP_CheckAsset": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "BP_CheckAsset",
         "args": "/Game/Debug/Utilities/BP_CheckAsset.BP_CheckAsset",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
@@ -59,7 +59,7 @@ Tools = {
 
     "EUW_GetAllTexture": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "EUW_GetAllTexture",
         "args": "/Game/Debug/Utilities/EUW_GetAllTexture.EUW_GetAllTexture",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
@@ -67,7 +67,7 @@ Tools = {
 
     "EUW_GoodsReplace": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "EUW_GoodsReplace",
         "args": "/Game/Debug/Utilities/EUW_GoodsReplace.EUW_GoodsReplace",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
@@ -75,7 +75,7 @@ Tools = {
 
     "EUW_HLODLayerChecker": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "EUW_HLODLayerChecker",
         "args": "/Game/Debug/Utilities/EUW_HLODLayerChecker.EUW_HLODLayerChecker",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
@@ -83,7 +83,7 @@ Tools = {
 
     "EUW_IntegrateInstances": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "EUW_IntegrateInstances",
         "args": "/Game/Debug/Utilities/EUW_IntegrateInstances.EUW_IntegrateInstances",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
@@ -91,7 +91,7 @@ Tools = {
 
     "EUW_LayerMaterialChecker": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "EUW_LayerMaterialChecker",
         "args": "/Game/Debug/Utilities/EUW_LayerMaterialChecker.EUW_LayerMaterialChecker",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
@@ -99,7 +99,7 @@ Tools = {
 
     "EUW_MergeSplineMesh": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "EUW_MergeSplineMesh",
         "args": "/Game/Debug/Utilities/EUW_MergeSplineMesh.EUW_MergeSplineMesh",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
@@ -108,7 +108,7 @@ Tools = {
 
     "EUW_PhysicalMaterialChecker": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "EUW_PhysicalMaterialChecker",
         "args": "/Game/Debug/Utilities/EUW_PhysicalMaterialChecker.EUW_PhysicalMaterialChecker",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
@@ -116,7 +116,7 @@ Tools = {
 
     "EUW_ResaveAssets": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "EUW_ResaveAssets",
         "args": "/Game/Debug/Utilities/EUW_ResaveAssets.EUW_ResaveAssets",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
@@ -124,7 +124,7 @@ Tools = {
 
     "EUW_RuntimeGridChecker": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "EUW_RuntimeGridChecker",
         "args": "/Game/Debug/Utilities/EUW_RuntimeGridChecker.EUW_RuntimeGridChecker",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
@@ -132,7 +132,7 @@ Tools = {
 
     "ExtractBlueprint": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "ExtractBlueprint",
         "args": "/Game/Debug/Utilities/ExtractBlueprint.ExtractBlueprint",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
@@ -140,7 +140,7 @@ Tools = {
 
     "FindBoundingBox": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "FindBoundingBox",
         "args": "/Game/Debug/Utilities/FindBoundingBox.FindBoundingBox",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
@@ -149,7 +149,7 @@ Tools = {
 
     "FindExternalActors": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "FindExternalActors",
         "args": "/Game/Debug/Utilities/FindExternalActors.FindExternalActors",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
@@ -157,7 +157,7 @@ Tools = {
 
     "InstancedFoliageActorChecker": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "InstancedFoliageActorChecker",
         "args": "/Game/Debug/Utilities/InstancedFoliageActorChecker.InstancedFoliageActorChecker",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
@@ -165,7 +165,7 @@ Tools = {
 
     "InstancedFoliageActorManage": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "InstancedFoliageActorManage",
         "args": "/Game/Debug/Utilities/InstancedFoliageActorManage.InstancedFoliageActorManage",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
@@ -173,7 +173,7 @@ Tools = {
 
     "SetMeshPlatformsLOD": {
         "type": "run",
-        "name": "Check Texture",
+        "name": "SetMeshPlatformsLOD",
         "args": "/Game/Debug/Utilities/SetMeshPlatformsLOD.SetMeshPlatformsLOD",
         "function": ExcuteBlueprintWidget.ExcuteUtilityWidget,
         "icon": os.path.join(os.path.dirname(__file__), "icons/CheckTextureAlpha.png")
