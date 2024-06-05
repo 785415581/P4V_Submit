@@ -12,12 +12,20 @@ import requests, json
 import datetime
 import traceback
 from AssetBrowser.utils.log import ToolsLogger
-wx_bot = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=d828bfd1-3f07-498e-aaed-e3d2bcf3a94e"
+
+# wx_bot = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=d828bfd1-3f07-498e-aaed-e3d2bcf3a94e"
+wx_bot = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=0c480dc0-061b-48d3-ae3d-f31a1215c38a"
 now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+cwx_user = {"Chengyanfeng": "陈岩峰", "Duyunlong": "杜云龙", "Liuzhilei": "刘志磊", "Lixin": "李鑫", "Lvyan": "吕妍",
+            "Minjie": "闵杰", "Peiyangyang": "裴阳阳", "Shenchuan": "申川", "Tengzhenyi": "滕哥", "Wangyuanhao": "王元昊",
+            "Xuezherong": "薛哲荣", "Yanyubin": "严育斌", "Zhangxinlong": "张鑫龙"}
 
 
 def send_msg(**kwargs):
     notice = kwargs.get('notice', '')
+    if notice == "(无选择)":
+        notice = ""
     des = kwargs.get('log', '')
     taskId = kwargs.get('taskID', '')
     taskId = taskId.replace('ID', '')
@@ -33,29 +41,32 @@ def send_msg(**kwargs):
     assetName = kwargs.get('assetName', '')
     assetStep = kwargs.get('assetStep', '')
     p4model = kwargs.get("p4model", "")
+    userName = cwx_user.get(p4model.user.capitalize().rstrip(), "")
+    if not userName:
+        userName = p4model.user.capitalize()
     fils = ''
     for file in dst_files:
         fils = fils + '\n' + os.path.basename(file)
 
-    markdown_msg = "# {assetStep}艺术家 {userName} 提交了资产 <font color=#1766c4>{assetName}</font>\n" \
+    markdown_msg = "# {userName} 提交了资产 <font color=#1766c4>{assetName}</font>\n" \
                    ">文件名称 : <font color=\"comment\">{fileName}</font>\n" \
                    ">提交人   : <font color=\"comment\">{userName}</font>\n" \
+                   ">提交环节 : <font color=\"comment\">{assetStep}</font>\n" \
                    ">提交时间 : <font color=\"comment\">{time}</font>\n" \
                    ">提交描述 : <font color=#ff3c20>{des}</font>\n" \
                    ">下游人员 : <font color=#ff3c20>{noticeMember}</font>\n" \
                    ">任务 ID ：[{id}](https://www.tapd.cn/61223525/prong/tasks/view/116122352500{id})\n" \
                    ">任务状态 ：{status}".format(
-                            assetName=assetName,
-                            assetStep=assetStep,
-                            userName=p4model.user.capitalize(),
-                            fileName=fils,
-                            time=now_time,
-                            des=des,
-                            noticeMember=notice,
-                            id=taskId,
-                            status=status
-                        )
-
+        assetName=assetName,
+        assetStep=assetStep,
+        userName=userName,
+        fileName=fils,
+        time=now_time,
+        des=des,
+        noticeMember=notice,
+        id=taskId,
+        status=status
+    )
 
     data_markdown = json.dumps(
         {
@@ -67,25 +78,72 @@ def send_msg(**kwargs):
         }
     )
 
-    data_text = json.dumps(
-        {
-            "msgtype": "text",
-            "text": {
-                "content": "",
-                # "mentioned_list": ["wangqing", "@all"],
-                # "mentioned_mobile_list": mentioned_list
+    # requests.packages.urllib3.disable_warnings()
+    # proxies = {"http": None, "https": None}
+    # try:
+    #     requests.post(wx_bot, data_markdown, auth=('Content-Type', 'application/json'), verify=False, proxies=proxies)
+    # except ConnectionError as e:
+    #     error = traceback.print_exc()
+    #     ToolsLogger.get_logger(error, save_log=True)
+    # requests.post(wx_bot, data_text, auth=('Content-Type', 'application/json'), verify=False)
+
+    # -----feishu notice
+    webhook = "https://open.feishu.cn/open-apis/bot/v2/hook/a3e01f5a-23ed-4c66-8441-4e6c1b80bca4"
+    payload_message = {
+        "msg_type": "post",
+        "content": {
+            "post": {
+                "zh_cn": {
+                    "title": "{userName} 提交了资产{assetName}".format(userName=userName, assetName=assetName),
+                    "content": [
+                        [{
+                            "tag": "text",
+                            "text": "{userName} 提交了资产 {assetName}\n" \
+                                    ">文件名称 : {fileName}\n" \
+                                    ">提交人   : {userName}\n" \
+                                    ">提交环节 : {assetStep}\n" \
+                                    ">提交时间 : {time}\n" \
+                                    ">提交描述 : {des}\n" \
+                                    ">下游人员 : {noticeMember}\n" \
+                                    ">任务 ID ：{id}\n" \
+                                    ">任务状态 ：{status}\n".format(
+                                assetName=assetName,
+                                assetStep=assetStep,
+                                userName=userName,
+                                fileName=fils,
+                                time=now_time,
+                                des=des,
+                                noticeMember=notice,
+                                id=taskId,
+                                status=status
+                            )
+                        },
+                            {
+                                "tag": "a",
+                                "text": "请查看",
+                                "href": "https://www.tapd.cn/61223525/prong/tasks/view/116122352500{id}".format(id=taskId)
+                            }
+
+                        ]
+                    ]
+                }
             }
         }
-    )
-
+    }
+    # payload_message = {
+    #     "msg_type": "post",
+    #     "content": {
+    #         "text": markdown_msg
+    #     }
+    # }
+    headers = {
+        'Content-Type': 'application/json'
+    }
     requests.packages.urllib3.disable_warnings()
-    proxies = {"http": None, "https": None}
-    try:
-        requests.post(wx_bot, data_markdown, auth=('Content-Type', 'application/json'), verify=False, proxies=proxies)
-    except ConnectionError as e:
-        error = traceback.print_exc()
-        ToolsLogger.get_logger(error, save_log=True)
-    # requests.post(wx_bot, data_text, auth=('Content-Type', 'application/json'), verify=False)
+    proxies = {'http': None, 'https': None}
+    response = requests.request("POST", webhook, headers=headers, data=json.dumps(payload_message), verify=False,
+                                proxies=proxies)
+    print(response)
 
 
 def updateTAPDTaskStatus(**kwargs):
@@ -110,7 +168,8 @@ def updateTAPDTaskStatus(**kwargs):
 if __name__ == '__main__':
     # updateTAPDTaskStatus(taskID="1054299", taskStatus=u"进行中")
 
-    send_msg(assetName="TATest", assetStep="Rig", notice='刘雅旭;程缓缓;秦家鑫', taskID='1053143', dst_files=['SM_Football.fbx', 'SM_Football.fbx', 'SM_Football.fbx'])
+    send_msg(assetName="TATest", assetStep="Rig", notice='刘雅旭;程缓缓;秦家鑫', taskID='1053143',
+             dst_files=['SM_Football.fbx', 'SM_Football.fbx', 'SM_Football.fbx'])
     # noticeConfig = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'noticeConfig.json')
     # import base64
     # import pickle

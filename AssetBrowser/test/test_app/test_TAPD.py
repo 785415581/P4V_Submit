@@ -30,6 +30,8 @@ def creatTask():
     print(r.text)
 
 
+
+
 def updateTask():
     payload = {'workspace_id': '61223525', 'id': '1161223525001053143', 'status': 'progressing'}
     r = requests.post("https://api.tapd.cn/tasks", data=payload, auth=(api_user, api_password))
@@ -41,6 +43,7 @@ def addComment():
                'description': '12332455', 'author': '秦家鑫'}
     r = requests.post("https://api.tapd.cn/comments", data=payload, auth=(api_user, api_password))
     print(r.text)
+
 
 
 if __name__ == '__main__':

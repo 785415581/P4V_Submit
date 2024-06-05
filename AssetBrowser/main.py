@@ -351,6 +351,7 @@ if __name__ == '__main__':
         if o.objectName() == "FloatingWindow":
             o.deleteLater()
     FloatingBall = MainWindow()
+    FloatingBall.setWindowIcon(QtGui.QIcon("./resources/icons/X_Art_icon.png"))
     FloatingBall.setObjectName("FloatingWindow")
     FloatingBall.show()
     app.exec_()

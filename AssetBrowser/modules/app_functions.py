@@ -153,9 +153,13 @@ class AppFunc():
         if currentType not in self.data_dict:
             return
 
-        self.view.assetNameComboBox.addItems(list(self.data_dict[currentType].keys()))
+        assetsItems = list(self.data_dict[currentType].keys())
+        for item in assetsItems:
+            if "Hero/History" in item:
+                continue
+            self.view.assetNameComboBox.addItem(item)
 
-
+        # self.view.assetNameComboBox.addItems(list(self.data_dict[currentType].keys()))
         self.setTreeWidget()
 
     def changeAsset(self, index):
@@ -188,18 +192,28 @@ class AppFunc():
     def showRightTreeHandle(self, pos):
         contextMenuTree = QtWidgets.QMenu()
         current_item = self.view.workTree.itemAt(pos)
-        actionNew = QtWidgets.QAction('delete p4 file')
+        actionNew = QtWidgets.QAction('Get Latest')
         contextMenuTree.addAction(actionNew)
-        actionNew.triggered.connect(partial(self.deleteFile, current_item))
+        actionNew.triggered.connect(self.getLatestFile)
         contextMenuTree.exec_(QtGui.QCursor().pos())
 
-    def deleteFile(self, item):
-        if item:
-            print(item)
-            print(item.source_path)
-            # print(item.filePath)
-            # print(item.half_path)
-            # print(item.have_rev)
+    def getLatestFile(self):
+        items = self.view.workTree.selectedItems()
+
+        if items:
+            for item in items:
+                self.p4Model.syncFile(item.source_path, "head")
+                labelWidget = self.view.workTree.itemWidget(item, 2)
+                serverVersion = labelWidget.text()
+                if item.source_path in self.p4_file_infos:
+                    self.p4Model.syncFile(item.source_path, version=str(serverVersion))
+                    self.p4_file_infos[item.source_path]["haveRev"] = str(serverVersion)
+                    item.have_rev = str(serverVersion)
+                label = QtWidgets.QLabel(serverVersion)
+                label.setAlignment(QtCore.Qt.AlignCenter)
+                self.view.workTree.setItemWidget(item, 1, label)
+                msg = str(item.source_path) + "   get latest."
+                app_utils.add_log(msg, error=False)
 
     def showWorkTreeHandle(self, pos):
         contextMenuTree = QtWidgets.QMenu()
@@ -281,8 +295,6 @@ class AppFunc():
             else:
                 item.parentItem.takeChild(self.view.listWidget.currentIndex().row())
 
-
-
     def setTreeWidget(self):
         self.view.workTree.clear()
         current_type, current_asset, current_step = self.getAssetStep()
@@ -325,7 +337,7 @@ class AppFunc():
                 else:
                     parent = self.view.workTree
 
-                if (current_path not in level_items):
+                if current_path not in level_items:
                     item = baseWidget.PathTreeItem(current_path, source_model="server", parent=parent)
                     level_items[current_path] = item
                     levels[matrix_index] = item
@@ -413,6 +425,41 @@ class AppFunc():
         background-repeat: no-repeat;
         background-image: url(R:/ProjectX/Scripts/Python/tools/publish/AssetBrowser/resources/icons/no_display_password.png);}""")
         self.view.passwordLn.setEchoMode(QtWidgets.QLineEdit.Password)
+
+    def showParent(self, item):
+        if item:
+            parentItem = item.parent()
+            if parentItem:
+                parentItem.setHidden(False)
+                self.showParent(parentItem)
+
+    def showSon(self, item):
+        itemChildCount = item.childCount()
+        for i in range(itemChildCount):
+            item.child(i).setHidden(False)
+            self.showSon(item.child(i))
+
+    def searchItem(self, item, text):
+        if item:
+            for i in range(item.childCount()):
+                childItem = item.child(i)
+                if childItem:
+                    if text in childItem.text(0):
+                        childItem.setHidden(False)
+                        childItem.setExpanded(True)
+                        self.showSon(childItem)
+                        self.showParent(childItem)
+                    else:
+                        childItem.setHidden(True)
+                        self.searchItem(childItem, text)
+
+    def searchWorkTreeItem(self, input):
+        for i in range(self.view.workTree.topLevelItemCount()):
+            if input.lower() in self.view.workTree.topLevelItem(i).text(0).lower():
+                self.view.workTree.topLevelItem(i).setHidden(False)
+            else:
+                self.view.workTree.topLevelItem(i).setHidden(True)
+            self.searchItem(self.view.workTree.topLevelItem(i), input)
 
     def btnImportClicked(self, model):
         print("{0} btn pressed".format(model))

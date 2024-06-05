@@ -164,6 +164,8 @@ class P4Client(object):
                 continue
             if data_values[-1] == "delete":
                 continue
+            if data_values[-1] == "move/delete":
+                continue
             file_dict.setdefault(data_values[0], {})
             for index in range(len(data_keys)):
                 file_dict[data_values[0]][data_keys[index]] = data_values[index]

@@ -72,8 +72,12 @@ class View(QtWidgets.QMainWindow):
             window.setWindowTitle(ToolInfo.get("name"))
             window.show()
         elif ToolInfo.get("type") == "run":
-            function = ToolInfo.get("function")
-            function()
+            if ToolInfo.get("args"):
+                function = ToolInfo.get("function")
+                function(ToolInfo.get("args"))
+            else:
+                function = ToolInfo.get("function")
+                function()
 
 
 if __name__ == '__main__':
