@@ -76,6 +76,7 @@ class CommentUI(QWidget):
         self.label_status.setText("任务状态")
         self.label_status.setObjectName(u"label")
         self.comboBox_status = QComboBox(self.frame)
+        self.comboBox_status.setEnabled(False)
         self.comboBox_status.setObjectName(u"comboBox_status")
         self.comboBox_status.addItem(u"未开始")
         self.comboBox_status.addItem(u"进行中")

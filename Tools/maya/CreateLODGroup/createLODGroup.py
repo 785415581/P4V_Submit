@@ -1,10 +1,15 @@
+import json
 
 from PySide2 import QtWidgets
 from PySide2.QtWidgets import QApplication
 from PySide2 import QtCore
 from Tools.maya.CreateLODGroup.UI_LODExportManage import Ui_MainWindow
 import sys, os
+import json
 from enum import Enum, EnumMeta, unique
+
+from maya import cmds
+
 
 @unique
 class NodeType(Enum):
@@ -19,7 +24,6 @@ class ExportLOD(QtWidgets.QMainWindow):
 
         self.MainUI.stackedWidget.setCurrentIndex(0)
         self.Data = self.collectInfo()
-        # self.Data = {}
         if not self.Data:
             self.MainUI.label_4.setText("None LOD Group")
             self.MainUI.treeWidget.setEnabled(False)
@@ -33,17 +37,87 @@ class ExportLOD(QtWidgets.QMainWindow):
         self.MainUI.pushButton_2.clicked.connect(self.Export)
 
     def Export(self):
-        pass
+        from maya import cmds
+        checked_items = []
+        topLevel = self.MainUI.treeWidget.topLevelItemCount()
+        for i in range(topLevel):
+            TopItem = self.MainUI.treeWidget.topLevelItem(i)
+            checked_items = self.get_checked_items(TopItem)
+        cmds.select(checked_items)
+        filePath = self.MainUI.lineEdit.text()
+        if filePath:
+            cmds.file(filePath, force=True, type="FBX export", es=True, esc=(self.python_export_callback, "TEMP_EXPORT"))
+        else:
+            self.show_warning_dialog()
+        cmds.confirmDialog(title="Info", message="Export Success", button=['OK'], defaultButton='OK', cancelButton='OK',
+                                    icon='information')
+    def python_export_callback(self):
+        """
+    	Print all nodes to be exported and triangulate all mesh shapes.
+    	"""
+        lodGroups = cmds.ls(sl=1, type="lodGroup", long=True)
+        lodDetail = {}
+        for lodGroup in lodGroups:
+            lodDetail[lodGroup] = {}
+            if cmds.listRelatives(lodGroup):
+                for lod in cmds.listRelatives(lodGroup):
+                    lodDetail[lodGroup][lod] = {}
+                    lodLongName = lodGroup + "|" + lod
+                    lodDetail[lodGroup][lod]["name"] = lodLongName
+                    shapes = self.get_shapes_from_group(lodLongName)
+                    if shapes:
+                        Result = cmds.polyEvaluate(shapes[0])
+                        lodDetail[lodGroup][lod]["shapes"] = shapes
+                        lodDetail[lodGroup][lod]["UVShell"] = Result.get("shell")
+                        lodDetail[lodGroup][lod]["face"] = Result.get("face")
+                        lodDetail[lodGroup][lod]["vertex"] = Result.get("vertex")
+                        lodDetail[lodGroup][lod]["platform"] = "Mobile"
+                        lodDetail[lodGroup][lod]["Level"] = lod
+        filePath = self.MainUI.lineEdit.text()
+        configPath = filePath.replace(".fbx", ".json")
+        with open(configPath, "w") as fp:
+            json.dump(lodDetail, fp, indent=4)
+        from pprint import pprint
+        pprint(lodDetail)
 
+    def show_warning_dialog(self):
+        title = "Warning!"
+        message = "Export path is None"
+
+        # 使用 cmds.confirmDialog() 创建弹窗警告
+        result = cmds.confirmDialog(title=title, message=message, button=['OK'], defaultButton='OK', cancelButton='OK',
+                                    icon='warning')
+
+        # 处理用户响应（这里只有一个 OK 按钮）
+        if result == 'OK':
+            print("User acknowledged the warning!")
+
+
+    def get_checked_items(self, parent_item):
+        checked_items = []
+
+        for index in range(parent_item.childCount()):
+            child = parent_item.child(index)
+            if child.checkState(0) == QtCore.Qt.Checked:
+                checked_items.append(child.text(0))
+            # Recursively check children
+            checked_items.extend(self.get_checked_items(child))
+
+        return checked_items
     def SelectPath(self):
-        folder = QtWidgets.QFileDialog.getExistingDirectory(self, "选择文件夹", os.getcwd())
+        """
+        Select export file path
+        :return:
+        """
+        multipleFilters = "Fbx (*.fbx);;All Files (*.*)"
+        file = cmds.fileDialog2(fileFilter=multipleFilters, dialogStyle=2)
 
         # 如果用户选择了文件夹，将路径显示在标签上
-        if folder:
-            self.MainUI.lineEdit.setText(f"{folder}")
+        if file:
+            self.MainUI.lineEdit.setText(f"{file[0]}")
 
         else:
-            self.MainUI.lineEdit.setText("未选择任何文件夹")
+            self.MainUI.lineEdit.setText("")
 
     def ChangePlatform(self, text):
         item = self.MainUI.treeWidget.currentItem()
