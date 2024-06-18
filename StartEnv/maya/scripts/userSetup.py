@@ -45,6 +45,18 @@ def BatchExport(*args):
     import Tools.maya.BatchExporter as BE
     BE.CreationWindow()
 
+def ExportLOD(*args):
+    import Tools.maya.CreateLODGroup.createLODGroup as CLODG
+    from PySide2.QtWidgets import QApplication
+    import imp
+    imp.reload(CLODG)
+
+    for widget in QApplication.topLevelWidgets():
+        if widget.objectName() == "ExportLODManage":
+            widget.deleteLater()
+    win = CLODG.ExportLOD(parent=maya_main_window())
+    win.setObjectName('ExportLODManage')
+    win.show()
 
 def addJGMenu():
 
@@ -55,6 +67,7 @@ def addJGMenu():
     cmds.menuItem(parent=showMyMenu, label='CreateHierarchy', command=createLevel)
     cmds.menuItem(parent=showMyMenu, label='CreateSubGroup', command=createSubGroup)
     cmds.menuItem(parent=showMyMenu, label='BatchExport', command=BatchExport)
+    cmds.menuItem(parent=showMyMenu, label='Export LOD', command=ExportLOD)
 
 
 cmds.evalDeferred(addJGMenu)
