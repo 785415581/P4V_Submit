@@ -58,6 +58,18 @@ def ExportLOD(*args):
     win.setObjectName('ExportLODManage')
     win.show()
 
+def CallPyblish(*args):
+    from Tools.maya.Pyblish.pyblish import api
+    api.register_gui("pyblish_qml")
+    api.register_plugin_path(r"D:\workSpace\Maya\Pyblish\pyblish_plugins\model")
+
+    # 2. Set-up Pyblish for Maya
+    import Tools.maya.Pyblish.pyblish_maya as pyblish_maya
+    pyblish_maya.setup()
+
+    import Tools.maya.Pyblish.pyblish_qml as pyblish_qml
+    pyblish_qml.show()
+
 def addJGMenu():
 
     if cmds.menu('AuroraTools', exists=1):
@@ -68,6 +80,7 @@ def addJGMenu():
     cmds.menuItem(parent=showMyMenu, label='CreateSubGroup', command=createSubGroup)
     cmds.menuItem(parent=showMyMenu, label='BatchExport', command=BatchExport)
     cmds.menuItem(parent=showMyMenu, label='Export LOD', command=ExportLOD)
+    cmds.menuItem(parent=showMyMenu, label='Pyblish', command=CallPyblish)
 
 
 cmds.evalDeferred(addJGMenu)
