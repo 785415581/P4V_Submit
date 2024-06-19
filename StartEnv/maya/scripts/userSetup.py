@@ -61,7 +61,8 @@ def ExportLOD(*args):
 def CallPyblish(*args):
     from Tools.maya.Pyblish.pyblish import api
     api.register_gui("pyblish_qml")
-    api.register_plugin_path(r"D:\workSpace\Maya\Pyblish\pyblish_plugins\model")
+    plugin_path = ToolLib + "/Tool/maya/Pyblish/pyblish_plugins/model"
+    api.register_plugin_path(plugin_path)
 
     # 2. Set-up Pyblish for Maya
     import Tools.maya.Pyblish.pyblish_maya as pyblish_maya
