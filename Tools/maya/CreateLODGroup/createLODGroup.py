@@ -47,10 +47,12 @@ class ExportLOD(QtWidgets.QMainWindow):
         filePath = self.MainUI.lineEdit.text()
         if filePath:
             cmds.file(filePath, force=True, type="FBX export", es=True, esc=(self.python_export_callback, "TEMP_EXPORT"))
+            cmds.confirmDialog(title="Info", message="Export Success", button=['OK'], defaultButton='OK',
+                               cancelButton='OK',
+                               icon='information')
         else:
             self.show_warning_dialog()
-        cmds.confirmDialog(title="Info", message="Export Success", button=['OK'], defaultButton='OK', cancelButton='OK',
-                                    icon='information')
+
     def python_export_callback(self):
         """
     	Print all nodes to be exported and triangulate all mesh shapes.
