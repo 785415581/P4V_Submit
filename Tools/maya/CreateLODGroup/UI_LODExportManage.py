@@ -367,6 +367,11 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addItem(self.verticalSpacer)
 
+        self.pushButton_3 = QPushButton(self.frame)
+        self.pushButton_3.setObjectName(u"pushButton_3")
+
+        self.verticalLayout_3.addWidget(self.pushButton_3)
+
         self.splitter.addWidget(self.frame)
 
         self.verticalLayout_5.addWidget(self.splitter)
@@ -443,6 +448,7 @@ class Ui_MainWindow(object):
         self.comboBox_2.setItemText(7, QCoreApplication.translate("MainWindow", u"LOD_7", None))
         self.comboBox_2.setItemText(8, QCoreApplication.translate("MainWindow", u"LOD_8", None))
 
+        self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"Refresh", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"ExportPath", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Browse...", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Export", None))
